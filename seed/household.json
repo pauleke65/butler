@@ -1,0 +1,10 @@
+{
+  "household": {
+    "household_id": "hh_demo",
+    "name": "Paul's home",
+    "timezone": "America/New_York",
+    "currency": "USD",
+    "location": { "lat": 40.7128, "lon": -74.006 }
+  },
+  "members": [{ "member_id": "mem_paul", "name": "Paul", "email": "paul@example.com" }]
+}

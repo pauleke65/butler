@@ -1,0 +1,9 @@
+[
+  { "provider_id": "prv_sparkle",    "name": "Sparkle Cleaners", "service_type": "cleaning", "rating": 4.8, "price_minor": 6500, "slot": { "weekday": 3, "hour": 15 } },
+  { "provider_id": "prv_brighthome", "name": "BrightHome",       "service_type": "cleaning", "rating": 4.9, "price_minor": 8500, "slot": { "weekday": 4, "hour": 10 } },
+  { "provider_id": "prv_tidyup",     "name": "TidyUp Co",        "service_type": "cleaning", "rating": 4.5, "price_minor": 5900, "slot": { "weekday": 3, "hour": 9 } },
+  { "provider_id": "prv_swiftride",  "name": "SwiftRide",        "service_type": "ride",     "rating": 4.7, "price_minor": 3800, "slot": { "weekday": 3, "hour": 17 } },
+  { "provider_id": "prv_cityhail",   "name": "CityHail",         "service_type": "ride",     "rating": 4.4, "price_minor": 3200, "slot": { "weekday": 3, "hour": 17 } },
+  { "provider_id": "prv_fixitfast",  "name": "FixItFast",        "service_type": "repair",   "rating": 4.6, "price_minor": 9500, "slot": { "weekday": 2, "hour": 11 } },
+  { "provider_id": "prv_pawsitive",  "name": "Pawsitive Care",   "service_type": "pet_care", "rating": 4.9, "price_minor": 4500, "slot": { "weekday": 3, "hour": 8 } }
+]

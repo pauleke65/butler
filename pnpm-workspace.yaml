@@ -1,0 +1,7 @@
+packages:
+  - packages/contracts/ts
+  - server
+  - server/ui
+  - sim-panel
+  - infra
+  - debug-api

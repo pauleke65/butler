@@ -1,0 +1,2414 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ButlerContracts",
+  "type": "object",
+  "properties": {
+    "ISODateTime": {
+      "$ref": "#/$defs/ISODateTime"
+    },
+    "Currency": {
+      "$ref": "#/$defs/Currency"
+    },
+    "Money": {
+      "$ref": "#/$defs/Money"
+    },
+    "Capability": {
+      "$ref": "#/$defs/Capability"
+    },
+    "NeedStatus": {
+      "$ref": "#/$defs/NeedStatus"
+    },
+    "PlanStatus": {
+      "$ref": "#/$defs/PlanStatus"
+    },
+    "SituationKind": {
+      "$ref": "#/$defs/SituationKind"
+    },
+    "ProductCategory": {
+      "$ref": "#/$defs/ProductCategory"
+    },
+    "ServiceType": {
+      "$ref": "#/$defs/ServiceType"
+    },
+    "GatewayToolName": {
+      "$ref": "#/$defs/GatewayToolName"
+    },
+    "TemplateId": {
+      "$ref": "#/$defs/TemplateId"
+    },
+    "RuleEffect": {
+      "$ref": "#/$defs/RuleEffect"
+    },
+    "PrincipalName": {
+      "$ref": "#/$defs/PrincipalName"
+    },
+    "PolicyDecision": {
+      "$ref": "#/$defs/PolicyDecision"
+    },
+    "ReceiptStatus": {
+      "$ref": "#/$defs/ReceiptStatus"
+    },
+    "ErrorCode": {
+      "$ref": "#/$defs/ErrorCode"
+    },
+    "Need": {
+      "$ref": "#/$defs/Need"
+    },
+    "Plan": {
+      "$ref": "#/$defs/Plan"
+    },
+    "ActionDraft": {
+      "$ref": "#/$defs/ActionDraft"
+    },
+    "DecisionOption": {
+      "$ref": "#/$defs/DecisionOption"
+    },
+    "DecisionKind": {
+      "$ref": "#/$defs/DecisionKind"
+    },
+    "DecisionStatus": {
+      "$ref": "#/$defs/DecisionStatus"
+    },
+    "Decision": {
+      "$ref": "#/$defs/Decision"
+    },
+    "Reasoning": {
+      "$ref": "#/$defs/Reasoning"
+    },
+    "Receipt": {
+      "$ref": "#/$defs/Receipt"
+    },
+    "RuleOrigin": {
+      "$ref": "#/$defs/RuleOrigin"
+    },
+    "Rule": {
+      "$ref": "#/$defs/Rule"
+    },
+    "RuleDraft": {
+      "$ref": "#/$defs/RuleDraft"
+    },
+    "Contact": {
+      "$ref": "#/$defs/Contact"
+    },
+    "Household": {
+      "$ref": "#/$defs/Household"
+    },
+    "Preference": {
+      "$ref": "#/$defs/Preference"
+    },
+    "ToolError": {
+      "$ref": "#/$defs/ToolError"
+    },
+    "HandleSituationInput": {
+      "$ref": "#/$defs/HandleSituationInput"
+    },
+    "HandleSituationOutput": {
+      "$ref": "#/$defs/HandleSituationOutput"
+    },
+    "GetStatusInput": {
+      "$ref": "#/$defs/GetStatusInput"
+    },
+    "GetStatusOutput": {
+      "$ref": "#/$defs/GetStatusOutput"
+    },
+    "AnswerDecisionInput": {
+      "$ref": "#/$defs/AnswerDecisionInput"
+    },
+    "AnswerDecisionOutput": {
+      "$ref": "#/$defs/AnswerDecisionOutput"
+    },
+    "ListActionsInput": {
+      "$ref": "#/$defs/ListActionsInput"
+    },
+    "ListActionsOutput": {
+      "$ref": "#/$defs/ListActionsOutput"
+    },
+    "ExplainActionInput": {
+      "$ref": "#/$defs/ExplainActionInput"
+    },
+    "ExplainActionOutput": {
+      "$ref": "#/$defs/ExplainActionOutput"
+    },
+    "ObjectToActionInput": {
+      "$ref": "#/$defs/ObjectToActionInput"
+    },
+    "ObjectToActionOutput": {
+      "$ref": "#/$defs/ObjectToActionOutput"
+    },
+    "ListRulesInput": {
+      "$ref": "#/$defs/ListRulesInput"
+    },
+    "ListRulesOutput": {
+      "$ref": "#/$defs/ListRulesOutput"
+    },
+    "ChangeRuleInput": {
+      "$ref": "#/$defs/ChangeRuleInput"
+    },
+    "ChangeRuleOutput": {
+      "$ref": "#/$defs/ChangeRuleOutput"
+    },
+    "UndoActionInput": {
+      "$ref": "#/$defs/UndoActionInput"
+    },
+    "UndoActionOutput": {
+      "$ref": "#/$defs/UndoActionOutput"
+    },
+    "GetLedgerPageInput": {
+      "$ref": "#/$defs/GetLedgerPageInput"
+    },
+    "GetLedgerPageOutput": {
+      "$ref": "#/$defs/GetLedgerPageOutput"
+    },
+    "GetPlanInput": {
+      "$ref": "#/$defs/GetPlanInput"
+    },
+    "GetPlanOutput": {
+      "$ref": "#/$defs/GetPlanOutput"
+    },
+    "AgentRequest": {
+      "$ref": "#/$defs/AgentRequest"
+    },
+    "AgentResponse": {
+      "$ref": "#/$defs/AgentResponse"
+    },
+    "ExecutorRequest": {
+      "$ref": "#/$defs/ExecutorRequest"
+    },
+    "SendEmailInput": {
+      "$ref": "#/$defs/SendEmailInput"
+    },
+    "ListEventsInput": {
+      "$ref": "#/$defs/ListEventsInput"
+    },
+    "CreateEventInput": {
+      "$ref": "#/$defs/CreateEventInput"
+    },
+    "EventOwner": {
+      "$ref": "#/$defs/EventOwner"
+    },
+    "UpdateEventInput": {
+      "$ref": "#/$defs/UpdateEventInput"
+    },
+    "DeleteEventInput": {
+      "$ref": "#/$defs/DeleteEventInput"
+    },
+    "SearchProductsInput": {
+      "$ref": "#/$defs/SearchProductsInput"
+    },
+    "CheckoutInput": {
+      "$ref": "#/$defs/CheckoutInput"
+    },
+    "RefundInput": {
+      "$ref": "#/$defs/RefundInput"
+    },
+    "SearchProvidersInput": {
+      "$ref": "#/$defs/SearchProvidersInput"
+    },
+    "BookServiceInput": {
+      "$ref": "#/$defs/BookServiceInput"
+    },
+    "CancelBookingInput": {
+      "$ref": "#/$defs/CancelBookingInput"
+    },
+    "GetWeatherInput": {
+      "$ref": "#/$defs/GetWeatherInput"
+    },
+    "PolicyEvent": {
+      "$ref": "#/$defs/PolicyEvent"
+    }
+  },
+  "$defs": {
+    "ISODateTime": {
+      "$id": "#/$defs/ISODateTime",
+      "type": "string",
+      "minLength": 10
+    },
+    "Currency": {
+      "$id": "#/$defs/Currency",
+      "type": "string",
+      "const": "USD"
+    },
+    "Money": {
+      "$id": "#/$defs/Money",
+      "type": "object",
+      "properties": {
+        "amount_minor": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        }
+      },
+      "required": [
+        "amount_minor",
+        "currency"
+      ]
+    },
+    "Capability": {
+      "$id": "#/$defs/Capability",
+      "type": "string",
+      "enum": [
+        "messages",
+        "calendar",
+        "supplies",
+        "services",
+        "context"
+      ]
+    },
+    "NeedStatus": {
+      "$id": "#/$defs/NeedStatus",
+      "type": "string",
+      "enum": [
+        "doing",
+        "done",
+        "needs_you",
+        "blocked",
+        "skipped"
+      ]
+    },
+    "PlanStatus": {
+      "$id": "#/$defs/PlanStatus",
+      "type": "string",
+      "enum": [
+        "planning",
+        "active",
+        "waiting_on_you",
+        "complete",
+        "cancelled"
+      ]
+    },
+    "SituationKind": {
+      "$id": "#/$defs/SituationKind",
+      "type": "string",
+      "enum": [
+        "hosting",
+        "away",
+        "running_low",
+        "other"
+      ]
+    },
+    "ProductCategory": {
+      "$id": "#/$defs/ProductCategory",
+      "type": "string",
+      "enum": [
+        "groceries",
+        "drinks",
+        "household",
+        "toiletries",
+        "gifts",
+        "other"
+      ]
+    },
+    "ServiceType": {
+      "$id": "#/$defs/ServiceType",
+      "type": "string",
+      "enum": [
+        "cleaning",
+        "ride",
+        "repair",
+        "pet_care"
+      ]
+    },
+    "GatewayToolName": {
+      "$id": "#/$defs/GatewayToolName",
+      "type": "string",
+      "enum": [
+        "Messages___send_email",
+        "Calendar___list_events",
+        "Calendar___create_event",
+        "Calendar___update_event",
+        "Calendar___delete_event",
+        "Supplies___search_products",
+        "Supplies___checkout",
+        "Supplies___refund",
+        "Services___search_providers",
+        "Services___book_service",
+        "Services___cancel_booking",
+        "Context___get_weather"
+      ]
+    },
+    "TemplateId": {
+      "$id": "#/$defs/TemplateId",
+      "type": "string",
+      "enum": [
+        "spend_cap",
+        "ask_category",
+        "ask_tool",
+        "ask_non_contact",
+        "never_contact",
+        "protect_human_events",
+        "never_tool"
+      ]
+    },
+    "RuleEffect": {
+      "$id": "#/$defs/RuleEffect",
+      "type": "string",
+      "enum": [
+        "allow",
+        "ask_first",
+        "never"
+      ]
+    },
+    "PrincipalName": {
+      "$id": "#/$defs/PrincipalName",
+      "type": "string",
+      "enum": [
+        "butler-agent",
+        "approval-executor"
+      ]
+    },
+    "PolicyDecision": {
+      "$id": "#/$defs/PolicyDecision",
+      "type": "string",
+      "enum": [
+        "ALLOW",
+        "DENY"
+      ]
+    },
+    "ReceiptStatus": {
+      "$id": "#/$defs/ReceiptStatus",
+      "type": "string",
+      "enum": [
+        "executed",
+        "held_for_approval",
+        "blocked",
+        "failed",
+        "undone"
+      ]
+    },
+    "ErrorCode": {
+      "$id": "#/$defs/ErrorCode",
+      "type": "string",
+      "enum": [
+        "INVALID_INPUT",
+        "NOT_FOUND",
+        "AMBIGUOUS_REFERENCE",
+        "NO_ACTIVE_PLAN",
+        "DUPLICATE_PLAN",
+        "RULE_UNSUPPORTED",
+        "POLICY_PROPAGATING",
+        "NOT_REVERSIBLE",
+        "BLOCKED_BY_NEVER_RULE",
+        "UPSTREAM_UNAVAILABLE",
+        "INTERNAL"
+      ]
+    },
+    "Need": {
+      "$id": "#/$defs/Need",
+      "type": "object",
+      "properties": {
+        "need_id": {
+          "type": "string"
+        },
+        "plan_id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "capability": {
+          "$ref": "#/$defs/Capability"
+        },
+        "status": {
+          "$ref": "#/$defs/NeedStatus"
+        },
+        "note": {
+          "type": "string"
+        },
+        "action_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decision_id": {
+          "type": "string"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/ISODateTime"
+        }
+      },
+      "required": [
+        "need_id",
+        "plan_id",
+        "label",
+        "capability",
+        "status",
+        "action_ids",
+        "updated_at"
+      ]
+    },
+    "Plan": {
+      "$id": "#/$defs/Plan",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "household_id": {
+          "type": "string"
+        },
+        "situation": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/SituationKind"
+        },
+        "title": {
+          "type": "string"
+        },
+        "starts_at": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "ends_at": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "status": {
+          "$ref": "#/$defs/PlanStatus"
+        },
+        "needs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Need"
+          }
+        },
+        "last_status_read_at": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "created_at": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/ISODateTime"
+        }
+      },
+      "required": [
+        "plan_id",
+        "household_id",
+        "situation",
+        "kind",
+        "title",
+        "status",
+        "needs",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "ActionDraft": {
+      "$id": "#/$defs/ActionDraft",
+      "type": "object",
+      "properties": {
+        "tool": {
+          "$ref": "#/$defs/GatewayToolName"
+        },
+        "args": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool",
+        "args",
+        "summary"
+      ]
+    },
+    "DecisionOption": {
+      "$id": "#/$defs/DecisionOption",
+      "type": "object",
+      "properties": {
+        "option_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/$defs/Money"
+        },
+        "tradeoff": {
+          "type": "string"
+        },
+        "image_url": {
+          "type": "string"
+        },
+        "simulated": {
+          "type": "boolean"
+        },
+        "action_draft": {
+          "$ref": "#/$defs/ActionDraft"
+        }
+      },
+      "required": [
+        "option_id",
+        "title",
+        "tradeoff"
+      ]
+    },
+    "DecisionKind": {
+      "$id": "#/$defs/DecisionKind",
+      "type": "string",
+      "enum": [
+        "choose_option",
+        "approve_action"
+      ]
+    },
+    "DecisionStatus": {
+      "$id": "#/$defs/DecisionStatus",
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "expired",
+        "executed",
+        "failed"
+      ]
+    },
+    "Decision": {
+      "$id": "#/$defs/Decision",
+      "type": "object",
+      "properties": {
+        "decision_id": {
+          "type": "string"
+        },
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/DecisionKind"
+        },
+        "question": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DecisionOption"
+          }
+        },
+        "default_option_id": {
+          "type": "string"
+        },
+        "reason_held": {
+          "type": "object",
+          "properties": {
+            "rule_id": {
+              "type": "string"
+            },
+            "rule_text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rule_id",
+            "rule_text"
+          ]
+        },
+        "status": {
+          "$ref": "#/$defs/DecisionStatus"
+        },
+        "chosen_option_id": {
+          "type": "string"
+        },
+        "result_action_id": {
+          "type": "string"
+        },
+        "created_at": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/ISODateTime"
+        }
+      },
+      "required": [
+        "decision_id",
+        "plan_id",
+        "need_id",
+        "kind",
+        "question",
+        "options",
+        "status",
+        "created_at"
+      ]
+    },
+    "Reasoning": {
+      "$id": "#/$defs/Reasoning",
+      "type": "object",
+      "properties": {
+        "reasons": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "context_used": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alternatives": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "option": {
+                "type": "string"
+              },
+              "rejected_because": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "option",
+              "rejected_because"
+            ]
+          }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "Receipt": {
+      "$id": "#/$defs/Receipt",
+      "type": "object",
+      "properties": {
+        "action_id": {
+          "type": "string"
+        },
+        "household_id": {
+          "type": "string"
+        },
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "decision_id": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "situation": {
+          "type": "string"
+        },
+        "need_label": {
+          "type": "string"
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "tool": {
+              "$ref": "#/$defs/GatewayToolName"
+            },
+            "args": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            }
+          },
+          "required": [
+            "tool",
+            "args"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ReceiptStatus"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "context_used": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "option": {
+                "type": "string"
+              },
+              "rejected_because": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "option",
+              "rejected_because"
+            ]
+          }
+        },
+        "authority": {
+          "type": "object",
+          "properties": {
+            "decision": {
+              "$ref": "#/$defs/PolicyDecision"
+            },
+            "principal": {
+              "$ref": "#/$defs/PrincipalName"
+            },
+            "rule_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "rule_texts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "gateway_request_id": {
+              "type": "string"
+            },
+            "evaluated_at": {
+              "$ref": "#/$defs/ISODateTime"
+            },
+            "matcher_gateway_agree": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "decision",
+            "principal",
+            "rule_ids",
+            "rule_texts",
+            "evaluated_at",
+            "matcher_gateway_agree"
+          ]
+        },
+        "cost": {
+          "$ref": "#/$defs/Money"
+        },
+        "result": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "reversible": {
+          "type": "boolean"
+        },
+        "undo_of": {
+          "type": "string"
+        },
+        "might_disagree": {
+          "type": "object",
+          "properties": {
+            "score": {
+              "type": "number"
+            },
+            "top_reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "score"
+          ]
+        },
+        "simulated": {
+          "type": "boolean"
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "created_at": {
+          "$ref": "#/$defs/ISODateTime"
+        }
+      },
+      "required": [
+        "action_id",
+        "household_id",
+        "correlation_id",
+        "action",
+        "title",
+        "status",
+        "reasons",
+        "context_used",
+        "alternatives",
+        "authority",
+        "reversible",
+        "might_disagree",
+        "simulated",
+        "spoken_summary",
+        "created_at"
+      ]
+    },
+    "RuleOrigin": {
+      "$id": "#/$defs/RuleOrigin",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "default"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "correction"
+            },
+            "utterance": {
+              "type": "string"
+            },
+            "action_id": {
+              "type": "string"
+            },
+            "created_at": {
+              "$ref": "#/$defs/ISODateTime"
+            }
+          },
+          "required": [
+            "type",
+            "utterance",
+            "created_at"
+          ]
+        }
+      ]
+    },
+    "Rule": {
+      "$id": "#/$defs/Rule",
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string"
+        },
+        "household_id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "effect": {
+          "$ref": "#/$defs/RuleEffect"
+        },
+        "template": {
+          "$ref": "#/$defs/TemplateId"
+        },
+        "params": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "cedar_statement": {
+          "type": "string"
+        },
+        "policy_id": {
+          "type": "string"
+        },
+        "policy_status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "creating",
+            "active",
+            "failed",
+            "disabled"
+          ]
+        },
+        "origin": {
+          "$ref": "#/$defs/RuleOrigin"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/ISODateTime"
+        }
+      },
+      "required": [
+        "rule_id",
+        "household_id",
+        "text",
+        "effect",
+        "template",
+        "params",
+        "cedar_statement",
+        "policy_status",
+        "origin",
+        "active",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "RuleDraft": {
+      "$id": "#/$defs/RuleDraft",
+      "type": "object",
+      "properties": {
+        "template": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TemplateId"
+            },
+            {
+              "type": "string",
+              "const": "unsupported"
+            }
+          ]
+        },
+        "params": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "text": {
+          "type": "string"
+        },
+        "effect": {
+          "$ref": "#/$defs/RuleEffect"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "template",
+        "params",
+        "text",
+        "effect",
+        "confidence"
+      ]
+    },
+    "Contact": {
+      "$id": "#/$defs/Contact",
+      "type": "object",
+      "properties": {
+        "contact_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "relationship": {
+          "type": "string",
+          "enum": [
+            "friend",
+            "family",
+            "work",
+            "service",
+            "other"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "contact_id",
+        "name",
+        "first_name",
+        "email"
+      ]
+    },
+    "Household": {
+      "$id": "#/$defs/Household",
+      "type": "object",
+      "properties": {
+        "household_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "location": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lon": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "lat",
+            "lon"
+          ]
+        }
+      },
+      "required": [
+        "household_id",
+        "name",
+        "timezone",
+        "currency"
+      ]
+    },
+    "Preference": {
+      "$id": "#/$defs/Preference",
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "learned_from": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "learned_from"
+      ]
+    },
+    "ToolError": {
+      "$id": "#/$defs/ToolError",
+      "type": "object",
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "message_spoken": {
+          "type": "string"
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "label"
+            ]
+          }
+        }
+      },
+      "required": [
+        "code",
+        "message_spoken"
+      ]
+    },
+    "HandleSituationInput": {
+      "$id": "#/$defs/HandleSituationInput",
+      "type": "object",
+      "properties": {
+        "situation": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 400
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "situation"
+      ]
+    },
+    "HandleSituationOutput": {
+      "$id": "#/$defs/HandleSituationOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "plan": {
+          "$ref": "#/$defs/Plan"
+        },
+        "handled_by_butler": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "needs_you": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "plan",
+        "handled_by_butler",
+        "needs_you"
+      ]
+    },
+    "GetStatusInput": {
+      "$id": "#/$defs/GetStatusInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        }
+      }
+    },
+    "GetStatusOutput": {
+      "$id": "#/$defs/GetStatusOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "plan": {
+          "$ref": "#/$defs/Plan"
+        },
+        "done_since_last_check": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "need_id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "need_id",
+              "label"
+            ]
+          }
+        },
+        "pending_decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Decision"
+          }
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "plan",
+        "done_since_last_check",
+        "pending_decisions"
+      ]
+    },
+    "AnswerDecisionInput": {
+      "$id": "#/$defs/AnswerDecisionInput",
+      "type": "object",
+      "properties": {
+        "decision_id": {
+          "type": "string"
+        },
+        "choice": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "choice"
+      ]
+    },
+    "AnswerDecisionOutput": {
+      "$id": "#/$defs/AnswerDecisionOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "decision": {
+          "$ref": "#/$defs/Decision"
+        },
+        "receipt": {
+          "$ref": "#/$defs/Receipt"
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "decision"
+      ]
+    },
+    "ListActionsInput": {
+      "$id": "#/$defs/ListActionsInput",
+      "type": "object",
+      "properties": {
+        "period": {
+          "type": "string",
+          "enum": [
+            "today",
+            "this_week",
+            "plan"
+          ]
+        },
+        "filter": {
+          "type": "string",
+          "enum": [
+            "all",
+            "purchases",
+            "might_disagree",
+            "blocked"
+          ]
+        },
+        "plan_id": {
+          "type": "string"
+        }
+      }
+    },
+    "ListActionsOutput": {
+      "$id": "#/$defs/ListActionsOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Receipt"
+          }
+        },
+        "total_count": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "filter": {
+          "type": "string"
+        },
+        "period": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "actions",
+        "total_count",
+        "filter",
+        "period"
+      ]
+    },
+    "ExplainActionInput": {
+      "$id": "#/$defs/ExplainActionInput",
+      "type": "object",
+      "properties": {
+        "action_id": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        }
+      }
+    },
+    "ExplainActionOutput": {
+      "$id": "#/$defs/ExplainActionOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "receipt": {
+          "$ref": "#/$defs/Receipt"
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "receipt"
+      ]
+    },
+    "ObjectToActionInput": {
+      "$id": "#/$defs/ObjectToActionInput",
+      "type": "object",
+      "properties": {
+        "correction": {
+          "type": "string",
+          "minLength": 3
+        },
+        "action_id": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        },
+        "confirm": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "correction"
+      ]
+    },
+    "ObjectToActionOutput": {
+      "$id": "#/$defs/ObjectToActionOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "rule": {
+          "$ref": "#/$defs/Rule"
+        },
+        "needs_confirmation": {
+          "type": "boolean"
+        },
+        "offered_undo": {
+          "type": "object",
+          "properties": {
+            "action_id": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "action_id",
+            "summary"
+          ]
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "rule",
+        "needs_confirmation"
+      ]
+    },
+    "ListRulesInput": {
+      "$id": "#/$defs/ListRulesInput",
+      "type": "object",
+      "properties": {}
+    },
+    "ListRulesOutput": {
+      "$id": "#/$defs/ListRulesOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "allowed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Rule"
+          }
+        },
+        "ask_first": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Rule"
+          }
+        },
+        "never": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Rule"
+          }
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "allowed",
+        "ask_first",
+        "never"
+      ]
+    },
+    "ChangeRuleInput": {
+      "$id": "#/$defs/ChangeRuleInput",
+      "type": "object",
+      "properties": {
+        "rule_id": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        },
+        "change": {
+          "type": "string",
+          "minLength": 2
+        },
+        "confirm": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "change"
+      ]
+    },
+    "ChangeRuleOutput": {
+      "$id": "#/$defs/ChangeRuleOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "rule": {
+          "$ref": "#/$defs/Rule"
+        },
+        "needs_confirmation": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "needs_confirmation"
+      ]
+    },
+    "UndoActionInput": {
+      "$id": "#/$defs/UndoActionInput",
+      "type": "object",
+      "properties": {
+        "action_id": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        }
+      }
+    },
+    "UndoActionOutput": {
+      "$id": "#/$defs/UndoActionOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "original": {
+          "$ref": "#/$defs/Receipt"
+        },
+        "undo": {
+          "$ref": "#/$defs/Receipt"
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "original",
+        "undo"
+      ]
+    },
+    "GetLedgerPageInput": {
+      "$id": "#/$defs/GetLedgerPageInput",
+      "type": "object",
+      "properties": {
+        "cursor": {
+          "type": "string"
+        },
+        "filter": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        }
+      }
+    },
+    "GetLedgerPageOutput": {
+      "$id": "#/$defs/GetLedgerPageOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Receipt"
+          }
+        },
+        "next_cursor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "actions"
+      ]
+    },
+    "GetPlanInput": {
+      "$id": "#/$defs/GetPlanInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id"
+      ]
+    },
+    "GetPlanOutput": {
+      "$id": "#/$defs/GetPlanOutput",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "const": true
+        },
+        "spoken_summary": {
+          "type": "string"
+        },
+        "plan": {
+          "$ref": "#/$defs/Plan"
+        }
+      },
+      "required": [
+        "ok",
+        "spoken_summary",
+        "plan"
+      ]
+    },
+    "AgentRequest": {
+      "$id": "#/$defs/AgentRequest",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "start_plan"
+            },
+            "household_id": {
+              "type": "string"
+            },
+            "correlation_id": {
+              "type": "string"
+            },
+            "plan_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "household_id",
+            "correlation_id",
+            "plan_id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "resume_plan"
+            },
+            "household_id": {
+              "type": "string"
+            },
+            "correlation_id": {
+              "type": "string"
+            },
+            "plan_id": {
+              "type": "string"
+            },
+            "decision_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "household_id",
+            "correlation_id",
+            "plan_id",
+            "decision_id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "draft_rule"
+            },
+            "household_id": {
+              "type": "string"
+            },
+            "correlation_id": {
+              "type": "string"
+            },
+            "correction": {
+              "type": "string"
+            },
+            "action_id": {
+              "type": "string"
+            },
+            "base_rule_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "household_id",
+            "correlation_id",
+            "correction"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "apply_rule"
+            },
+            "household_id": {
+              "type": "string"
+            },
+            "correlation_id": {
+              "type": "string"
+            },
+            "rule_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "household_id",
+            "correlation_id",
+            "rule_id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "remove_rule"
+            },
+            "household_id": {
+              "type": "string"
+            },
+            "correlation_id": {
+              "type": "string"
+            },
+            "rule_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "household_id",
+            "correlation_id",
+            "rule_id"
+          ]
+        }
+      ]
+    },
+    "AgentResponse": {
+      "$id": "#/$defs/AgentResponse",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        }
+      },
+      "required": [
+        "ok"
+      ]
+    },
+    "ExecutorRequest": {
+      "$id": "#/$defs/ExecutorRequest",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "decision"
+            },
+            "household_id": {
+              "type": "string"
+            },
+            "correlation_id": {
+              "type": "string"
+            },
+            "decision_id": {
+              "type": "string"
+            },
+            "option_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "mode",
+            "household_id",
+            "correlation_id",
+            "decision_id",
+            "option_id"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "const": "undo"
+            },
+            "household_id": {
+              "type": "string"
+            },
+            "correlation_id": {
+              "type": "string"
+            },
+            "action_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "mode",
+            "household_id",
+            "correlation_id",
+            "action_id"
+          ]
+        }
+      ]
+    },
+    "SendEmailInput": {
+      "$id": "#/$defs/SendEmailInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "recipient_contact_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recipient_email": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "body_text": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "invite",
+            "reminder",
+            "notice",
+            "other"
+          ]
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "subject",
+        "body_text",
+        "kind"
+      ]
+    },
+    "ListEventsInput": {
+      "$id": "#/$defs/ListEventsInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "from": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "to": {
+          "$ref": "#/$defs/ISODateTime"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "from",
+        "to"
+      ]
+    },
+    "CreateEventInput": {
+      "$id": "#/$defs/CreateEventInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "end": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "attendee_contact_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "location": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "title",
+        "start",
+        "end"
+      ]
+    },
+    "EventOwner": {
+      "$id": "#/$defs/EventOwner",
+      "type": "string",
+      "enum": [
+        "butler",
+        "human"
+      ]
+    },
+    "UpdateEventInput": {
+      "$id": "#/$defs/UpdateEventInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "event_id": {
+          "type": "string"
+        },
+        "event_owner": {
+          "$ref": "#/$defs/EventOwner"
+        },
+        "title": {
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "end": {
+          "$ref": "#/$defs/ISODateTime"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "event_id",
+        "event_owner"
+      ]
+    },
+    "DeleteEventInput": {
+      "$id": "#/$defs/DeleteEventInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "event_id": {
+          "type": "string"
+        },
+        "event_owner": {
+          "$ref": "#/$defs/EventOwner"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "event_id",
+        "event_owner"
+      ]
+    },
+    "SearchProductsInput": {
+      "$id": "#/$defs/SearchProductsInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/ProductCategory"
+        },
+        "deliver_by": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "max_results": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "query"
+      ]
+    },
+    "CheckoutInput": {
+      "$id": "#/$defs/CheckoutInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "merchant": {
+          "type": "string"
+        },
+        "items": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sku": {
+                "type": "string"
+              },
+              "qty": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "sku",
+              "qty"
+            ]
+          }
+        },
+        "amount_minor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "category": {
+          "$ref": "#/$defs/ProductCategory"
+        },
+        "deliver_by": {
+          "$ref": "#/$defs/ISODateTime"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "merchant",
+        "items",
+        "amount_minor",
+        "currency",
+        "category"
+      ]
+    },
+    "RefundInput": {
+      "$id": "#/$defs/RefundInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "order_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "order_id"
+      ]
+    },
+    "SearchProvidersInput": {
+      "$id": "#/$defs/SearchProvidersInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "service_type": {
+          "$ref": "#/$defs/ServiceType"
+        },
+        "date": {
+          "type": "string"
+        },
+        "window": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "service_type",
+        "date"
+      ]
+    },
+    "BookServiceInput": {
+      "$id": "#/$defs/BookServiceInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "provider_id": {
+          "type": "string"
+        },
+        "service_type": {
+          "$ref": "#/$defs/ServiceType"
+        },
+        "slot_start": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "amount_minor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "provider_id",
+        "service_type",
+        "slot_start",
+        "amount_minor",
+        "currency"
+      ]
+    },
+    "CancelBookingInput": {
+      "$id": "#/$defs/CancelBookingInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "booking_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "booking_id"
+      ]
+    },
+    "GetWeatherInput": {
+      "$id": "#/$defs/GetWeatherInput",
+      "type": "object",
+      "properties": {
+        "plan_id": {
+          "type": "string"
+        },
+        "need_id": {
+          "type": "string"
+        },
+        "idempotency_key": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "lat": {
+          "type": "number"
+        },
+        "lon": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "correlation_id",
+        "date"
+      ]
+    },
+    "PolicyEvent": {
+      "$id": "#/$defs/PolicyEvent",
+      "type": "object",
+      "properties": {
+        "at": {
+          "$ref": "#/$defs/ISODateTime"
+        },
+        "action_id": {
+          "type": "string"
+        },
+        "principal": {
+          "$ref": "#/$defs/PrincipalName"
+        },
+        "tool": {
+          "$ref": "#/$defs/GatewayToolName"
+        },
+        "decision": {
+          "$ref": "#/$defs/PolicyDecision"
+        },
+        "rule_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rule_texts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "amount_minor": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "gateway_request_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "at",
+        "action_id",
+        "principal",
+        "tool",
+        "decision",
+        "rule_ids",
+        "rule_texts"
+      ]
+    }
+  }
+}

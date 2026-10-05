@@ -1,0 +1,10 @@
+{
+  "note": "Executed purchase history, 3-6 weeks before 'now'. Offsets are days ago. Median FreshCart drinks price = 3000 so the 4200 purchase reads as above usual. No cleaning bookings, so any cleaner booking is first of its kind.",
+  "receipts": [
+    { "days_ago": 41, "tool": "Supplies___checkout", "category": "drinks",    "merchant": "FreshCart", "amount_minor": 2800, "items": [{ "sku": "drk-soda-12", "qty": 2 }, { "sku": "drk-water-24", "qty": 1 }], "title": "Bought drinks" },
+    { "days_ago": 34, "tool": "Supplies___checkout", "category": "drinks",    "merchant": "FreshCart", "amount_minor": 3000, "items": [{ "sku": "drk-juice-6", "qty": 2 }], "title": "Bought drinks" },
+    { "days_ago": 25, "tool": "Supplies___checkout", "category": "drinks",    "merchant": "FreshCart", "amount_minor": 3300, "items": [{ "sku": "drk-tea", "qty": 1 }, { "sku": "drk-soda-12", "qty": 2 }], "title": "Bought drinks" },
+    { "days_ago": 30, "tool": "Supplies___checkout", "category": "household", "merchant": "FreshCart", "amount_minor": 3200, "items": [{ "sku": "hh-paper-bundle", "qty": 1 }, { "sku": "hh-dish-tabs", "qty": 1 }], "title": "Bought household supplies" },
+    { "days_ago": 21, "tool": "Supplies___checkout", "category": "household", "merchant": "FreshCart", "amount_minor": 1900, "items": [{ "sku": "hh-paper-bundle", "qty": 1 }], "title": "Bought household supplies" }
+  ]
+}

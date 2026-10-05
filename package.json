@@ -1,0 +1,13 @@
+{
+  "name": "butler",
+  "private": true,
+  "version": "0.1.0",
+  "license": "MIT",
+  "packageManager": "pnpm@10.7.0",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "contracts:gen": "pnpm --filter @butler/contracts gen && uv run python packages/contracts/gen_py.py",
+    "test": "pnpm -r --if-present test",
+    "typecheck": "pnpm -r --if-present typecheck"
+  }
+}

@@ -1,0 +1,11 @@
+[
+  { "contact_id": "c_tolu",   "name": "Tolu",   "first_name": "Tolu",   "email": "butler.demo+tolu@example.com",   "relationship": "friend", "tags": ["dinner-crew"] },
+  { "contact_id": "c_sam",    "name": "Sam",    "first_name": "Sam",    "email": "butler.demo+sam@example.com",    "relationship": "friend", "tags": ["dinner-crew"] },
+  { "contact_id": "c_ada",    "name": "Ada",    "first_name": "Ada",    "email": "butler.demo+ada@example.com",    "relationship": "friend", "tags": ["dinner-crew"] },
+  { "contact_id": "c_chris",  "name": "Chris",  "first_name": "Chris",  "email": "butler.demo+chris@example.com",  "relationship": "friend", "tags": ["dinner-crew"] },
+  { "contact_id": "c_maya",   "name": "Maya",   "first_name": "Maya",   "email": "butler.demo+maya@example.com",   "relationship": "friend", "tags": ["dinner-crew"] },
+  { "contact_id": "c_dee",    "name": "Dee",    "first_name": "Dee",    "email": "butler.demo+dee@example.com",    "relationship": "friend", "tags": ["dinner-crew"] },
+  { "contact_id": "c_mum",    "name": "Mum",    "first_name": "Mum",    "email": "butler.demo+mum@example.com",    "relationship": "family", "tags": ["parents"] },
+  { "contact_id": "c_dad",    "name": "Dad",    "first_name": "Dad",    "email": "butler.demo+dad@example.com",    "relationship": "family", "tags": ["parents"] },
+  { "contact_id": "c_jordan", "name": "Jordan", "first_name": "Jordan", "email": "butler.demo+jordan@example.com", "relationship": "work",   "tags": ["boss"] }
+]

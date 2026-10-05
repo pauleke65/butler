@@ -1,0 +1,710 @@
+[
+  {
+    "sku": "drk-party-7",
+    "name": "Drinks bundle for 7 (sodas, juice, sparkling water)",
+    "merchant": "FreshCart",
+    "category": "drinks",
+    "unit_price_minor": 4200,
+    "delivery": {
+      "weekday": 4,
+      "window": "12-2 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "drk-party-7-budget",
+    "name": "Drinks bundle for 7",
+    "merchant": "BudgetBasket",
+    "category": "drinks",
+    "unit_price_minor": 3600,
+    "delivery": {
+      "weekday": 5,
+      "window": "9 AM-12 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "drk-premium-7",
+    "name": "Premium drinks bundle for 7",
+    "merchant": "Corner Cellar",
+    "category": "drinks",
+    "unit_price_minor": 5800,
+    "delivery": {
+      "weekday": 4,
+      "window": "3-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "drk-family-3",
+    "name": "Drinks for a weekend, 3 people",
+    "merchant": "FreshCart",
+    "category": "drinks",
+    "unit_price_minor": 3100,
+    "delivery": {
+      "weekday": 3,
+      "window": "12-2 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "snk-party-7",
+    "name": "Snack platter for 7",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 2800,
+    "delivery": {
+      "weekday": 4,
+      "window": "12-2 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-guest-basics",
+    "name": "Guest basics (bread, eggs, fruit, coffee)",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 2400,
+    "delivery": {
+      "weekday": 3,
+      "window": "12-2 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-paper-bundle",
+    "name": "Paper towels and toilet paper",
+    "merchant": "FreshCart",
+    "category": "household",
+    "unit_price_minor": 1900,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-dish-tabs",
+    "name": "Dishwasher tablets",
+    "merchant": "FreshCart",
+    "category": "household",
+    "unit_price_minor": 1300,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-milk",
+    "name": "Whole milk, 1 gal",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 450,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-eggs",
+    "name": "Eggs, dozen",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 520,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-bread",
+    "name": "Sourdough loaf",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 600,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-coffee",
+    "name": "Coffee beans, 12 oz",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 1300,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-pasta",
+    "name": "Pasta, 4 pack",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 800,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-rice",
+    "name": "Rice, 5 lb",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 950,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-fruit",
+    "name": "Fruit basket",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 1800,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-veg",
+    "name": "Vegetable box",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 2200,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-cheese",
+    "name": "Cheese board kit",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 2600,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-cereal",
+    "name": "Cereal, 2 boxes",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 900,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-snack-bars",
+    "name": "Snack bars, 12",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 1100,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "grc-nuts",
+    "name": "Mixed nuts, 1 lb",
+    "merchant": "FreshCart",
+    "category": "groceries",
+    "unit_price_minor": 1400,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "drk-water-24",
+    "name": "Sparkling water, 24 pack",
+    "merchant": "FreshCart",
+    "category": "drinks",
+    "unit_price_minor": 1600,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "drk-soda-12",
+    "name": "Soda variety, 12 pack",
+    "merchant": "FreshCart",
+    "category": "drinks",
+    "unit_price_minor": 1200,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "drk-juice-6",
+    "name": "Orange juice, 6 pack",
+    "merchant": "FreshCart",
+    "category": "drinks",
+    "unit_price_minor": 1500,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "drk-tea",
+    "name": "Iced tea, 12 pack",
+    "merchant": "FreshCart",
+    "category": "drinks",
+    "unit_price_minor": 1300,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "drk-wine-3",
+    "name": "Wine trio",
+    "merchant": "FreshCart",
+    "category": "drinks",
+    "unit_price_minor": 5200,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "drk-beer-12",
+    "name": "Craft beer, 12 pack",
+    "merchant": "FreshCart",
+    "category": "drinks",
+    "unit_price_minor": 2400,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-trash-bags",
+    "name": "Trash bags, 60",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 1100,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-sponges",
+    "name": "Sponges and cloths",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 800,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-detergent",
+    "name": "Laundry detergent",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 1700,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-soap-dish",
+    "name": "Dish soap, 2 pack",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 900,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-bulbs",
+    "name": "LED bulbs, 6 pack",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 1400,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-batteries",
+    "name": "AA batteries, 24",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 1500,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-candles",
+    "name": "Dinner candles, 12",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 1000,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-napkins",
+    "name": "Paper napkins, 200",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 700,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-foil",
+    "name": "Foil and wrap set",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 1200,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "hh-cleaner",
+    "name": "All-purpose cleaner, 3 pack",
+    "merchant": "HomeHub",
+    "category": "household",
+    "unit_price_minor": 1600,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "tl-shampoo",
+    "name": "Shampoo and conditioner",
+    "merchant": "HomeHub",
+    "category": "toiletries",
+    "unit_price_minor": 1500,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "tl-toothpaste",
+    "name": "Toothpaste, 3 pack",
+    "merchant": "HomeHub",
+    "category": "toiletries",
+    "unit_price_minor": 1100,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "tl-soap",
+    "name": "Hand soap, 4 pack",
+    "merchant": "HomeHub",
+    "category": "toiletries",
+    "unit_price_minor": 1300,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "tl-tissue",
+    "name": "Tissues, 8 boxes",
+    "merchant": "HomeHub",
+    "category": "toiletries",
+    "unit_price_minor": 1400,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "tl-guest-kit",
+    "name": "Guest toiletry kit",
+    "merchant": "HomeHub",
+    "category": "toiletries",
+    "unit_price_minor": 1900,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "tl-deodorant",
+    "name": "Deodorant, 2 pack",
+    "merchant": "HomeHub",
+    "category": "toiletries",
+    "unit_price_minor": 1000,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "gf-flowers",
+    "name": "Fresh flower bouquet",
+    "merchant": "FreshCart",
+    "category": "gifts",
+    "unit_price_minor": 3200,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "gf-chocolate",
+    "name": "Chocolate gift box",
+    "merchant": "FreshCart",
+    "category": "gifts",
+    "unit_price_minor": 2800,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "gf-candle",
+    "name": "Scented candle gift set",
+    "merchant": "FreshCart",
+    "category": "gifts",
+    "unit_price_minor": 3400,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "gf-card",
+    "name": "Greeting card set",
+    "merchant": "FreshCart",
+    "category": "gifts",
+    "unit_price_minor": 900,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "gf-wine-gift",
+    "name": "Wine gift basket",
+    "merchant": "FreshCart",
+    "category": "gifts",
+    "unit_price_minor": 6500,
+    "delivery": {
+      "days": 1,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-phone-cable",
+    "name": "Phone charging cable",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 1200,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-adapter",
+    "name": "Travel adapter",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 1800,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-board-game",
+    "name": "Board game night pick",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 3900,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-speaker",
+    "name": "Portable speaker",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 5900,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-playlist-card",
+    "name": "Music subscription gift card",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 2500,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-umbrella",
+    "name": "Compact umbrella",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 1700,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-first-aid",
+    "name": "First aid kit",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 2100,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-extension",
+    "name": "Power strip",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 1500,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-lanterns",
+    "name": "String lights",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 2300,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-throw",
+    "name": "Throw blanket",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 3600,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-pillow",
+    "name": "Guest pillow",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 2900,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  },
+  {
+    "sku": "ot-towels",
+    "name": "Guest towel set",
+    "merchant": "HomeHub",
+    "category": "other",
+    "unit_price_minor": 3100,
+    "delivery": {
+      "days": 2,
+      "window": "9 AM-5 PM"
+    },
+    "keywords": []
+  }
+]

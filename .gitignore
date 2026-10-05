@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+.DS_Store
+cdk.out/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.local-data/
+coverage/
