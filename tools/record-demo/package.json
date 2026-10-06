@@ -1,0 +1,9 @@
+{
+  "name": "record-demo",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Records the Butler golden demo from the simulator as an mp4 (silent, captioned). Needs Microsoft Edge/Chrome and ffmpeg.",
+  "scripts": { "record": "node record.mjs" },
+  "dependencies": { "playwright-core": "^1.50.0" }
+}

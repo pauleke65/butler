@@ -13,3 +13,5 @@ cdk.out/
 .ruff_cache/
 .local-data/
 coverage/
+docs/demo/*.mp4
+tools/record-demo/.frames/
