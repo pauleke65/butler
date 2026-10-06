@@ -84,3 +84,8 @@ def test_read_only_tools_score_zero(seeded):
 def test_no_cap_means_no_near_cap(store, pinned_now):
     out = score(store, {"category": "drinks", "merchant": "m", "amount_minor": 99999})
     assert out["score"] == 0.3
+
+
+def test_first_email_or_calendar_entry_is_not_something_to_disagree_with(seeded):
+    for tool, args in (("Messages___send_email", {"kind": "invite"}), ("Calendar___create_event", {"title": "Dinner"})):
+        assert score(seeded, args, tool=tool) == {"score": 0.0, "top_reason": None}

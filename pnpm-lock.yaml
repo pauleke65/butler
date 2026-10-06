@@ -8,6 +8,31 @@ importers:
 
   .: {}
 
+  infra:
+    dependencies:
+      aws-cdk-lib:
+        specifier: ^2.272.0
+        version: 2.272.0(constructs@10.8.1)
+      constructs:
+        specifier: ^10.4.0
+        version: 10.8.1
+    devDependencies:
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.20.5
+      aws-cdk:
+        specifier: ^2.1100.0
+        version: 2.1144.0
+      tsx:
+        specifier: ^4.19.0
+        version: 4.23.15
+      typescript:
+        specifier: ^5.6.0
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.0
+        version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)(tsx@4.23.15)
+
   packages/contracts/ts:
     dependencies:
       zod:
@@ -132,6 +157,19 @@ packages:
 
   '@asamuzakjp/css-color@3.2.0':
     resolution: {integrity: sha512-K1A6z8tS3XsmCMM86xoWdn7Fkdn9m6RSVtocUrJYIwZnFVkng/PvkEoWtOWmP+Scc6saYWHWZYbndEEXxl24jw==}
+
+  '@aws-cdk/asset-awscli-v1@2.2.292':
+    resolution: {integrity: sha512-d4aMFsAFj19FtxVyw8IzlUKv5Zu4sIvgnEjI2IU6IWBJgVbJ4aFnadANqYa+6MwB1CQbGOg0jh8WE77M+Nb/9A==}
+
+  '@aws-cdk/asset-node-proxy-agent-v6@2.1.3':
+    resolution: {integrity: sha512-98We1QWfin9vtuuQtNFhIIAEWb8CreyYTAP0Vn8HqSBoNiFJM9nZgifJeQawT9Wq0NX1HCNFlxCyTccIrK1PSA==}
+
+  '@aws-cdk/cloud-assembly-schema@54.26.0':
+    resolution: {integrity: sha512-zYI3XhQ/bpuSXuPaF77f7u2q6rZBPwdrPh8a0v+e/B3IxbRQAtQv0fmacQ8uYh9RPVuIVnExE6IsFJBSALH7BA==}
+    engines: {node: '>= 18.0.0'}
+    bundledDependencies:
+      - jsonschema
+      - semver
 
   '@aws-sdk/client-bedrock-agentcore@3.1146.0':
     resolution: {integrity: sha512-Grafcp3NvKE2Rt6RG+zNa7dawGjYIcLdbxsqko9kag2Olbh9fjyUds5RmhQ/H1ODGvnxWQjjdpI+TazRtIe95g==}
@@ -988,6 +1026,30 @@ packages:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
 
+  aws-cdk-lib@2.272.0:
+    resolution: {integrity: sha512-XHqU7msDtp03JLoFqtbIuNPDeCebQxOBwRcuL6BpH8B1rV/sMHSdH9EY0ZRn+P004RKHs/+b5DPssN6F966k1A==}
+    engines: {node: '>= 20.0.0'}
+    peerDependencies:
+      constructs: ^10.5.0
+    bundledDependencies:
+      - '@aws/cloudformation-validate'
+      - '@balena/dockerignore'
+      - '@aws-cdk/cloud-assembly-api'
+      - case
+      - fs-extra
+      - ignore
+      - jsonschema
+      - minimatch
+      - punycode
+      - semver
+      - yaml
+      - mime-types
+
+  aws-cdk@2.1144.0:
+    resolution: {integrity: sha512-T3Kkke7c/vlGzrovtgxtb83u0ihF/Lq9z/R0hvOk+ncUZ734zrbG+0IWO/xZLd5tTQphwAO7OYufarg/wl5ZFA==}
+    engines: {node: '>= 18.0.0'}
+    hasBin: true
+
   babel-plugin-transform-hook-names@1.0.2:
     resolution: {integrity: sha512-5gafyjyyBTTdX/tQQ0hRgu4AhNHG/hqWi0ZZmg2xvs2FgRkJXzDNKBZCyoYqgFkovfDrgM8OoKg8karoUvWeCw==}
     peerDependencies:
@@ -1047,6 +1109,9 @@ packages:
   chrono-node@2.10.2:
     resolution: {integrity: sha512-xBCwGGmodF2YVtzE7/8ewNDajbCg72jgZHyOXvhkuQiYhIQ1KbqyXJJJw2fLaQ603LL4oMVhOyjckEBve45S4w==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
+  constructs@10.8.1:
+    resolution: {integrity: sha512-98yGXYyhePqPYh3cYu8nzBERmAhC0DONe3UD03okK0nehZ7hYP4wgZuf02a04+uOWxnTJ5Rpp5m0GRNpwyLGGA==}
 
   content-disposition@1.1.0:
     resolution: {integrity: sha512-5jRCH9Z/+DRP7rkvY83B+yGIGX96OYdJmzngqnw2SBSxqCFPd0w2km3s5iawpGX8krnwSGmF0FW5Nhr0Hfai3g==}
@@ -1858,6 +1923,12 @@ snapshots:
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4
       lru-cache: 10.4.3
+
+  '@aws-cdk/asset-awscli-v1@2.2.292': {}
+
+  '@aws-cdk/asset-node-proxy-agent-v6@2.1.3': {}
+
+  '@aws-cdk/cloud-assembly-schema@54.26.0': {}
 
   '@aws-sdk/client-bedrock-agentcore@3.1146.0':
     dependencies:
@@ -2708,6 +2779,15 @@ snapshots:
 
   assertion-error@2.0.1: {}
 
+  aws-cdk-lib@2.272.0(constructs@10.8.1):
+    dependencies:
+      '@aws-cdk/asset-awscli-v1': 2.2.292
+      '@aws-cdk/asset-node-proxy-agent-v6': 2.1.3
+      '@aws-cdk/cloud-assembly-schema': 54.26.0
+      constructs: 10.8.1
+
+  aws-cdk@2.1144.0: {}
+
   babel-plugin-transform-hook-names@1.0.2(@babel/core@7.29.7):
     dependencies:
       '@babel/core': 7.29.7
@@ -2771,6 +2851,8 @@ snapshots:
   check-error@2.1.3: {}
 
   chrono-node@2.10.2: {}
+
+  constructs@10.8.1: {}
 
   content-disposition@1.1.0: {}
 

@@ -1,0 +1,45 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --python 3.12
+      - run: uv run ruff check libs executor local debug-api actions agent evals seed
+      - run: uv run pytest -q
+
+  node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --python 3.12   # contract drift check and store-layout golden need Python
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @butler/contracts test      # includes the "no schema drift" check
+      - run: uv run pytest packages -q                  # fixtures validate with the generated Pydantic models
+      - run: pnpm --filter ./server typecheck && pnpm --filter ./server test
+      - run: pnpm --filter ./server/ui typecheck && pnpm --filter ./server/ui build && pnpm --filter ./server/ui test
+
+  simulator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: pnpm install --ignore-workspace
+        working-directory: addon-sim
+      - run: pnpm typecheck && pnpm test && pnpm build
+        working-directory: addon-sim
+      - run: pnpm install --ignore-workspace && pnpm typecheck && pnpm test
+        working-directory: sim-panel

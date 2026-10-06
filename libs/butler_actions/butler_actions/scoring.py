@@ -9,6 +9,10 @@ from butler_contracts.models import Receipt, Rule
 
 from .summaries import READ_ONLY_TOOLS, SERVICE_NOUN
 
+# "First time I did this" only matters where money or other people's time is involved; a first invite email
+# or calendar entry is not something a customer would object to.
+FIRST_OF_KIND_TOOLS = {"Supplies___checkout", "Services___book_service"}
+
 WEIGHTS = {"first_of_kind": 0.30, "near_cap": 0.25, "above_usual_price": 0.20, "differs_from_past": 0.15,
            "low_confidence": 0.10}
 
@@ -58,7 +62,7 @@ def _factors(store: Any, household_id: str, tool: str, args: dict[str, Any], rea
     recent_vendors = [_vendor(tool, r.action.args) for r in history[:2]]  # newest first
     conf = (reasoning or {}).get("confidence")
     return {
-        "first_of_kind": not history,
+        "first_of_kind": tool in FIRST_OF_KIND_TOOLS and not history,
         "near_cap": cap is not None and amount >= 0.8 * cap,
         "above_usual_price": bool(amounts) and isinstance(amount, int) and amount >= 1.2 * statistics.median(amounts),
         "differs_from_past": bool(history) and vendor is not None and vendor not in recent_vendors,
