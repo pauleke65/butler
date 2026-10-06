@@ -68,6 +68,9 @@ def test_full_trust_loop(world, caplog):
     assert ok.status == "executed" and ok.receipt.authority.decision == "ALLOW" and ok.receipt.authority.matcher_gateway_agree
     assert store.get_receipt(HH, ok.receipt.action_id) == ok.receipt and len(effects.ran) == 1
     assert ok.receipt.might_disagree.score == 0.45 and ok.receipt.reversible
+    # the allowing rule is named on the receipt ("ALLOWED by ...")
+    assert ok.receipt.authority.rule_ids == ["rule_default_spend"]
+    assert ok.receipt.authority.rule_texts == ["Ask me before spending more than 50 dollars."]
     assert ok.receipt.spoken_summary == "I bought drinks for 42 dollars because six guests are coming. Your 50 dollar limit allowed it."
 
     # 2. over the cap: DENY by rule_default_spend, held for approval, with the rule text on the receipt

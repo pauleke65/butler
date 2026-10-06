@@ -165,3 +165,13 @@ describe("OfflineBrain conversation (golden-demo utterances against the mock ser
     await s2.close();
   });
 });
+
+describe("regression: substrings must not match tool descriptions", () => {
+  it('"spending" in a description does not satisfy the "pending" status hint', () => {
+    const real: BrainTool[] = [
+      { server: "butler", name: "change_rule", description: "Use when the customer wants to change or remove one of Butler's rules, such as raising a spending limit. Returns the proposed change.", inputSchema: { type: "object", properties: { change: { type: "string" } } } },
+      { server: "butler", name: "get_status", description: "Use when the customer asks how a plan is going, what's left, or whether Butler needs anything from them.", inputSchema: { type: "object", properties: {} } },
+    ];
+    expect(scoreTools("How's Friday looking?", real)?.tool.name).toBe("get_status");
+  });
+});

@@ -161,9 +161,16 @@ def _plan_labels(store: Store, household_id: str, plan_id: str | None, need_id: 
     return {"situation": plan.situation, "need_label": need.label if need else None}
 
 
-def _allowing_texts(rules: list[Rule], tool: str) -> list[str]:
-    """Spend-limit rule texts that applied to an allowed call (for 'Your 50 dollar limit allowed it.')."""
-    return [r.text for r in rules if r.active and r.template == "spend_cap" and tool in r.params.get("tools", [])]
+def _allowing(rules: list[Rule], tool: str, args: dict[str, Any]) -> list[Rule]:
+    """Spend-limit rules that an allowed call fell inside ("Your 50 dollar limit allowed it.")."""
+    amount = args.get("amount_minor")
+    out = []
+    for r in rules:
+        if not (r.active and r.template == "spend_cap" and tool in r.params.get("tools", [])):
+            continue
+        if isinstance(amount, int) and not isinstance(amount, bool) and amount <= int(r.params.get("cap_minor", 0)):
+            out.append(r)
+    return out
 
 
 @dataclass
@@ -235,7 +242,10 @@ def _build_receipt(call: _Call, status: Status, decision: str, agree: bool, matc
     tool, sent = call.tool, call.sent
     rule_ids = [blame["rule_id"]] if blame else list(matched.rule_ids)
     rule_texts = [blame["rule_text"]] if blame else list(matched.rule_texts)
-    summary_rules = rule_texts if status != "executed" else _allowing_texts(call.rules, tool)
+    if status == "executed" and not blame and call.principal == "butler-agent":
+        allowing = _allowing(call.rules, tool, sent)
+        rule_ids, rule_texts = [r.rule_id for r in allowing], [r.text for r in allowing]
+    summary_rules = rule_texts
     reasons = [str(r) for r in (call.reasoning.get("reasons") or [])][:3]
     spoken = spoken_summary(tool, status, sent, data, reasons, summary_rules, approved=call.decision_id is not None,
                             error=error, now=now)

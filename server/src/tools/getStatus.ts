@@ -21,6 +21,13 @@ export function labelPast(label: string): string {
   return verb ? [verb, ...rest].join(" ").replace(/\byour\b/g, "your") : `finished: ${lowerFirst(label)}`;
 }
 
+/** "Bought drinks from FreshCart, 42 dollars, arriving Friday" -> "bought drinks for 42 dollars". */
+export function doneClause(need: Need): string {
+  const m = /^(Bought|Booked|Ordered)\s+(.+?)(?:\s+from\s+[^,]+)?,\s*(\d+(?:\s\d+)?\s+dollars?)\b/i.exec(need.note ?? "");
+  if (m) return `${m[1]!.toLowerCase()} ${m[2]} for ${m[3]}`;
+  return labelPast(need.label);
+}
+
 function after(iso: string, since: string | undefined): boolean {
   if (!since) return true;
   const a = Date.parse(iso);
@@ -31,7 +38,7 @@ function after(iso: string, since: string | undefined): boolean {
 export function statusSpoken(plan: Plan, done: Need[], pending: Decision[]): string {
   const parts: string[] = [];
   if (done.length > 0) {
-    const things = joinNames(done.map((n) => labelPast(n.label)));
+    const things = joinNames(done.map(doneClause));
     parts.push(`I ${things}.`);
   } else if (plan.status === "complete") {
     parts.push("Everything is done.");

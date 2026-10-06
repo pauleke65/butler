@@ -93,3 +93,15 @@ describe("get_status", () => {
     expectError(await env.call("get_status", { plan_id: 12 }), "get_status", "INVALID_INPUT");
   });
 });
+
+import { doneClause } from "../src/tools/getStatus.js";
+describe("doneClause", () => {
+  const need = (note: string | undefined, label = "Order food and drinks") =>
+    ({ need_id: "n", plan_id: "p", label, capability: "supplies", status: "done", note, action_ids: [], updated_at: "2026-10-16T12:00:00+00:00" }) as never;
+  it("says what was bought and for how much", () => {
+    expect(doneClause(need("Bought drinks from FreshCart, 42 dollars, arriving Friday 12-2 PM"))).toBe("bought drinks for 42 dollars");
+  });
+  it("falls back to the label when there is no amount", () => {
+    expect(doneClause(need("Sent to 6 people", "Invite 6 guests"))).toBe("invited 6 guests");
+  });
+});

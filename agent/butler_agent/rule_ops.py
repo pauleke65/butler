@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import logging
+import os
+import time
 from typing import Any
 
 from butler_actions import clock
@@ -35,9 +37,14 @@ def _dump(model: Any) -> dict[str, Any]:
 
 
 class RuleOps:
-    def __init__(self, store: Store, drafter: RuleDrafter, policy: PolicyService, ids: Identities | None = None):
+    def __init__(self, store: Store, drafter: RuleDrafter, policy: PolicyService, ids: Identities | None = None,
+                 settle_ms: int | None = None):
         self.store, self.drafter, self.policy = store, drafter, policy
         self.ids = ids or Identities.from_env()
+        # A policy can be ACTIVE before the gateway enforces it. We only tell the customer a rule is in
+        # force after this settle window, otherwise the very next action can slip through (found in the
+        # first full-stack golden run). Tune from the measured propagation time (spike S-1).
+        self.settle_ms = int(os.environ.get("POLICY_SETTLE_MS", "1500")) if settle_ms is None else settle_ms
 
     # ── draft_rule ────────────────────────────────────────────────────
     def draft_rule(self, req: dict[str, Any]) -> dict[str, Any]:
@@ -83,9 +90,14 @@ class RuleOps:
             failed = rule.model_copy(update={"policy_status": "failed", "active": False, "updated_at": clock.iso()})
             self.store.put_rule(failed)
             return _err(e.code, str(e), {"rule": _dump(failed)})
+        self._settle()
         self.store.put_rule(created)
         self._disable_replaced(hh, created)
         return {"ok": True, "data": {"rule": _dump(created)}}
+
+    def _settle(self) -> None:
+        if self.settle_ms > 0:
+            time.sleep(self.settle_ms / 1000)
 
     def _disable_replaced(self, hh: str, new: Rule) -> None:
         """Old rule goes only after the new one is active (no gap, contracts §3.9)."""
@@ -104,5 +116,6 @@ class RuleOps:
             disabled = self.policy.disable(rule)
         except PolicyError as e:
             return _err(e.code, str(e))
+        self._settle()
         self.store.put_rule(disabled)
         return {"ok": True, "data": {"rule": _dump(disabled)}}

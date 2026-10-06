@@ -24,8 +24,13 @@ interface Lexeme {
   weight: number;
 }
 
+interface CompiledLexeme extends Lexeme {
+  /** `tool` anchored at a word start so "spending" does not match "pending". */
+  toolMatcher: RegExp;
+}
+
 /** Generic English intents for voice assistants -> words that tool names/descriptions use for them. */
-const LEXICON: Lexeme[] = [
+const RAW_LEXICON: Lexeme[] = [
   // status / progress / "do you need anything from me"
   { when: /\b(how'?s|how is|how are|how'?re|looking|going|progress|status|what'?s left|where (are|do) (we|things)|update me|anything (you )?need|need(s)? (anything|something) from me|anything else)\b/i, tool: /status|progress|going|what'?s left|needs? anything|pending/i, weight: 6 },
   // explain / why
@@ -44,6 +49,8 @@ const LEXICON: Lexeme[] = [
   // undo
   { when: /\b(undo|reverse|take (it )?back|cancel (that|it|the)|refund)\b/i, tool: /undo|reverse|cancel|refund/i, weight: 8 },
 ];
+
+const LEXICON: CompiledLexeme[] = RAW_LEXICON.map((lx) => ({ ...lx, toolMatcher: new RegExp(`\\b(?:${lx.tool.source})`, lx.tool.flags) }));
 
 const YES = /^(yes|yeah|yep|yup|sure|ok(ay)?|do it|go ahead|please do|confirm(ed)?|that'?s right|correct|make it a rule|approve)\b[\s.!,]*$/i;
 const NO = /^(no|nope|nah|cancel|never ?mind|don'?t|not now|decline|reject)\b[\s.!,]*$/i;
@@ -114,7 +121,7 @@ export function scoreTools(utterance: string, tools: BrainTool[], addressedServe
       if (nameStems.has(s)) score += 2;
       else if (descStems.has(s)) score += 1;
     }
-    for (const lx of LEXICON) if (lx.when.test(utterance) && lx.tool.test(haystack)) score += lx.weight;
+    for (const lx of LEXICON) if (lx.when.test(utterance) && lx.toolMatcher.test(haystack)) score += lx.weight;
     score += 6 * enumHits(tool, utterance);
     if (addressedServer && tool.server === addressedServer) score += 1.5;
     return { tool, score };

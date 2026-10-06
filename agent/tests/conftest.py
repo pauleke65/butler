@@ -7,6 +7,7 @@ from moto import mock_aws
 # Never export dummy AWS credentials here: the opt-in bedrock test must use the developer's real ones.
 # (``mock_aws`` installs fake credentials only while it is active.)
 os.environ.setdefault("AWS_DEFAULT_REGION", "us-east-1")
+os.environ.setdefault("POLICY_SETTLE_MS", "0")
 os.environ["BUTLER_SEED_DIR"] = str(pathlib.Path(__file__).resolve().parents[2] / "seed")
 
 
