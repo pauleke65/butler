@@ -9,8 +9,11 @@ async function main(): Promise<void> {
   const logger = createLogger({ level: config.logLevel });
   const deps = buildDeps(config, logger);
   const server = createHttpApp(deps);
-  server.listen(config.port, "0.0.0.0", () => {
+  // The local stage has no real auth, so it only listens on loopback; deployed stages sit behind the runtime authorizer.
+  const host = process.env.HOST ?? (config.stage === "local" ? "127.0.0.1" : "0.0.0.0");
+  server.listen(config.port, host, () => {
     logger.log("info", "butler.server.listening", {
+      host,
       port: config.port,
       path: "/mcp",
       stage: config.stage,

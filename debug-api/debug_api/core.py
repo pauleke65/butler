@@ -15,8 +15,15 @@ MAX_LIMIT = 200
 Response = tuple[int, dict[str, Any]]
 
 
-def token() -> str:
-    return os.environ.get("DEBUG_API_TOKEN", "local-debug-token")
+LOCAL_DEFAULT_TOKEN = "local-debug-token"
+
+
+def token() -> str | None:
+    """The bearer token, or None when the API must stay closed (deployed stage without a real token)."""
+    configured = os.environ.get("DEBUG_API_TOKEN")
+    if os.environ.get("STAGE", "local") == "local":
+        return configured or LOCAL_DEFAULT_TOKEN
+    return configured if configured and configured != LOCAL_DEFAULT_TOKEN else None
 
 
 def household_id() -> str:
@@ -25,9 +32,10 @@ def household_id() -> str:
 
 def authorized(authorization: str | None) -> bool:
     """Static bearer token, constant-time compare."""
-    if not authorization or not authorization.startswith("Bearer "):
+    expected = token()
+    if expected is None or not authorization or not authorization.startswith("Bearer "):
         return False
-    return hmac.compare_digest(authorization[7:].strip().encode(), token().encode())
+    return hmac.compare_digest(authorization[7:].strip().encode(), expected.encode())
 
 
 def _limit(raw: str | None) -> int:

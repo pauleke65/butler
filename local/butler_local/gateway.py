@@ -183,7 +183,7 @@ def create_app(store: Store | None = None, ids: Identities | None = None, **kw: 
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
-    uvicorn.run(create_app(), host="0.0.0.0", port=int(os.environ.get("GATEWAY_PORT", "8090")), log_level="warning")
+    uvicorn.run(create_app(), host=os.environ.get("HOST", "127.0.0.1"), port=int(os.environ.get("GATEWAY_PORT", "8090")), log_level="warning")
 
 
 if __name__ == "__main__":

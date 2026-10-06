@@ -128,6 +128,11 @@ describe("auth", () => {
     expect(authenticate(`Bearer ${jwt({ sub: "stranger" })}`, prod)).toMatchObject({ ok: false });
   });
 
+  it("the static dev token never opens a deployed stage", () => {
+    const open = testConfig({ stage: "demo", householdBySub: { "*": "hh_demo" } });
+    expect(authenticate("Bearer local-sim-token", open)).toMatchObject({ ok: false, status: 401 });
+  });
+
   it("household map falls back to the wildcard", () => {
     expect(householdFor("special-sub", cfg.householdBySub)).toBe("hh_other");
     expect(householdFor("anyone", cfg.householdBySub)).toBe("hh_demo");

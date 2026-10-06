@@ -39,7 +39,7 @@ def create_app(store: Store | None = None, gateway: GatewayClient | None = None)
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
-    uvicorn.run(create_app(), host="0.0.0.0", port=int(os.environ.get("EXECUTOR_PORT", "8081")), log_level="info")
+    uvicorn.run(create_app(), host=os.environ.get("HOST", "127.0.0.1"), port=int(os.environ.get("EXECUTOR_PORT", "8081")), log_level="info")
 
 
 if __name__ == "__main__":

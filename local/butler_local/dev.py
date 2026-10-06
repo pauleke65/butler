@@ -45,6 +45,7 @@ def build_env(base: dict[str, str] | None = None) -> dict[str, str]:
     if env.get("LLM_MODE") != "bedrock":
         env.setdefault("AWS_ACCESS_KEY_ID", "test")
         env.setdefault("AWS_SECRET_ACCESS_KEY", "test")
+    env.setdefault("HOST", "127.0.0.1")  # local services are unauthenticated: loopback only
     env["PYTHONUNBUFFERED"] = "1"
     return env
 

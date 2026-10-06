@@ -46,7 +46,8 @@ export function authenticate(authorization: string | undefined, config: Config):
     return { ok: false, status: 401, reason: "missing bearer token" };
   }
 
-  if (token === LOCAL_SIM_TOKEN) {
+  // The static dev token is only ever valid on a local stage; never let it open a deployed server.
+  if (token === LOCAL_SIM_TOKEN && config.stage === "local") {
     const hh = householdFor("local-sim", config.householdBySub);
     return hh ? { ok: true, principal: { sub: "local-sim", householdId: hh } } : { ok: false, status: 401, reason: "no household for caller" };
   }

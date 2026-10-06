@@ -134,3 +134,15 @@ def test_lambda_function_url_adapter(api):
     assert lambda_handler(event, store=store)["statusCode"] == 401
     event["requestContext"] = {"http": {"method": "OPTIONS"}}
     assert lambda_handler(event, store=store)["statusCode"] == 204
+
+
+def test_deployed_stage_stays_closed_without_a_real_token(monkeypatch):
+    from debug_api import core
+    monkeypatch.setenv("STAGE", "demo")
+    monkeypatch.delenv("DEBUG_API_TOKEN", raising=False)
+    assert core.authorized("Bearer local-debug-token") is False
+    monkeypatch.setenv("DEBUG_API_TOKEN", "local-debug-token")
+    assert core.authorized("Bearer local-debug-token") is False
+    monkeypatch.setenv("DEBUG_API_TOKEN", "a-real-secret")
+    assert core.authorized("Bearer a-real-secret") is True
+    assert core.authorized("Bearer local-debug-token") is False
