@@ -8,12 +8,13 @@ from __future__ import annotations
 import json
 import os
 import time
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
+from urllib.parse import urlparse
 
 import boto3
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
-
 from butler_contracts.models import (
     Contact,
     Decision,
@@ -34,24 +35,28 @@ def _dump(model: Any) -> str:
     return json.dumps(model, default=str)
 
 
+def _client_kwargs(region: str, endpoint_url: str | None) -> dict[str, Any]:
+    """boto3 kwargs; a localhost endpoint (moto) gets explicit dummy credentials so real AWS creds stay untouched."""
+    kwargs: dict[str, Any] = {"region_name": region}
+    if endpoint_url:
+        kwargs["endpoint_url"] = endpoint_url
+        if urlparse(endpoint_url).hostname in ("localhost", "127.0.0.1", "::1"):
+            kwargs.update(aws_access_key_id="test", aws_secret_access_key="test")
+    return kwargs
+
+
 class Store:
     def __init__(self, table_name: str | None = None, region: str | None = None, endpoint_url: str | None = None):
         self.table_name = table_name or os.environ.get("TABLE_NAME", "butler-local")
         region = region or os.environ.get("AWS_REGION", "us-east-1")
         endpoint_url = endpoint_url or os.environ.get("DYNAMODB_ENDPOINT") or None
-        kwargs: dict[str, Any] = {"region_name": region}
-        if endpoint_url:
-            kwargs["endpoint_url"] = endpoint_url
-        self._ddb = boto3.resource("dynamodb", **kwargs)
+        self._ddb = boto3.resource("dynamodb", **_client_kwargs(region, endpoint_url))
         self.table = self._ddb.Table(self.table_name)
 
     # ── table management ──────────────────────────────────────────────
     @classmethod
-    def create_table(cls, table_name: str, region: str = "us-east-1", endpoint_url: str | None = None) -> "Store":
-        kwargs: dict[str, Any] = {"region_name": region}
-        if endpoint_url:
-            kwargs["endpoint_url"] = endpoint_url
-        ddb = boto3.resource("dynamodb", **kwargs)
+    def create_table(cls, table_name: str, region: str = "us-east-1", endpoint_url: str | None = None) -> Store:
+        ddb = boto3.resource("dynamodb", **_client_kwargs(region, endpoint_url))
         existing = {t.name for t in ddb.tables.all()}
         if table_name not in existing:
             ddb.create_table(
@@ -249,6 +254,17 @@ class Store:
         rows = self._query(f"HH#{household_id}", "ACT#", forward=not newest_first, limit=limit)
         return [Receipt(**d) for d in rows]
 
+    def list_receipts_since(self, household_id: str, since: str | None, limit: int = 50) -> list[Receipt]:
+        """Receipts with action_id > ``since`` (oldest first); with no ``since``, the newest ``limit`` oldest-first."""
+        if not since:
+            return list(reversed(self.list_receipts(household_id, newest_first=True, limit=limit)))
+        res = self.table.query(
+            KeyConditionExpression=Key("PK").eq(f"HH#{household_id}") & Key("SK").between(f"ACT#{since}", "ACT#~"),
+            Limit=limit + 1,
+        )
+        out = [Receipt(**json.loads(i["data"])) for i in res["Items"]]
+        return [r for r in out if r.action_id > since][:limit]
+
     def list_receipts_for_plan(self, plan_id: str) -> list[Receipt]:
         return [Receipt(**d) for d in self._query(f"PLAN#{plan_id}#ACT", index="GSI1")]
 
@@ -314,6 +330,21 @@ class Store:
             if e.response["Error"]["Code"] == ALREADY_EXISTS:
                 return False
             raise
+
+    def delete_idempotency_records(self) -> int:
+        """Remove every IDEMP# item (demo reset)."""
+        from boto3.dynamodb.conditions import Attr
+
+        n = 0
+        kwargs: dict[str, Any] = {"FilterExpression": Attr("PK").begins_with("IDEMP#")}
+        while True:
+            res = self.table.scan(**kwargs)
+            for it in res["Items"]:
+                self.table.delete_item(Key={"PK": it["PK"], "SK": it["SK"]})
+                n += 1
+            if "LastEvaluatedKey" not in res:
+                return n
+            kwargs["ExclusiveStartKey"] = res["LastEvaluatedKey"]
 
     # ── maintenance (demo reset) ──────────────────────────────────────
     def delete_household_items(self, household_id: str, *, keep_prefixes: Iterable[str] = ("META", "CONTACT#", "MEMBER#")) -> int:

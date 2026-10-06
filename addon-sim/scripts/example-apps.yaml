@@ -1,0 +1,25 @@
+# Runs against test/example-apps-server (pnpm example-apps-server): a server in the shape of the public
+# ext-apps examples (UI declared on the tool definition, text-only results, elicitation).
+#   pnpm play scripts/example-apps.yaml --url http://localhost:8120/mcp
+name: Example MCP Apps server
+server: example
+device: display-8
+elicitation: accept-defaults
+steps:
+  - say: "Show me the counter"
+    expect_tool: show_counter
+    expect:
+      structuredContent.count: 0
+    expect_spoken: ["counter is at"]
+  - call: { tool: increment, args: { by: 2 } }
+    expect:
+      structuredContent.count: 2
+  - say: "Please buy a coffee for me"
+    expect_tool: buy_coffee
+    expect:
+      structuredContent.ordered: true
+  - device: speaker
+  - say: "Show me the slow carousel gallery"
+    expect_tool: show_slow_carousel
+    expect:
+      structuredContent.items: { length: 3 }

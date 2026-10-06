@@ -1,0 +1,129 @@
+# Golden demo script for Butler (handoff/04-demo-and-submission.md section 2).
+# Run headless against the configured server:
+#   pnpm --dir addon-sim play scripts/butler-golden.yaml [--url http://localhost:8000/mcp --token local-sim-token]
+# Utterances go through the simulator's brain (offline router by default); assertions run on the
+# structuredContent of the tool results. Reset the demo (make reset-demo) before running.
+name: Butler golden demo
+server: butler
+device: display-15
+elicitation: accept-defaults
+
+steps:
+  # 1 ---------------------------------------------------------------------------------------------
+  - name: "1. Hosting situation creates a plan"
+    say: "Tell Butler six friends from the dinner crew are coming over Friday at 7."
+    expect_tool: handle_situation
+    expect:
+      "structuredContent.plan.kind": hosting
+      "structuredContent.plan.needs[*].capability": { includes_all: [messages, calendar, supplies, services] }
+    save:
+      hosting_plan_id: structuredContent.plan.plan_id
+
+  - name: "   wait until no need is doing (max 60 s)"
+    wait_until:
+      tool: get_plan
+      args: { plan_id: "${hosting_plan_id}" }
+      path: "plan.needs[*].status"
+      none_equal: doing
+      timeout_s: 60
+      interval_s: 1
+
+  # 2 ---------------------------------------------------------------------------------------------
+  - name: "2. Status: one cleaning decision with 3 options"
+    say: "How's Friday looking?"
+    expect_tool: get_status
+    expect:
+      "structuredContent.pending_decisions[0].kind": choose_option
+      "structuredContent.pending_decisions[0].options": { length: 3 }
+      "structuredContent.plan.needs[*].status": { any_equal: done }
+    expect_spoken: ["42 dollars"]
+
+  - name: "   drinks receipt is 4200, ALLOWed by rule_default_spend"
+    call:
+      tool: list_actions
+      args: { period: this_week, filter: all }
+    expect:
+      "structuredContent.actions[*].cost.amount_minor": { any_equal: 4200 }
+      "structuredContent.actions[*].authority.rule_ids[*]": { any_equal: rule_default_spend }
+      "structuredContent.actions[*].authority.decision": { any_equal: ALLOW }
+
+  # 3 ---------------------------------------------------------------------------------------------
+  - name: "3. Choose BrightHome (executed by the approval executor)"
+    say: "Book BrightHome."
+    expect_tool: answer_decision
+    expect:
+      "structuredContent.receipt.authority.principal": approval-executor
+      "structuredContent.receipt.simulated": true
+
+  # 4 ---------------------------------------------------------------------------------------------
+  - name: "4. Explain the drinks purchase"
+    say: "Why did you buy the drinks?"
+    expect_tool: explain_action
+    expect:
+      - "structuredContent.receipt.alternatives[*].option": { contains: BudgetBasket }
+      - "structuredContent.receipt.alternatives[*].rejected_because": { contains: Saturday }
+      - "structuredContent.receipt.alternatives[*].option": { contains: Corner Cellar }
+      - "structuredContent.receipt.alternatives[*].rejected_because": { contains: 50 dollar }
+
+  # 5 ---------------------------------------------------------------------------------------------
+  - name: "5. Correction drafts an ask_category:drinks rule"
+    say: "Don't buy drinks without asking me."
+    expect_tool: object_to_action
+    expect:
+      "structuredContent.rule.template": ask_category
+      "structuredContent.rule.params.category": drinks
+      "structuredContent.needs_confirmation": true
+
+  # 6 ---------------------------------------------------------------------------------------------
+  - name: "6. Yes confirms the rule"
+    say: "Yes."
+    expect_tool: object_to_action
+    expect_args:
+      confirm: true
+    expect:
+      "structuredContent.rule.policy_status": { one_of: [active, creating] }
+    save:
+      new_rule_id: structuredContent.rule.rule_id
+
+  - name: "   wait until the rule is active"
+    wait_until:
+      tool: list_rules
+      path: "ask_first[*].rule_id"
+      any_equal: "${new_rule_id}"
+      timeout_s: 30
+      interval_s: 1
+
+  # 7 ---------------------------------------------------------------------------------------------
+  - name: "7. Away plan: agent's drinks purchase is denied by the new rule"
+    say: "I'm travelling Thursday to Sunday. My parents are staying at the house."
+    expect_tool: handle_situation
+    expect:
+      "structuredContent.plan.kind": away
+
+  - name: "   wait until the DENY exists (max 60 s)"
+    wait_until:
+      tool: list_actions
+      args: { period: this_week, filter: blocked }
+      path: "actions[*].authority.decision"
+      any_equal: DENY
+      timeout_s: 60
+      interval_s: 1
+
+  # 8 ---------------------------------------------------------------------------------------------
+  - name: "8. Anything for me? Approve drinks for 31 dollars"
+    say: "Anything you need from me?"
+    expect_tool: get_status
+    expect:
+      "structuredContent.pending_decisions[0].kind": approve_action
+      "structuredContent.pending_decisions[0].reason_held.rule_id": "${new_rule_id}"
+    expect_spoken: ["31 dollars"]
+
+  # 9 ---------------------------------------------------------------------------------------------
+  - name: "9. What might I disagree with?"
+    say: "What did you do this week that I might disagree with?"
+    expect_tool: list_actions
+    expect_args:
+      filter: might_disagree
+    expect:
+      "structuredContent.actions[*].title": { contains: BrightHome }
+      "structuredContent.actions[*].cost.amount_minor": { any_equal: 4200 }

@@ -2,7 +2,7 @@
 name = "butler-actions"
 version = "0.1.0"
 requires-python = ">=3.12"
-dependencies = ["butler-contracts", "pydantic>=2.7", "boto3>=1.35", "httpx>=0.27"]
+dependencies = ["butler-contracts", "butler-rules", "pydantic>=2.7", "boto3>=1.35", "httpx>=0.27"]
 
 [build-system]
 requires = ["hatchling"]

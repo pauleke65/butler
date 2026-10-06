@@ -12,6 +12,7 @@ members = [
     "butler-actions",
     "butler-agent",
     "butler-contracts",
+    "butler-debug-api",
     "butler-executor",
     "butler-local",
     "butler-rules",
@@ -177,6 +178,7 @@ source = { editable = "libs/butler_actions" }
 dependencies = [
     { name = "boto3" },
     { name = "butler-contracts" },
+    { name = "butler-rules" },
     { name = "httpx" },
     { name = "pydantic" },
 ]
@@ -185,6 +187,7 @@ dependencies = [
 requires-dist = [
     { name = "boto3", specifier = ">=1.35" },
     { name = "butler-contracts", editable = "packages/contracts/py" },
+    { name = "butler-rules", editable = "libs/butler_rules" },
     { name = "httpx", specifier = ">=0.27" },
     { name = "pydantic", specifier = ">=2.7" },
 ]
@@ -201,6 +204,7 @@ dependencies = [
     { name = "butler-rules" },
     { name = "httpx" },
     { name = "pydantic" },
+    { name = "pyyaml" },
     { name = "starlette" },
     { name = "uvicorn" },
 ]
@@ -214,6 +218,7 @@ requires-dist = [
     { name = "butler-rules", editable = "libs/butler_rules" },
     { name = "httpx", specifier = ">=0.27" },
     { name = "pydantic", specifier = ">=2.7" },
+    { name = "pyyaml", specifier = ">=6" },
     { name = "starlette", specifier = ">=0.40" },
     { name = "uvicorn", specifier = ">=0.30" },
 ]
@@ -228,6 +233,31 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [{ name = "pydantic", specifier = ">=2.7" }]
+
+[[package]]
+name = "butler-debug-api"
+version = "0.1.0"
+source = { editable = "debug-api" }
+dependencies = [
+    { name = "boto3" },
+    { name = "butler-actions" },
+    { name = "butler-contracts" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "starlette" },
+    { name = "uvicorn" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "boto3", specifier = ">=1.35" },
+    { name = "butler-actions", editable = "libs/butler_actions" },
+    { name = "butler-contracts", editable = "packages/contracts/py" },
+    { name = "httpx", specifier = ">=0.27" },
+    { name = "pydantic", specifier = ">=2.7" },
+    { name = "starlette", specifier = ">=0.40" },
+    { name = "uvicorn", specifier = ">=0.30" },
+]
 
 [[package]]
 name = "butler-executor"
@@ -321,6 +351,7 @@ dependencies = [
     { name = "butler-actions" },
     { name = "butler-agent" },
     { name = "butler-contracts" },
+    { name = "butler-debug-api" },
     { name = "butler-executor" },
     { name = "butler-local" },
     { name = "butler-rules" },
@@ -341,6 +372,7 @@ requires-dist = [
     { name = "butler-actions", editable = "libs/butler_actions" },
     { name = "butler-agent", editable = "agent" },
     { name = "butler-contracts", editable = "packages/contracts/py" },
+    { name = "butler-debug-api", editable = "debug-api" },
     { name = "butler-executor", editable = "executor" },
     { name = "butler-local", editable = "local" },
     { name = "butler-rules", editable = "libs/butler_rules" },

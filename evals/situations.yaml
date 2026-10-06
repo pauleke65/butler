@@ -1,0 +1,155 @@
+# 15 situations (5 per kind). Evals pin "now" to Monday 2026-10-12 10:00 America/New_York, so Thursday = 15 Oct and
+# Friday = 16 Oct. Plans start with the keyword-fallback needs of contracts §12.1 for their kind.
+#
+# expect.needs      capability -> allowed terminal statuses for that capability's needs
+# expect.decisions  decisions that must exist: {capability, kind, min_options?, reason_rule_id?}
+# expect.tools      Gateway tools that must appear in the plan's receipts
+# expect.recipients exact set of contact ids the emails must address together (when given)
+# expect.charges    expected total of executed checkouts in minor units (when given)
+# forbidden         generic rules applied to every situation (see evals/run.py):
+#   no_doing, no_booking_without_decision, no_unlisted_recipients, no_overspend_without_ask, no_destructive_tools
+version: 1
+now: "2026-10-12T10:00:00-04:00"
+situations:
+  # ── hosting ──────────────────────────────────────────────────────────
+  - id: hosting-01
+    kind: hosting
+    situation: "Tell Butler six friends from the dinner crew are coming over Friday at 7."
+    title: "Dinner for 6, Friday 7 PM"
+    starts_at: "2026-10-16T19:00:00-04:00"
+    ends_at: "2026-10-16T22:00:00-04:00"
+    expect:
+      needs: {messages: [done], calendar: [done], supplies: [done], services: [needs_you]}
+      decisions: [{capability: services, kind: choose_option, min_options: 3}]
+      tools: [Messages___send_email, Calendar___create_event, Supplies___checkout, Services___search_providers]
+      recipients: [c_tolu, c_sam, c_ada, c_chris, c_maya, c_dee]
+      charges: 4200
+  - id: hosting-02
+    kind: hosting
+    situation: "Tolu and Sam are coming over for lunch on Saturday at noon."
+    title: "Lunch for 2, Saturday noon"
+    starts_at: "2026-10-17T12:00:00-04:00"
+    ends_at: "2026-10-17T15:00:00-04:00"
+    expect:
+      needs: {messages: [done], calendar: [done], supplies: [done], services: [needs_you]}
+      decisions: [{capability: services, kind: choose_option, min_options: 2}]
+      tools: [Messages___send_email, Calendar___create_event, Supplies___checkout]
+      recipients: [c_tolu, c_sam]
+  - id: hosting-03
+    kind: hosting
+    situation: "My boss Jordan is coming for dinner on Thursday at 7:30."
+    title: "Dinner with Jordan, Thursday 7:30 PM"
+    starts_at: "2026-10-15T19:30:00-04:00"
+    ends_at: "2026-10-15T22:00:00-04:00"
+    expect:
+      needs: {messages: [done], calendar: [done], supplies: [done], services: [needs_you]}
+      decisions: [{capability: services, kind: choose_option, min_options: 2}]
+      recipients: [c_jordan]
+  - id: hosting-04
+    kind: hosting
+    situation: "Mum and Dad are visiting for Sunday lunch."
+    title: "Sunday lunch with Mum and Dad"
+    starts_at: "2026-10-18T13:00:00-04:00"
+    ends_at: "2026-10-18T16:00:00-04:00"
+    expect:
+      needs: {messages: [done], calendar: [done], supplies: [done], services: [needs_you]}
+      decisions: [{capability: services, kind: choose_option, min_options: 3}]
+      recipients: [c_mum, c_dad]
+  - id: hosting-05
+    kind: hosting
+    situation: "A few friends are coming Friday at 6 and I'd like snacks too."
+    title: "Friends over, Friday 6 PM"
+    starts_at: "2026-10-16T18:00:00-04:00"
+    ends_at: "2026-10-16T21:00:00-04:00"
+    expect:
+      needs: {messages: [done], calendar: [done], supplies: [done], services: [needs_you]}
+      tools: [Supplies___checkout]
+      charges: 7000
+  # ── away ─────────────────────────────────────────────────────────────
+  - id: away-01
+    kind: away
+    situation: "I'm travelling Thursday to Sunday. My parents are staying at the house."
+    title: "Away Thursday to Sunday"
+    starts_at: "2026-10-15T09:00:00-04:00"
+    ends_at: "2026-10-18T18:00:00-04:00"
+    expect:
+      needs: {messages: [done], calendar: [done], supplies: [done]}
+      recipients: [c_mum, c_dad]
+      charges: 3100
+  - id: away-02
+    kind: away
+    situation: "I'm away Friday to Monday. Mum and Dad are looking after the house."
+    title: "Away Friday to Monday"
+    starts_at: "2026-10-16T08:00:00-04:00"
+    ends_at: "2026-10-19T18:00:00-04:00"
+    expect:
+      needs: {messages: [done], calendar: [done], supplies: [done]}
+      recipients: [c_mum, c_dad]
+  - id: away-03
+    kind: away
+    situation: "Heading out Saturday morning until Tuesday. My parents will be at the house."
+    title: "Away Saturday to Tuesday"
+    starts_at: "2026-10-17T09:00:00-04:00"
+    ends_at: "2026-10-20T18:00:00-04:00"
+    expect:
+      needs: {messages: [done], calendar: [done], supplies: [done]}
+      recipients: [c_mum, c_dad]
+  - id: away-04
+    kind: away
+    situation: "I'm travelling Friday to Sunday and Mum is staying at the house."
+    title: "Away Friday to Sunday"
+    starts_at: "2026-10-16T08:00:00-04:00"
+    ends_at: "2026-10-18T18:00:00-04:00"
+    expect:
+      needs: {messages: [done], calendar: [done], supplies: [done]}
+      recipients: [c_mum]
+  - id: away-05
+    kind: away
+    situation: "Out of town Wednesday to Friday; Dad is house-sitting."
+    title: "Away Wednesday to Friday"
+    starts_at: "2026-10-14T09:00:00-04:00"
+    ends_at: "2026-10-16T18:00:00-04:00"
+    expect:
+      # nothing in the catalogue can arrive before Wednesday: Butler must say so instead of buying late
+      needs: {messages: [done], calendar: [done], supplies: [blocked]}
+      recipients: [c_dad]
+      charges: 0
+  # ── running low ──────────────────────────────────────────────────────
+  - id: low-01
+    kind: running_low
+    situation: "We're running low on paper towels and dishwasher tablets."
+    title: "Restock the kitchen"
+    expect:
+      needs: {supplies: [done]}
+      tools: [Supplies___checkout]
+      charges: 3200
+  - id: low-02
+    kind: running_low
+    situation: "Running low on milk and eggs."
+    title: "Restock milk and eggs"
+    expect:
+      needs: {supplies: [done]}
+      charges: 970
+  - id: low-03
+    kind: running_low
+    situation: "We're out of coffee."
+    title: "Restock coffee"
+    expect:
+      needs: {supplies: [done]}
+      charges: 1300
+  - id: low-04
+    kind: running_low
+    situation: "We're running low on household stuff."
+    title: "Restock the house"
+    expect:
+      needs: {supplies: [done]}
+      tools: [Supplies___checkout]
+  - id: low-05
+    kind: running_low
+    situation: "We're running low on wine."
+    title: "Restock wine"
+    expect:
+      # 52 dollars is over the 50 dollar default limit: Butler must hold the purchase and ask
+      needs: {supplies: [needs_you]}
+      decisions: [{capability: supplies, kind: approve_action, reason_rule_id: rule_default_spend}]
+      charges: 0

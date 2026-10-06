@@ -1,5 +1,5 @@
 from butler_actions.ids import new_id
-from butler_contracts.models import Decision, DecisionOption, Need, Plan, Receipt, Rule
+from butler_contracts.models import Decision, DecisionOption, Need, Plan, Receipt
 
 
 def _plan(hh="hh_t"):

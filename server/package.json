@@ -1,0 +1,33 @@
+{
+  "name": "@butler/server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Butler Alexa+ add-on: stateless Streamable HTTP MCP server with MCP Apps views",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "build": "pnpm --filter ./server/ui build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "dev:fixtures": "tsx src/dev/fixtureServer.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-agentcore": "^3.1000.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.1000.0",
+    "@aws-sdk/client-dynamodb": "^3.1000.0",
+    "@aws-sdk/client-lambda": "^3.1000.0",
+    "@aws-sdk/lib-dynamodb": "^3.1000.0",
+    "@butler/contracts": "workspace:*",
+    "@modelcontextprotocol/ext-apps": "^1.7.5",
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "chrono-node": "^2.10.2",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0"
+  }
+}

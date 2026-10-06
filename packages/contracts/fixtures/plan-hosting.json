@@ -1,0 +1,62 @@
+{
+  "plan_id": "plan_01M4XSBQM07SRRBPPHKDW2XE88",
+  "household_id": "hh_demo",
+  "situation": "Tell Butler six friends from the dinner crew are coming over Friday at 7.",
+  "kind": "hosting",
+  "title": "Dinner for 6, Friday 7 PM",
+  "starts_at": "2026-10-16T19:00:00-04:00",
+  "ends_at": "2026-10-16T22:00:00-04:00",
+  "status": "waiting_on_you",
+  "needs": [
+    {
+      "need_id": "need_01M4XSBQM08RVNZTX4GX6508Z4",
+      "plan_id": "plan_01M4XSBQM07SRRBPPHKDW2XE88",
+      "label": "Invite 6 guests",
+      "capability": "messages",
+      "status": "done",
+      "note": "Sent to 6 people at 2:05 PM",
+      "action_ids": [
+        "act_01M4XSDJ707WZ8RGD39KE7DYVY"
+      ],
+      "updated_at": "2026-10-14T18:05:00+00:00"
+    },
+    {
+      "need_id": "need_01M4XSBQM1SEVR6W7MNC7E644M",
+      "plan_id": "plan_01M4XSBQM07SRRBPPHKDW2XE88",
+      "label": "Add dinner to your calendar",
+      "capability": "calendar",
+      "status": "done",
+      "note": "Friday 7 PM is on your calendar",
+      "action_ids": [
+        "act_01M4XSDK68BQZNP9Z7SA0S2JKD"
+      ],
+      "updated_at": "2026-10-14T18:05:01+00:00"
+    },
+    {
+      "need_id": "need_01M4XSBQM2MB1E6V84QH9HE6JT",
+      "plan_id": "plan_01M4XSBQM07SRRBPPHKDW2XE88",
+      "label": "Order food and drinks",
+      "capability": "supplies",
+      "status": "done",
+      "note": "Drinks for 7, 42 dollars, arrives Friday",
+      "action_ids": [
+        "act_01M4XSFCT0Q51V48EHXR4BG5JB",
+        "act_01M4XSFDS8BK2BAS6K7V4T3EGD"
+      ],
+      "updated_at": "2026-10-14T18:06:01+00:00"
+    },
+    {
+      "need_id": "need_01M4XSBQM3GSW79TYYCYXCFY0S",
+      "plan_id": "plan_01M4XSBQM07SRRBPPHKDW2XE88",
+      "label": "Book a cleaner",
+      "capability": "services",
+      "status": "needs_you",
+      "note": "Three cleaners available",
+      "action_ids": [],
+      "decision_id": "dec_01M4XSH7D09K7FKWRBB5KHR6PN",
+      "updated_at": "2026-10-14T18:07:00+00:00"
+    }
+  ],
+  "created_at": "2026-10-14T18:04:00+00:00",
+  "updated_at": "2026-10-14T18:07:00+00:00"
+}

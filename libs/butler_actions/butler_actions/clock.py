@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from zoneinfo import ZoneInfo
 
 _fixed: datetime | None = None
@@ -19,7 +19,7 @@ def now() -> datetime:
     env = os.environ.get("BUTLER_NOW")
     if env:
         return datetime.fromisoformat(env)
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def iso(dt: datetime | None = None, tz: str | None = None) -> str:

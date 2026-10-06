@@ -30,3 +30,11 @@ PREFIXES = {
     "decision": "dec", "option": "opt", "action": "act", "rule": "rule", "order": "ord",
     "booking": "bkg", "event": "evt", "correlation": "cor",
 }
+
+
+def deterministic_id(prefix: str, ts_ms: int, seed: str) -> str:
+    """Time-sortable id whose random part derives from ``seed`` (idempotent seeding)."""
+    import hashlib
+
+    rand = int.from_bytes(hashlib.sha256(seed.encode()).digest()[:10], "big")
+    return f"{prefix}_{_encode(ts_ms, 10)}{_encode(rand, 16)}"

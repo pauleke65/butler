@@ -9,3 +9,7 @@ seed:
 	uv run python -m butler_local.seed
 dev:
 	uv run python -m butler_local.dev
+
+.PHONY: evals
+evals:
+	uv run python evals/run.py

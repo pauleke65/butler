@@ -1,0 +1,119 @@
+[
+  {
+    "rule_id": "rule_default_spend",
+    "household_id": "hh_demo",
+    "text": "Ask me before spending more than 50 dollars.",
+    "effect": "ask_first",
+    "template": "spend_cap",
+    "params": {
+      "tools": [
+        "Supplies___checkout",
+        "Services___book_service"
+      ],
+      "cap_minor": 5000
+    },
+    "cedar_statement": "@id(\"rule_default_spend\")\nforbid (principal, action == AgentCore::Action::\"Supplies___checkout\", resource is AgentCore::Gateway)\nwhen { principal.hasTag(\"sub\") && principal.getTag(\"sub\") == \"local-agent\" && context has input && context.input has amount_minor && context.input.amount_minor > 5000 };\n\n@id(\"rule_default_spend\")\nforbid (principal, action == AgentCore::Action::\"Services___book_service\", resource is AgentCore::Gateway)\nwhen { principal.hasTag(\"sub\") && principal.getTag(\"sub\") == \"local-agent\" && context has input && context.input has amount_minor && context.input.amount_minor > 5000 };",
+    "policy_id": "policy-lt_spend",
+    "policy_status": "active",
+    "origin": {
+      "type": "default"
+    },
+    "active": true,
+    "created_at": "2026-09-04T18:04:00+00:00",
+    "updated_at": "2026-09-04T18:04:00+00:00"
+  },
+  {
+    "rule_id": "rule_default_contacts",
+    "household_id": "hh_demo",
+    "text": "Ask me before messaging anyone who isn't a saved contact.",
+    "effect": "ask_first",
+    "template": "ask_non_contact",
+    "params": {},
+    "cedar_statement": "@id(\"rule_default_contacts\")\nforbid (principal, action == AgentCore::Action::\"Messages___send_email\", resource is AgentCore::Gateway)\nwhen { principal.hasTag(\"sub\") && principal.getTag(\"sub\") == \"local-agent\" && context has input && context.input has recipient_email };",
+    "policy_id": "policy-contacts",
+    "policy_status": "active",
+    "origin": {
+      "type": "default"
+    },
+    "active": true,
+    "created_at": "2026-09-04T18:04:00+00:00",
+    "updated_at": "2026-09-04T18:04:00+00:00"
+  },
+  {
+    "rule_id": "rule_default_calendar",
+    "household_id": "hh_demo",
+    "text": "Never change or delete events I created.",
+    "effect": "never",
+    "template": "protect_human_events",
+    "params": {},
+    "cedar_statement": "@id(\"rule_default_calendar\")\nforbid (principal, action in [AgentCore::Action::\"Calendar___update_event\", AgentCore::Action::\"Calendar___delete_event\"], resource is AgentCore::Gateway)\nwhen { context has input && context.input has event_owner && context.input.event_owner == \"human\" };",
+    "policy_id": "policy-calendar",
+    "policy_status": "active",
+    "origin": {
+      "type": "default"
+    },
+    "active": true,
+    "created_at": "2026-09-04T18:04:00+00:00",
+    "updated_at": "2026-09-04T18:04:00+00:00"
+  },
+  {
+    "rule_id": "rule_default_services",
+    "household_id": "hh_demo",
+    "text": "Always ask me before booking a service.",
+    "effect": "ask_first",
+    "template": "ask_tool",
+    "params": {
+      "tool": "Services___book_service"
+    },
+    "cedar_statement": "@id(\"rule_default_services\")\nforbid (principal, action == AgentCore::Action::\"Services___book_service\", resource is AgentCore::Gateway)\nwhen { principal.hasTag(\"sub\") && principal.getTag(\"sub\") == \"local-agent\" };",
+    "policy_id": "policy-services",
+    "policy_status": "active",
+    "origin": {
+      "type": "default"
+    },
+    "active": true,
+    "created_at": "2026-09-04T18:04:00+00:00",
+    "updated_at": "2026-09-04T18:04:00+00:00"
+  },
+  {
+    "rule_id": "rule_default_refunds",
+    "household_id": "hh_demo",
+    "text": "Ask me before refunding anything.",
+    "effect": "ask_first",
+    "template": "ask_tool",
+    "params": {
+      "tool": "Supplies___refund"
+    },
+    "cedar_statement": "@id(\"rule_default_refunds\")\nforbid (principal, action == AgentCore::Action::\"Supplies___refund\", resource is AgentCore::Gateway)\nwhen { principal.hasTag(\"sub\") && principal.getTag(\"sub\") == \"local-agent\" };",
+    "policy_id": "policy-_refunds",
+    "policy_status": "active",
+    "origin": {
+      "type": "default"
+    },
+    "active": true,
+    "created_at": "2026-09-04T18:04:00+00:00",
+    "updated_at": "2026-09-04T18:04:00+00:00"
+  },
+  {
+    "rule_id": "rule_01M4XTSGF0YETV9PMDRTW58KRT",
+    "household_id": "hh_demo",
+    "text": "Ask me before buying drinks.",
+    "effect": "ask_first",
+    "template": "ask_category",
+    "params": {
+      "category": "drinks"
+    },
+    "cedar_statement": "@id(\"rule_01M4XTSGF0YETV9PMDRTW58KRT\")\nforbid (principal, action == AgentCore::Action::\"Supplies___checkout\", resource is AgentCore::Gateway)\nwhen { principal.hasTag(\"sub\") && principal.getTag(\"sub\") == \"local-agent\" && context has input && context.input has category && context.input.category == \"drinks\" };",
+    "policy_id": "policy-rtw58krt",
+    "policy_status": "active",
+    "origin": {
+      "type": "correction",
+      "utterance": "Don't buy drinks without asking me.",
+      "action_id": "act_01M4XSFCT0Q51V48EHXR4BG5JB",
+      "created_at": "2026-10-14T18:29:00+00:00"
+    },
+    "active": true,
+    "created_at": "2026-10-14T18:29:00+00:00",
+    "updated_at": "2026-10-14T18:29:00+00:00"
+  }
+]

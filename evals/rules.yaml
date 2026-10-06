@@ -1,0 +1,27 @@
+# 20 rule utterances -> expected template (or "unsupported"). Contacts come from seed/contacts.json.
+# tier "pattern": the offline PatternRuleDrafter must get these 100% right (the supported subset).
+# tier "llm": natural phrasings that only the Bedrock drafter is expected to handle; reported separately offline.
+# base_rule: a default rule id used as the rule being changed (contracts §3.9).
+version: 1
+cases:
+  - {id: r01, tier: pattern, utterance: "Don't buy drinks without asking me.", template: ask_category, params: {category: drinks}}
+  - {id: r02, tier: pattern, utterance: "Never email my boss.", template: never_contact, params: {contact_id: c_jordan}}
+  - {id: r03, tier: pattern, utterance: "Ask me before spending over $30.", template: spend_cap, params: {cap_minor: 3000}}
+  - {id: r04, tier: pattern, utterance: "Ask me before spending more than 75 dollars.", template: spend_cap, params: {cap_minor: 7500}}
+  - {id: r05, tier: pattern, utterance: "Raise my limit to $100.", base_rule: rule_default_spend, template: spend_cap,
+     params: {cap_minor: 10000, tools: [Supplies___checkout, Services___book_service]}}
+  - {id: r06, tier: pattern, utterance: "Lower my limit to $25.", base_rule: rule_default_spend, template: spend_cap, params: {cap_minor: 2500}}
+  - {id: r07, tier: pattern, utterance: "Always ask me before booking services.", template: ask_tool, params: {tool: Services___book_service}}
+  - {id: r08, tier: pattern, utterance: "Ask me before refunding anything.", template: ask_tool, params: {tool: Supplies___refund}}
+  - {id: r09, tier: pattern, utterance: "Don't message strangers.", template: ask_non_contact, params: {}}
+  - {id: r10, tier: pattern, utterance: "Don't text anyone who isn't in my contacts.", template: ask_non_contact, params: {}}
+  - {id: r11, tier: pattern, utterance: "Never message Tolu again.", template: never_contact, params: {contact_id: c_tolu}}
+  - {id: r12, tier: pattern, utterance: "Check with me before ordering groceries.", template: ask_category, params: {category: groceries}}
+  - {id: r13, tier: pattern, utterance: "Ask me before buying gifts.", template: ask_category, params: {category: gifts}}
+  - {id: r14, tier: pattern, utterance: "Don't ever change or delete my calendar events.", template: protect_human_events, params: {}}
+  - {id: r15, tier: pattern, utterance: "Never book a service.", template: never_tool, params: {tool: Services___book_service}}
+  - {id: r16, tier: pattern, utterance: "Stop ordering pizza.", template: unsupported}
+  - {id: r17, tier: pattern, utterance: "Don't buy anything from BudgetBasket.", template: unsupported}
+  - {id: r18, tier: pattern, utterance: "Never email my parents.", template: unsupported}
+  - {id: r19, tier: llm, utterance: "From now on, please get my OK before you pay for any drinks.", template: ask_category, params: {category: drinks}}
+  - {id: r20, tier: llm, utterance: "I'd rather you left Jordan alone.", template: never_contact, params: {contact_id: c_jordan}}

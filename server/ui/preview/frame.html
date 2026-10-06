@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Butler view frame</title>
+    <style>
+      html, body { margin: 0; background: #05080f; color: #cbd5e1; font: 14px system-ui, sans-serif; }
+      #stage { transform-origin: 0 0; }
+      #bar { display: flex; gap: 16px; align-items: center; padding: 6px 12px; height: 28px; background: #0b1220; border-bottom: 1px solid #243352; }
+      #bar b { color: #fff; }
+      iframe { display: block; border: 0; background: #000; }
+      body.bare #bar { display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="bar"></div>
+    <div id="stage"><iframe id="view" title="Butler view" sandbox="allow-scripts allow-same-origin"></iframe></div>
+    <script type="module" src="./frame.ts"></script>
+  </body>
+</html>

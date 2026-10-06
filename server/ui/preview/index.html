@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Butler views: fixture preview</title>
+    <style>
+      body { margin: 0; padding: 24px; background: #05080f; color: #e2e8f0; font: 16px/1.5 system-ui, sans-serif; }
+      h1 { margin: 0 0 8px; }
+      p { color: #94a3b8; max-width: 70ch; }
+      table { border-collapse: collapse; margin-top: 16px; }
+      td, th { padding: 6px 14px; border-bottom: 1px solid #1e2a44; text-align: left; }
+      a { color: #7db4ff; }
+    </style>
+  </head>
+  <body>
+    <h1>Butler views: fixture preview</h1>
+    <p>
+      Every view rendered by the real ext-apps AppBridge from the real tools running over the contract fixtures.
+      Start the fixture server first (<code>pnpm --filter ./server dev:fixtures</code>), build the views
+      (<code>pnpm --filter ./server/ui build</code>), then open a frame. Buttons really call the server.
+    </p>
+    <table id="t"></table>
+    <script type="module" src="./index.ts"></script>
+  </body>
+</html>
