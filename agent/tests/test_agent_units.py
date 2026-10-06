@@ -85,3 +85,14 @@ def test_factory_picks_implementations_from_the_mode():
     assert type(build_planner("bedrock")).__name__ == "StrandsPlanner"
     llm = build_drafter("bedrock")
     assert type(llm).__name__ == "LLMRuleDrafter" and isinstance(llm.fallback, PatternRuleDrafter)
+
+
+def test_build_gateway_uses_cognito_credentials_in_aws(monkeypatch):
+    from butler_agent.factory import build_gateway
+    monkeypatch.setenv("COGNITO_TOKEN_URL", "https://example.auth.us-east-1.amazoncognito.com/oauth2/token")
+    monkeypatch.setenv("AGENT_CLIENT_ID", "cid")
+    monkeypatch.setenv("AGENT_CLIENT_SECRET", "secret")
+    monkeypatch.setenv("GATEWAY_URL", "https://gw.example/mcp")
+    gw = build_gateway()
+    assert type(gw).__name__ == "HttpGatewayClient"
+    assert "butler-agent" in gw.tokens or "butler-agent" in getattr(gw, "_tokens", {})

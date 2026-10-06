@@ -6,8 +6,23 @@
   "scripts": {
     "synth": "cdk synth",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:lambdas": "bash scripts/build-lambdas.sh",
+    "build:runtimes": "bash scripts/build-runtimes.sh",
+    "gen:policies": "uv run python scripts/gen-policies.py > generated/policies.json.tmp && mv generated/policies.json.tmp generated/policies.json",
+    "test:python": "cd .. && uv run pytest infra/runtime/tests actions/tests/test_actions_lambda_handler.py executor/tests/test_executor_lambda_handler.py -q"
   },
-  "dependencies": { "aws-cdk-lib": "^2.272.0", "constructs": "^10.4.0" },
-  "devDependencies": { "aws-cdk": "^2.1100.0", "tsx": "^4.19.0", "typescript": "^5.6.0", "vitest": "^3.0.0", "@types/node": "^22.0.0" }
+  "dependencies": {
+    "aws-cdk-lib": "^2.272.0",
+    "constructs": "^10.4.0",
+    "@butler/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "aws-cdk": "^2.1100.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.0",
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.25.0"
+  }
 }

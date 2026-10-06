@@ -43,9 +43,17 @@ def build_policy_service(store: Store, ids: Identities):
 
 
 def build_gateway():
-    from butler_actions.gateway import HttpGatewayClient
+    """Local static tokens, or Cognito client credentials for ``butler-agent`` when COGNITO_TOKEN_URL is set (AWS)."""
+    import os
 
-    return HttpGatewayClient.from_env()
+    from butler_actions.gateway import CognitoClientCredentials, HttpGatewayClient
+
+    token_url = os.environ.get("COGNITO_TOKEN_URL")
+    if not token_url:
+        return HttpGatewayClient.from_env()
+    cred = CognitoClientCredentials(token_url, os.environ["AGENT_CLIENT_ID"], os.environ["AGENT_CLIENT_SECRET"],
+                                    os.environ.get("AGENT_SCOPE"))
+    return HttpGatewayClient(os.environ["GATEWAY_URL"], {"butler-agent": cred})
 
 
 def build_agent(mode: str | None = None) -> Agent:

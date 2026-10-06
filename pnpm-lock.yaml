@@ -10,6 +10,9 @@ importers:
 
   infra:
     dependencies:
+      '@butler/contracts':
+        specifier: workspace:*
+        version: link:../packages/contracts/ts
       aws-cdk-lib:
         specifier: ^2.272.0
         version: 2.272.0(constructs@10.8.1)
@@ -23,6 +26,9 @@ importers:
       aws-cdk:
         specifier: ^2.1100.0
         version: 2.1144.0
+      esbuild:
+        specifier: ^0.25.0
+        version: 0.25.12
       tsx:
         specifier: ^4.19.0
         version: 4.23.15
