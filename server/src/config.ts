@@ -61,7 +61,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     executorLocalUrl: env["EXECUTOR_LOCAL_URL"] || undefined,
     executorFunctionName: env["EXECUTOR_FUNCTION_NAME"] || undefined,
     llmMode: mode,
-    bedrockModelFast: env["BEDROCK_MODEL_FAST"] ?? "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    bedrockModelFast: env["BEDROCK_MODEL_FAST"] ?? "us.amazon.nova-2-lite-v1:0",
     householdBySub: parseHouseholdMap(env["HOUSEHOLD_BY_SUB"]),
     defaultTimezone: env["DEFAULT_TIMEZONE"] ?? "America/New_York",
     uiDistDir: env["UI_DIST_DIR"] || undefined,

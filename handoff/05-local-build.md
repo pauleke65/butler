@@ -35,7 +35,7 @@ BUTLER_NOW=<optional ISO time to pin "now" for demos and tests>
 | Mode | Behaviour | Used for |
 |---|---|---|
 | `offline` (default in tests/CI) | Deterministic: keyword needs pass, scripted planner, pattern-based rule drafter, heuristic tool router in the simulator | tests, CI, deterministic rehearsals |
-| `bedrock` | Real models via Bedrock Converse in `us-east-1`: fast = `us.anthropic.claude-haiku-4-5-20251001-v1:0` (`BEDROCK_MODEL_FAST`), planner/drafter = `us.anthropic.claude-sonnet-5-5` (`BEDROCK_MODEL_PLANNER`), simulator brain = fast model (`BEDROCK_MODEL_BRAIN`). Uses the developer's real AWS credentials via the default credential chain (so do **not** export the moto dummy keys into these processes; moto clients get explicit `endpoint_url` + dummy credentials passed in code) | real runs, evals, recording |
+| `bedrock` | Real models via Bedrock Converse in `us-east-1`: fast = `us.amazon.nova-2-lite-v1:0` (`BEDROCK_MODEL_FAST`), planner/drafter = `us.amazon.nova-2-lite-v1:0` (`BEDROCK_MODEL_PLANNER`), simulator brain = fast model (`BEDROCK_MODEL_BRAIN`). Uses the developer's real AWS credentials via the default credential chain (so do **not** export the moto dummy keys into these processes; moto clients get explicit `endpoint_url` + dummy credentials passed in code) | real runs, evals, recording |
 
 Rule: both modes implement the same interface; code never branches on mode outside the factory that picks the implementation.
 

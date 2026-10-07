@@ -77,3 +77,12 @@ Format per entry: task, steps, expected vs actual, severity, workaround, suggest
 - **Actual:** the control-plane status becoming `ACTIVE` is the only signal; docs don't say whether the Gateway enforces it at that moment. We assumed some lag could exist and, after seeing the effect in a local emulator, made rule changes wait for a configurable settle window (`POLICY_SETTLE_MS`) before reporting success.
 - **Severity:** unknown until measured (spike S-1 on a real account)
 - **Suggestion:** document enforcement latency after `ACTIVE`, or add a "policy version in effect" field to gateway responses.
+
+### FL-10 · New account has a 0 tokens/day quota for every Amazon Nova model · 2026-10-07
+- **Tool:** Amazon Bedrock quotas (Nova 2 Lite, Nova Pro, Nova Lite, Nova Micro)
+- **Task:** first Converse call to `us.amazon.nova-2-lite-v1:0` from a newly verified account.
+- **Expected:** a small default quota so a developer can try the model.
+- **Actual:** `ThrottlingException: Too many tokens per day` on the very first call. Service Quotas shows 0 for "Model invocation max tokens per day" (not adjustable) and 0 for the tokens-per-minute quotas; only the cross-region tokens-per-minute quotas are adjustable. Nova Premier, the strongest Nova, is already end-of-life.
+- **Severity:** major (no model usable at all on day 1)
+- **Workaround:** offline implementations for every model-backed step; requested a cross-region TPM increase.
+- **Suggestion:** give new accounts a small non-zero default, and name the adjustable quota to raise in the throttling message.

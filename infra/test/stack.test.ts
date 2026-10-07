@@ -196,8 +196,8 @@ describe("least privilege", () => {
     const role = idByPath(s.json, "Runtimes/AgentRuntime/ExecutionRole/Resource");
     const st = statementsOfRole(s.json, role).find((x) => actionsOf(x).includes("bedrock:InvokeModel"))!;
     const res = resourcesOf(st).map(String);
-    expect(res).toContain("arn:aws:bedrock:us-east-1:000000000000:inference-profile/us.anthropic.claude-sonnet-5-5");
-    expect(res.every((r) => r.includes("anthropic."))).toBe(true);
+    expect(res).toContain("arn:aws:bedrock:us-east-1:000000000000:inference-profile/us.amazon.nova-2-lite-v1:0");
+    expect(res.every((r) => r.includes("amazon.nova-2-lite-v1:0"))).toBe(true);
   });
 });
 

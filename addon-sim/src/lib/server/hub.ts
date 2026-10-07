@@ -24,7 +24,7 @@ export class Hub {
 
   /** The brain for a turn. In bedrock mode a model override from the settings drawer gets its own (cached) brain. */
   brainFor(model?: string): Brain {
-    const def = process.env.BEDROCK_MODEL_BRAIN || "us.anthropic.claude-haiku-4-5-20251001-v1:0";
+    const def = process.env.BEDROCK_MODEL_BRAIN || "us.amazon.nova-2-lite-v1:0";
     if (this.llmMode !== "bedrock" || !model || model === def) return this.brain;
     let b = this.brains.get(model);
     if (!b) {

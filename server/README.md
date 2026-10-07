@@ -51,7 +51,7 @@ curl -s localhost:8000/mcp -H 'content-type: application/json' -H 'accept: appli
 | `AGENT_LOCAL_URL` | unset | `POST` agent ops here (local). Else `AGENT_RUNTIME_ARN` -> `InvokeAgentRuntime` (session id >= 33 chars) |
 | `EXECUTOR_LOCAL_URL` | unset | `POST` approval executor here (local). Else `EXECUTOR_FUNCTION_NAME` -> Lambda invoke |
 | `LLM_MODE` | `offline` | `offline`: keyword needs pass. `bedrock`: Claude Haiku via Converse (real AWS credentials from the default chain, never the moto dummy keys), falls back to keywords |
-| `BEDROCK_MODEL_FAST` | `us.anthropic.claude-haiku-4-5-20251001-v1:0` | needs-pass model |
+| `BEDROCK_MODEL_FAST` | `us.amazon.nova-2-lite-v1:0` | needs-pass model |
 | `NEEDS_PASS_TIMEOUT_MS` / `HANDLE_SITUATION_BUDGET_MS` | `2500` / `2500` | Bedrock call timeout / total `handle_situation` budget (the needs pass gets the budget minus 700 ms) |
 | `EXECUTOR_TIMEOUT_MS` | `8000` | approval executor timeout |
 | `MCP_JSON_RESPONSE` | `true` | reply with JSON instead of an SSE stream |

@@ -25,7 +25,7 @@ describe.skipIf(!process.env.RUN_BEDROCK_TESTS)("BedrockBrain (live)", () => {
   });
 
   it("routes the golden opening utterances to the right tools", async () => {
-    const brain = new BedrockBrain({ model: process.env.BEDROCK_MODEL_BRAIN || "us.anthropic.claude-haiku-4-5-20251001-v1:0" });
+    const brain = new BedrockBrain({ model: process.env.BEDROCK_MODEL_BRAIN || "us.amazon.nova-2-lite-v1:0" });
     const ctx: BrainContext = {
       tools: mgr.allTools().filter(isModelVisible).map((t) => ({ server: t.server, name: t.name, description: t.description, inputSchema: t.inputSchema })),
       servers: [{ id: "butler", name: "Butler", invocationName: "Butler" }],

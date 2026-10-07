@@ -12,7 +12,7 @@ export function resolveLlmMode(env: Record<string, string | undefined> = process
 export function createBrain(env: Record<string, string | undefined> = process.env): Brain {
   if (resolveLlmMode(env) === "bedrock") {
     return new BedrockBrain({
-      model: env.BEDROCK_MODEL_BRAIN || "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      model: env.BEDROCK_MODEL_BRAIN || "us.amazon.nova-2-lite-v1:0",
       region: env.AWS_REGION || "us-east-1",
     });
   }

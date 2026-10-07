@@ -85,7 +85,7 @@ How the simulator treats your server:
 | `LLM_MODE` | Brain | TTS |
 |---|---|---|
 | `offline` (default) | Deterministic keyword/regex router. No network, no AWS. | Browser `speechSynthesis` |
-| `bedrock` | Bedrock Converse tool-use loop (`BEDROCK_MODEL_BRAIN`, default `us.anthropic.claude-haiku-4-5-20251001-v1:0`, region `AWS_REGION` or `us-east-1`) using your default AWS credential chain. | Amazon Polly neural voice (`POLLY_VOICE_ID`, default `Joanna`), falling back to the browser voice on any failure |
+| `bedrock` | Bedrock Converse tool-use loop (`BEDROCK_MODEL_BRAIN`, default `us.amazon.nova-2-lite-v1:0`, region `AWS_REGION` or `us-east-1`) using your default AWS credential chain. | Amazon Polly neural voice (`POLLY_VOICE_ID`, default `Joanna`), falling back to the browser voice on any failure |
 
 ```bash
 LLM_MODE=bedrock pnpm dev

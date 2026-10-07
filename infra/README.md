@@ -89,7 +89,7 @@ cannot drift from `libs/butler_rules`; it also compares the output to `policies/
 | `paymentProvider` | `stripe` | `stripe` or `paystack` (decision D12) |
 | `googleCalendarId` | `primary` | |
 | `llmMode` | `bedrock` | `bedrock` or `offline` (agent and server) |
-| `bedrockModelPlanner` / `bedrockModelFast` | `us.anthropic.claude-sonnet-5-5` / `us.anthropic.claude-haiku-4-5-20251001-v1:0` | inference profile ids; IAM is scoped to exactly these |
+| `bedrockModelPlanner` / `bedrockModelFast` | `us.amazon.nova-2-lite-v1:0` / `us.amazon.nova-2-lite-v1:0` | inference profile ids; IAM is scoped to exactly these |
 | `policySettleMs` | `1500` | `POLICY_SETTLE_MS` of the agent (wait after a policy is ACTIVE before telling the customer a rule is in force) |
 | `policyValidationMode` | `FAIL_ON_ANY_FINDINGS` | or `IGNORE_ALL_FINDINGS` if AgentCore's Cedar validator rejects a default policy |
 | `runtimeArtifact` | `code` | `code` = S3 zip (direct code deployment); `container` = ECR image from `agent/Dockerfile` and `server/Dockerfile` (needs Docker) |

@@ -46,7 +46,7 @@ export function publicConfig(env: Record<string, string | undefined> = process.e
   return {
     servers: defaultServers(env),
     llmMode,
-    model: env.BEDROCK_MODEL_BRAIN || "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+    model: env.BEDROCK_MODEL_BRAIN || "us.amazon.nova-2-lite-v1:0",
     voice: { pollyVoiceId: env.POLLY_VOICE_ID || "Joanna", pollyEnabled: llmMode === "bedrock" },
     panelUrls: (env.PANEL_URLS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
     panelEnv: panelEnv(env),

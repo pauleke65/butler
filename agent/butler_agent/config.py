@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import os
 
-DEFAULT_PLANNER_MODEL = "us.anthropic.claude-sonnet-5-5"
-DEFAULT_FAST_MODEL = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+DEFAULT_PLANNER_MODEL = "us.amazon.nova-2-lite-v1:0"
+DEFAULT_FAST_MODEL = "us.amazon.nova-2-lite-v1:0"
 
 
 def llm_mode() -> str:
