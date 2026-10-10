@@ -36,12 +36,28 @@ export function shortDay(iso: string | undefined, tz?: string): string {
   return fmtDate(iso, tz, { weekday: "short", day: "numeric", month: "short" });
 }
 
+/**
+ * Plan times are written with the household's UTC offset ("2026-10-16T19:00:00-04:00"). Show them on that clock, not
+ * the viewer's: a Friday 7 PM dinner in New York must not read "Sat 12 AM" on a device set to Lagos.
+ */
+function onOwnClock(iso: string | undefined): { iso: string | undefined; tz: string | undefined } {
+  const m = iso ? /([+-])(\d{2}):?(\d{2})$/.exec(iso) : null;
+  if (!iso || !m) return { iso, tz: undefined };
+  const offset = (m[1] === "-" ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3]));
+  const shifted = new Date(new Date(iso).getTime() + offset * 60_000);
+  return Number.isNaN(shifted.getTime()) ? { iso, tz: undefined } : { iso: shifted.toISOString(), tz: "UTC" };
+}
+
 export function planWhen(starts?: string, ends?: string, tz?: string): string {
   if (!starts) return "";
-  if (ends && fmtDate(starts, tz) !== fmtDate(ends, tz)) {
-    return `${fmtDate(starts, tz, { weekday: "short", day: "numeric", month: "short" })} to ${fmtDate(ends, tz, { weekday: "short", day: "numeric", month: "short" })}`;
+  const a = onOwnClock(starts);
+  const b = onOwnClock(ends);
+  const ta = a.tz ?? tz;
+  const tb = b.tz ?? tz;
+  if (ends && fmtDate(a.iso, ta) !== fmtDate(b.iso, tb)) {
+    return `${fmtDate(a.iso, ta, { weekday: "short", day: "numeric", month: "short" })} to ${fmtDate(b.iso, tb, { weekday: "short", day: "numeric", month: "short" })}`;
   }
-  return fmtWhen(starts, tz);
+  return fmtWhen(a.iso, ta);
 }
 
 export const TOOL_LABEL: Record<string, string> = {

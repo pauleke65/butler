@@ -9,6 +9,8 @@ export interface FeedRow {
   decision: "ALLOW" | "DENY";
   statusNote?: string;
   ruleText: string;
+  /** a rule (not the default) decided this call */
+  matched: boolean;
   amount?: string;
   title: string;
   /** arrived after the panel's first poll: flashes (DENY) / slides in */
@@ -54,7 +56,8 @@ export function toRow(r: DebugReceipt, fresh: boolean): FeedRow {
     principal: r.authority?.principal ?? "?",
     decision: r.authority?.decision ?? "ALLOW",
     statusNote: r.status === "executed" ? undefined : r.status.replace(/_/g, " "),
-    ruleText: texts[0] ?? (ids[0] ? ids[0] : r.authority?.decision === "DENY" ? "denied by policy" : "no restrictions matched"),
+    ruleText: texts[0] ?? (ids[0] ? ids[0] : r.authority?.decision === "DENY" ? "denied by policy" : "no rule matched"),
+    matched: Boolean(texts[0] ?? ids[0]),
     amount: receiptAmount(r),
     title: r.title,
     fresh,

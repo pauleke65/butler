@@ -14,12 +14,22 @@ const scenario = SCENARIOS.find((s) => s.id === q.get("s")) ?? SCENARIOS[0]!;
 const device = DEVICES[(q.get("device") as DeviceId) ?? "show8"] ?? DEVICES.show8;
 const theme: "light" | "dark" = q.get("theme") === "light" ? "light" : "dark";
 if (q.get("bare")) document.body.classList.add("bare");
+// the host canvas behind the (transparent) inline view
+document.body.style.background = theme === "light" ? "#f3f5f9" : "#173055";
+document.documentElement.style.colorScheme = theme;
 
 const iframe = document.getElementById("view") as HTMLIFrameElement;
 const stage = document.getElementById("stage") as HTMLElement;
 const bar = document.getElementById("bar") as HTMLElement;
-iframe.width = String(device.width);
-iframe.height = String(device.height);
+// The Alexa+ conversation layout gives an add-on view the space right of the reply bubble: the screen minus
+// 296 canvas units (x1.667) of margins and bubble. Fullscreen gets the whole screen.
+const INLINE_W = device.width - Math.round(296 * 1.667);
+const setFrame = (mode: "inline" | "fullscreen"): void => {
+  iframe.width = String(mode === "fullscreen" ? device.width : INLINE_W);
+  iframe.height = String(device.height);
+  document.body.dataset["mode"] = mode;
+};
+setFrame("inline");
 
 const fit = (): void => {
   if (!q.get("fit")) return;
@@ -71,6 +81,7 @@ async function main(): Promise<void> {
   bridge.onrequestdisplaymode = async ({ mode }) => {
     const granted = mode === "pip" ? "inline" : mode;
     hostContext.displayMode = granted;
+    setFrame(granted);
     bridge.setHostContext(hostContext);
     await bridge.sendHostContextChange({ displayMode: granted });
     updateBar(`display mode: ${granted}`);

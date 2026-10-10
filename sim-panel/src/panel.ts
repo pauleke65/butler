@@ -4,39 +4,54 @@ import type { DebugReceipt, DebugRule, Panel, PanelCtx } from "./types";
 const DEFAULT_URL = "http://localhost:8085";
 const DEFAULT_TOKEN = "local-debug-token";
 const POLL_MS = 1000;
+const FEED_ROWS = 5;
 
 const CSS = `
 :host{display:block}
 *{box-sizing:border-box}
-.wrap{font:12px/1.4 ui-sans-serif,system-ui,sans-serif;color:#e7edf8;padding:8px 12px 12px}
-.bar{display:flex;align-items:center;gap:8px;color:#8ea3c4;font-size:11px;margin:2px 0 8px}
-.dot{width:8px;height:8px;border-radius:50%;background:#34d399}.dot.off{background:#f87171}
-h3{margin:12px 0 6px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#8ea3c4;font-weight:600}
-.feed{display:flex;flex-direction:column;gap:4px}
-.row{display:grid;grid-template-columns:auto 1fr auto;gap:1px 10px;padding:5px 10px;border-radius:10px;background:#111a2e;border:1px solid #1c2a47;align-items:center}
-.row.deny{background:rgba(248,113,113,.10);border-color:rgba(248,113,113,.45)}
-.row.fresh{animation:slide .35s ease-out}
-.row.deny.fresh{animation:slide .35s ease-out,flash 1.2s ease-out}
-@keyframes slide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
-@keyframes flash{0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,0)}20%,60%{box-shadow:0 0 0 3px rgba(248,113,113,.9);background:rgba(248,113,113,.45)}}
-@media (prefers-reduced-motion:reduce){.row.fresh,.row.deny.fresh{animation:none}.rule.new{animation:none}}
-.badge{font-weight:700;font-size:11px;padding:2px 8px;border-radius:6px;letter-spacing:.04em}
-.badge.allow{background:rgba(52,211,153,.16);color:#6ee7b7}.badge.deny{background:#ef4444;color:#fff}
-.tool{font:600 12px ui-monospace,Menlo,monospace;color:#f1f5f9}.tool small{color:#8ea3c4;font-weight:400}
-.meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 10px;color:#9fb0cc;font-size:11px}
-.chip{background:rgba(255,255,255,.06);border-radius:5px;padding:0 6px;font-size:10px;color:#b6c4dc}
-.amount{font:700 13px ui-monospace,Menlo,monospace;color:#fcd34d;white-space:nowrap}
-.rulet{color:#cbd5e1;font-style:italic}.time{color:#6b7fa3;font:11px ui-monospace,Menlo,monospace}
-.empty{color:#6b7fa3;padding:6px 2px}
-.rules{display:flex;flex-direction:column;gap:5px}
-.rule{display:flex;gap:8px;align-items:center;padding:6px 9px;border-radius:8px;background:#0f1730;border:1px solid #1c2a47}
-.rule.inactive{opacity:.55}
-.rule.new{border-color:#38bdf8;background:rgba(56,189,248,.14);animation:glow 1.6s ease-in-out 3}
-@keyframes glow{50%{box-shadow:0 0 0 3px rgba(56,189,248,.55)}}
-.tag{font-size:9px;font-weight:700;letter-spacing:.08em;padding:1px 6px;border-radius:5px;background:#38bdf8;color:#04283a}
-.effect{font-size:10px;padding:1px 6px;border-radius:5px;background:rgba(255,255,255,.07);color:#b6c4dc;white-space:nowrap}
-.effect.never{background:rgba(248,113,113,.2);color:#fca5a5}.effect.ask_first{background:rgba(251,191,36,.16);color:#fcd34d}
-.err{margin:6px 0;padding:6px 8px;border-radius:8px;background:rgba(248,113,113,.14);color:#fecaca}
+.wrap{font:13px/1.4 Figtree,"Amazon Ember",system-ui,sans-serif;color:#eceef2;padding:16px 16px 18px;-webkit-font-smoothing:antialiased}
+.head{display:flex;align-items:center;gap:11px;margin:0 0 4px}
+.mark{width:30px;height:30px;border-radius:9px;background:#ff7a1a;display:grid;place-items:center;flex:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 14px -6px rgba(255,122,26,.7)}
+.mark i{width:9px;height:9px;border-radius:50%;background:#2a1204;box-shadow:0 0 0 2px rgba(42,18,4,.25)}
+.mark.live i{animation:rec 1.6s ease-in-out infinite}
+@keyframes rec{50%{opacity:.35}}
+.title{font-size:15px;font-weight:650;letter-spacing:-.01em;line-height:1.15}
+.bar{display:flex;align-items:center;gap:6px;color:#8a909c;font-size:12px}
+.dot{display:none}.dot.off{display:inline-block;width:7px;height:7px;border-radius:50%;background:#ff8f8f}
+h3{margin:16px 0 8px;font-size:12px;font-weight:600;color:#b5bac4;display:flex;align-items:baseline;gap:6px}
+h3 span{color:#7b818d;font-weight:500;font-variant-numeric:tabular-nums}
+.feed,.rules{display:flex;flex-direction:column;gap:6px}
+.row{padding:9px 11px 10px;border-radius:14px;background:#1b1e23;display:flex;flex-direction:column;gap:4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+.top{display:flex;align-items:center;gap:8px}
+.badge{font:500 12px/1.2 Figtree,system-ui,sans-serif;flex:none}
+.badge.allow{color:#7b818d}
+.badge.deny{font-weight:700;background:#e5484d;color:#fff;padding:3px 8px;border-radius:99px}
+.tool{flex:1;min-width:0;font:600 12.5px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;color:#d6d9df;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tool small{font:500 11.5px Figtree,system-ui,sans-serif;color:#7b818d}
+.amount{font-weight:600;font-size:13px;color:#eceef2;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rulet{color:#b5bac4;font-size:12.5px;line-height:1.35}
+.meta{display:flex;flex-wrap:wrap;gap:2px 8px;color:#7b818d;font-size:11.5px}
+.time{font-variant-numeric:tabular-nums}
+.row.deny{background:#3a1519}
+.row.deny .rulet{color:#ffd9dc}
+.row.deny .tool{color:#fff}
+.row.deny .meta{color:#c79197}
+.row.fresh{animation:rise .42s cubic-bezier(.16,1,.3,1) both}
+.row.deny.fresh{animation:rise .42s cubic-bezier(.16,1,.3,1) both,deny 2.4s cubic-bezier(.16,1,.3,1) both}
+@keyframes rise{from{opacity:.3;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes deny{0%{background:#9b2230}100%{background:#3a1519}}
+.rule{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:12px;background:#1b1e23;font-size:12.5px;line-height:1.35;color:#d6d9df}
+.rule .text{flex:1}
+.rule.inactive{opacity:.5}
+.rule.new{background:#2a2622;color:#fff}
+.rule.new.fresh{animation:newrule 2.4s cubic-bezier(.16,1,.3,1) both}
+@keyframes newrule{0%{background:#6b3a14}100%{background:#2a2622}}
+.tag{font:700 10px/1 Figtree,system-ui,sans-serif;letter-spacing:.04em;padding:4px 7px;border-radius:99px;background:#ff7a1a;color:#2a1204;flex:none}
+.effect{font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px;background:#24272d;color:#b5bac4;white-space:nowrap;flex:none}
+.effect.never{background:#3a1a1f;color:#ff9a9a}.effect.ask_first{background:#33291a;color:#ffc56b}.effect.allow{background:#16302a;color:#6fd8a4}
+.empty{color:#7b818d;font-size:12.5px;padding:4px 2px}
+.err{margin:10px 0 0;padding:8px 10px;border-radius:12px;background:#3a1a1f;color:#ffd9dc;font-size:12px;word-break:break-word}
+@media (prefers-reduced-motion:reduce){.row.fresh,.row.deny.fresh,.rule.new.fresh,.mark.live i{animation:none}}
 `;
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string): HTMLElementTagNameMap[K] {
@@ -46,45 +61,48 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: 
   return e;
 }
 
+const EFFECT_LABEL: Record<string, string> = { ask_first: "Ask first", never: "Never", allow: "Allowed" };
+
 export function renderFeedRow(r: FeedRow): HTMLElement {
   const row = el("div", `row ${r.decision === "DENY" ? "deny" : "allow"}${r.fresh ? " fresh" : ""}`);
   row.dataset.testid = "feed-row";
   row.dataset.decision = r.decision;
-  const tool = el("div", "tool");
-  tool.append(r.tool);
-  if (r.target) tool.append(" ", Object.assign(el("small", "", `· ${r.target}`)));
-  const badge = el("span", `badge ${r.decision === "DENY" ? "deny" : "allow"}`, r.decision);
+  const top = el("div", "top");
+  // the DENY is the only filled mark on the card; allowed calls just say so
+  const badge = el("span", `badge ${r.decision === "DENY" ? "deny" : "allow"}`, r.decision === "DENY" ? "Denied" : "Allowed");
   badge.dataset.testid = "decision-badge";
-  const right = el("div");
-  right.style.cssText = "display:flex;gap:8px;align-items:center";
+  const tool = el("span", "tool");
+  tool.append(r.tool);
+  if (r.target) tool.append(" ", el("small", "", r.target));
+  tool.title = r.target ? `${r.target}___${r.tool}` : r.tool;
+  top.append(tool, badge);
   if (r.amount) {
     const a = el("span", "amount", r.amount);
     a.dataset.testid = "amount";
-    right.append(a);
+    top.append(a);
   }
-  right.append(badge);
-  const left = el("div");
-  left.append(tool);
-  const t = el("span", "time", r.time);
-  row.append(t, left, right);
   const meta = el("div", "meta");
-  const rule = el("span", "rulet", `“${r.ruleText}”`);
-  rule.dataset.testid = "rule-text";
-  meta.append(el("span", "chip", r.principal), rule);
-  if (r.statusNote) meta.append(el("span", "chip", r.statusNote));
-  row.append(meta);
+  meta.append(el("span", "", r.principal), el("span", "time", r.time));
+  if (r.statusNote) meta.append(el("span", "", r.statusNote));
+  if (r.matched) {
+    const rule = el("div", "rulet", `“${r.ruleText}”`);
+    rule.dataset.testid = "rule-text";
+    row.append(top, rule, meta);
+  } else {
+    const none = el("span", "", r.ruleText);
+    none.dataset.testid = "rule-text";
+    meta.append(none);
+    row.append(top, meta);
+  }
   return row;
 }
 
-export function renderRuleRow(r: RuleRow): HTMLElement {
-  const row = el("div", `rule${r.isNew ? " new" : ""}${r.active ? "" : " inactive"}`);
+export function renderRuleRow(r: RuleRow, animate = false): HTMLElement {
+  const row = el("div", `rule${r.isNew ? " new" : ""}${r.isNew && animate ? " fresh" : ""}${r.active ? "" : " inactive"}`);
   row.dataset.testid = "rule-row";
   row.dataset.new = String(r.isNew);
   if (r.isNew) row.append(el("span", "tag", "NEW"));
-  const text = el("span", "", r.text);
-  text.style.flex = "1";
-  row.append(text, el("span", `effect ${r.effect}`, r.effect.replace("_", " ")));
-  if (!r.active) row.append(el("span", "effect", r.status));
+  row.append(el("span", "text", r.text), el("span", `effect ${r.effect}`, r.active ? (EFFECT_LABEL[r.effect] ?? r.effect) : r.status));
   return row;
 }
 
@@ -156,6 +174,7 @@ export class DebugPoller {
 export const panel: Panel = {
   id: "butler-black-box",
   title: "Butler Black Box",
+  chrome: "bare",
   mount(host, ctx) {
     const base = (ctx.env.DEBUG_API_URL ?? DEFAULT_URL).replace(/\/$/, "");
     const token = ctx.env.DEBUG_API_TOKEN ?? DEFAULT_TOKEN;
@@ -163,20 +182,54 @@ export const panel: Panel = {
     const style = el("style");
     style.textContent = CSS;
     const wrap = el("div", "wrap");
+    // a flight recorder: recorder-orange mark, then the tape of decisions
+    const head = el("div", "head");
+    const mark = el("span", "mark");
+    mark.append(el("i"));
+    const names = el("div");
     const bar = el("div", "bar");
     const dot = el("span", "dot off");
-    const status = el("span", "", "connecting…");
+    const status = el("span", "", "Connecting…");
     bar.append(dot, status);
+    names.append(el("div", "title", "Black Box"), bar);
+    head.append(mark, names);
     const err = el("div", "err");
     err.hidden = true;
-    const feedTitle = el("h3", "", "Policy decisions (live)");
+    const feedTitle = el("h3", "", "Gateway decisions");
+    const feedCount = el("span");
+    feedTitle.append(feedCount);
     const feed = el("div", "feed");
     feed.dataset.testid = "feed";
-    const rulesTitle = el("h3", "", "Active rules");
+    const rulesTitle = el("h3", "", "Rules in force");
+    const ruleCount = el("span");
+    rulesTitle.append(ruleCount);
     const rules = el("div", "rules");
     rules.dataset.testid = "rules";
-    wrap.append(bar, err, feedTitle, feed, rulesTitle, rules);
+    wrap.append(head, err, feedTitle, feed, rulesTitle, rules);
     root.append(style, wrap);
+
+    // Animate each arrival once; repaints after that keep the row's colour but not the motion.
+    const shownRows = new Set<string>();
+    const shownRules = new Set<string>();
+    const attention = (tone: "alert" | "info") => host.dispatchEvent(new CustomEvent("panel-attention", { bubbles: true, composed: true, detail: { tone } }));
+    const paintRules = () => {
+      const rr = poller.rules.rows();
+      let fresh = false;
+      rules.replaceChildren(
+        ...(rr.length
+          ? rr.map((r) => {
+              const first = r.isNew && !shownRules.has(r.id);
+              if (first) {
+                shownRules.add(r.id);
+                fresh = true;
+              }
+              return renderRuleRow(r, first);
+            })
+          : [el("div", "empty", "No rules loaded.")]),
+      );
+      ruleCount.textContent = String(poller.rules.activeCount);
+      return fresh;
+    };
 
     let lastError: string | undefined;
     const poller = new DebugPoller({
@@ -187,22 +240,26 @@ export const panel: Panel = {
         lastError = m;
       },
       onUpdate: () => {
-        const rows = poller.receipts.rows(20);
-        feed.replaceChildren(...(rows.length ? rows.map(renderFeedRow) : [el("div", "empty", "No actions yet. Decisions appear here the moment the agent calls a tool.")]));
-        const rr = poller.rules.rows();
-        rules.replaceChildren(...(rr.length ? rr.map(renderRuleRow) : [el("div", "empty", "No rules loaded.")]));
+        const rows = poller.receipts.rows(FEED_ROWS).map((r) => {
+          const first = r.fresh && !shownRows.has(r.id);
+          shownRows.add(r.id);
+          return { ...r, fresh: first };
+        });
+        feed.replaceChildren(...(rows.length ? rows.map(renderFeedRow) : [el("div", "empty", "No actions yet. Every tool call the agent makes shows up here with the gateway's decision.")]));
+        const newRule = paintRules();
+        if (rows.some((r) => r.fresh && r.decision === "DENY")) attention("alert");
+        else if (rows.some((r) => r.fresh) || newRule) attention("info");
         dot.className = lastError ? "dot off" : "dot";
-        status.textContent = lastError ? "debug API unreachable" : `live · ${poller.receipts.size} receipts · ${poller.rules.activeCount} active rules · polling 1 s`;
+        status.textContent = lastError ? "Debug API unreachable" : "Recording every gateway decision";
+        mark.className = lastError ? "mark" : "mark live";
+        feedCount.textContent = String(poller.receipts.size);
         err.hidden = !lastError;
         err.textContent = lastError ? `${base}: ${lastError}` : "";
       },
     });
     poller.start();
-    // keep "NEW" highlight accurate without waiting for the next poll
-    const tick = setInterval(() => {
-      const rr = poller.rules.rows();
-      rules.replaceChildren(...rr.map(renderRuleRow));
-    }, 2500);
+    // keep the "NEW" highlight accurate without waiting for the next poll
+    const tick = setInterval(paintRules, 2500);
     return () => {
       poller.stop();
       clearInterval(tick);

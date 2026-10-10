@@ -1,8 +1,8 @@
 /** ui://butler/options: a carousel of choices for one pending decision. Choose -> answer_decision. */
 import { useState } from "preact/hooks";
-import { fmtMoney } from "../format";
+import { Check, Shield } from "../icons";
 import type { Data, Decision, DecisionOption, HostApi, Receipt, ViewProps } from "../types";
-import { Button, Chip, ErrorBox, Say, SimulatedBadge, Skeleton } from "../ui";
+import { Button, ErrorBox, Money, SimulatedBadge, Skeleton, stripDot } from "../ui";
 import { ReceiptCard } from "./receipt";
 
 export interface DecisionResult {
@@ -11,19 +11,24 @@ export interface DecisionResult {
   spoken: string;
 }
 
-export function OptionCard(props: { option: DecisionOption; suggested: boolean; busy: boolean; disabled: boolean; onChoose: () => void }) {
+export function OptionCard(props: { option: DecisionOption; suggested: boolean; busy: boolean; disabled: boolean; onChoose: () => void; labelSimulated?: boolean }) {
   const { option: o } = props;
+  const sim = o.simulated && props.labelSimulated !== false;
   return (
-    <article class={`card ${props.suggested ? "selected" : ""}`} aria-label={o.title}>
-      <h2>{o.title}</h2>
-      {o.subtitle ? <p class="dim">{o.subtitle}</p> : null}
-      <div class="row spread">
-        {o.price ? <div class="price">{fmtMoney(o.price)}</div> : <span />}
-        {o.simulated ? <SimulatedBadge /> : null}
+    <article class={`card option${props.suggested ? " suggested tabbed" : ""}`} aria-label={props.suggested ? `${o.title}, suggested` : o.title}>
+      {props.suggested ? <span class="tab good">Suggested</span> : null}
+      <div class="stack">
+        <h2>{o.title}</h2>
+        {o.subtitle ? <p class="sub">{o.subtitle}</p> : null}
       </div>
-      <p class="grow">{o.tradeoff}</p>
-      {props.suggested ? <Chip kind="active">Suggested</Chip> : null}
-      <Button variant="primary" block busy={props.busy} disabled={props.disabled} onClick={props.onChoose}>
+      <Money m={o.price} />
+      <p class="meta grow">{o.tradeoff}</p>
+      {sim ? (
+        <div class="row tight wrap">
+          <SimulatedBadge />
+        </div>
+      ) : null}
+      <Button variant="cta" block busy={props.busy} disabled={props.disabled} onClick={props.onChoose}>
         Choose
       </Button>
     </article>
@@ -52,48 +57,56 @@ export function DecisionPanel(props: { decision: Decision; host: HostApi; onResu
   if (d.kind === "approve_action") {
     const o = d.options[0];
     return (
-      <article class="card pinned" aria-label="Approval needed">
-        <div class="row wrap">
-          <h1 class="grow">{d.question}</h1>
-          {o?.simulated ? <SimulatedBadge /> : null}
-        </div>
+      <article class="card tabbed" aria-label="Approval needed">
+        <span class="tab warn">Needs your OK</span>
+        <header>
+          <h1>{d.question}</h1>
+          <Money m={o?.price} />
+        </header>
         {o ? (
-          <div class="row spread wrap">
-            <p class="dim grow">{o.action_draft?.summary ?? o.title}</p>
-            {o.price ? <div class="price">{fmtMoney(o.price)}</div> : null}
+          <div class="row tight wrap">
+            <p class="dim body2">{o.action_draft?.summary ?? o.title}</p>
+            {o.simulated ? <SimulatedBadge /> : null}
           </div>
         ) : null}
         {d.reason_held ? (
-          <p class="meta">
-            <span class="badge held">Held</span> by your rule: {d.reason_held.rule_text}
-          </p>
+          <div class="tile warn row tight held-by">
+            <Shield size={15} />
+            <span class="body2">Held by your rule “{stripDot(d.reason_held.rule_text)}”</span>
+          </div>
         ) : null}
         {error ? <ErrorBox message={error} /> : null}
-        <div class="row wrap">
-          <Button variant="primary" busy={busy === "approve"} disabled={busy !== undefined} onClick={() => answer("approve", "approve")}>
-            Approve
-          </Button>
+        <div class="row end wrap">
           <Button busy={busy === "reject"} disabled={busy !== undefined} onClick={() => answer("reject", "reject")}>
             Skip it
+          </Button>
+          <Button variant="primary" icon={<Check size={14} />} busy={busy === "approve"} disabled={busy !== undefined} onClick={() => answer("approve", "approve")}>
+            Approve
           </Button>
         </div>
       </article>
     );
   }
 
+  // one label for the whole set when every provider is simulated
+  const allSimulated = d.options.length > 0 && d.options.every((o) => o.simulated);
   return (
-    <section class="stack" style={{ gap: "var(--space-2)" }} aria-label="Options">
-      <h1>{d.question}</h1>
+    <section class="view" aria-label="Options">
+      <div class="row spread on-canvas">
+        <h1>{d.question}</h1>
+        {allSimulated ? <SimulatedBadge /> : null}
+      </div>
       {error ? <ErrorBox message={error} /> : null}
-      <div class="carousel" role="list">
-        {d.options.map((o) => (
-          <div role="listitem" key={o.option_id} style={{ display: "flex" }}>
+      <div class={`carousel${d.default_option_id ? " tabs" : ""}`} role="list">
+        {d.options.map((o, i) => (
+          <div role="listitem" key={o.option_id} class="rise" style={{ animationDelay: `${i * 60}ms` }}>
             <OptionCard
               option={o}
               suggested={o.option_id === d.default_option_id}
               busy={busy === o.option_id}
               disabled={busy !== undefined}
               onChoose={() => answer(o.option_id, o.option_id)}
+              labelSimulated={!allSimulated}
             />
           </div>
         ))}
@@ -104,9 +117,14 @@ export function DecisionPanel(props: { decision: Decision; host: HostApi; onResu
 
 export function ResultPanel({ result, host }: { result: DecisionResult; host: HostApi }) {
   return (
-    <section class="stack" style={{ gap: "var(--space-2)" }}>
-      {result.receipt ? <ReceiptCard receipt={result.receipt} host={host} /> : <div class="notice">{result.spoken}</div>}
-      <Say text={result.spoken} />
+    <section class="view">
+      {result.spoken ? (
+        <div class="notice good row tight" role="status">
+          <Check size={15} />
+          <span>{result.spoken}</span>
+        </div>
+      ) : null}
+      {result.receipt ? <ReceiptCard receipt={result.receipt} host={host} /> : null}
     </section>
   );
 }
@@ -124,10 +142,5 @@ export function OptionsView({ data, error, host }: ViewProps) {
   if (!data) return <Skeleton lines={2} />;
   const decision = decisionOf(data);
   if (!decision) return <div class="view"><div class="notice">{data.spoken_summary || "Nothing is waiting on you."}</div></div>;
-  return (
-    <div class="view">
-      {result ? <ResultPanel result={result} host={host} /> : <DecisionPanel decision={decision} host={host} onResult={setResult} />}
-      {result ? null : <Say text={data.spoken_summary} />}
-    </div>
-  );
+  return <div class="view">{result ? <ResultPanel result={result} host={host} /> : <DecisionPanel decision={decision} host={host} onResult={setResult} />}</div>;
 }

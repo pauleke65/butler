@@ -1,8 +1,9 @@
 /** ui://butler/actions: ranked receipts as a carousel; "See more" goes fullscreen with a filterable ledger. */
 import { useEffect, useState } from "preact/hooks";
 import { fmtMoney, fmtWhen, TOOL_LABEL } from "../format";
+import { Alert, Expand } from "../icons";
 import type { Data, Receipt, ViewProps } from "../types";
-import { authorityOf, AuthorityBadge, Button, Chip, ErrorBox, Say, SimulatedBadge, Skeleton } from "../ui";
+import { authorityOf, AuthorityLine, Button, ErrorBox, Money, SimulatedBadge, Skeleton } from "../ui";
 import { ReceiptCard } from "./receipt";
 
 const FILTERS = [
@@ -12,18 +13,31 @@ const FILTERS = [
   { id: "blocked", label: "Held or blocked" },
 ] as const;
 
+const HEADING: Record<string, string> = {
+  might_disagree: "You might disagree with",
+  blocked: "Held or blocked",
+  purchases: "Purchases and bookings",
+};
+
 function ActionCard({ r, onOpen, tz }: { r: Receipt; onOpen: () => void; tz?: string | undefined }) {
+  const flagged = r.might_disagree.score >= 0.3 && r.might_disagree.top_reason;
   return (
-    <button type="button" class="card" style={{ textAlign: "left", font: "inherit", color: "inherit", cursor: "pointer", width: "100%" }} onClick={onOpen} aria-label={`${r.title}. Tap for details`}>
-      <div class="row spread wrap">
-        <span class="meta">{TOOL_LABEL[r.action.tool] ?? "Action"} · {fmtWhen(r.created_at, tz)}</span>
-        {r.simulated ? <SimulatedBadge /> : null}
-      </div>
-      <h2>{r.title}</h2>
-      {r.cost ? <div class="price">{fmtMoney(r.cost)}</div> : null}
-      <p class="grow dim">{r.reasons[0] ?? ""}</p>
-      <AuthorityBadge receipt={r} />
-      {r.might_disagree.score >= 0.3 && r.might_disagree.top_reason ? <Chip kind="needs_you">{r.might_disagree.top_reason}</Chip> : null}
+    <button type="button" class={`card action tap${flagged ? " tabbed" : ""}`} onClick={onOpen} aria-label={`${r.title}. Tap for details`}>
+      {flagged ? <span class="tab warn">Worth a look</span> : null}
+      <span class="stack">
+        <span class="t2">{r.title}</span>
+        <span class="meta">{[TOOL_LABEL[r.action.tool] ?? "Action", fmtWhen(r.created_at, tz), r.simulated ? "Simulated" : ""].filter(Boolean).join(" · ")}</span>
+      </span>
+      <Money m={r.cost} />
+      {flagged ? (
+        <span class="flag body2">
+          <Alert size={14} />
+          <span>{r.might_disagree.top_reason}</span>
+        </span>
+      ) : (
+        <span class="meta grow">{r.reasons[0] ?? ""}</span>
+      )}
+      <AuthorityLine receipt={r} />
     </button>
   );
 }
@@ -31,15 +45,15 @@ function ActionCard({ r, onOpen, tz }: { r: Receipt; onOpen: () => void; tz?: st
 function LedgerRow({ r, onOpen, tz }: { r: Receipt; onOpen: () => void; tz?: string | undefined }) {
   const a = authorityOf(r);
   return (
-    <button type="button" class="card" style={{ textAlign: "left", font: "inherit", color: "inherit", cursor: "pointer", width: "100%", flexDirection: "row", alignItems: "center", padding: "var(--space-2) var(--space-3)" }} onClick={onOpen} aria-label={`${r.title}. Tap for details`}>
-      <span class={`badge ${a.kind}`} style={{ minWidth: "7.5em", justifyContent: "center" }}>{a.label}</span>
-      <span class="grow stack" style={{ gap: 2 }}>
-        <strong>{r.title}</strong>
+    <button type="button" class="ledger-row tap" onClick={onOpen} aria-label={`${r.title}. Tap for details`}>
+      <span class={`chip ${a.kind}`}>{a.label}</span>
+      <span class="grow stack">
+        <span class="need-label">{r.title}</span>
         <span class="meta">{r.reasons[0] ?? ""}</span>
       </span>
-      {r.simulated ? <SimulatedBadge /> : null}
-      <span class="price" style={{ minWidth: "4em", textAlign: "right" }}>{fmtMoney(r.cost)}</span>
-      <span class="meta" style={{ minWidth: "7em", textAlign: "right" }}>{fmtWhen(r.created_at, tz)}</span>
+      {r.simulated ? <SimulatedBadge /> : <span />}
+      <span class="price small">{fmtMoney(r.cost)}</span>
+      <span class="meta when">{fmtWhen(r.created_at, tz)}</span>
     </button>
   );
 }
@@ -67,8 +81,8 @@ function Ledger(props: { initialFilter: string; host: ViewProps["host"]; onOpen:
   }, []);
 
   return (
-    <section class="stack" style={{ gap: "var(--space-2)" }} aria-label="Ledger">
-      <div class="ledger-head stack" style={{ gap: "var(--space-2)" }}>
+    <section class="view" aria-label="Ledger">
+      <div class="ledger-head stack" style={{ gap: "var(--s-12)" }}>
         <h1>Everything Butler did</h1>
         <div class="filters" role="group" aria-label="Filter">
           {FILTERS.map((f) => (
@@ -80,9 +94,13 @@ function Ledger(props: { initialFilter: string; host: ViewProps["host"]; onOpen:
       </div>
       {error ? <ErrorBox message={error} /> : null}
       {rows === undefined ? <Skeleton lines={4} /> : null}
-      {rows?.length === 0 ? <div class="notice">Nothing here yet.</div> : null}
-      <div class="list">{rows?.map((r) => <LedgerRow key={r.action_id} r={r} onOpen={() => props.onOpen(r)} tz={host.timeZone} />)}</div>
-      {cursor ? <Button busy={busy} onClick={() => load(filter, cursor)}>Load more</Button> : null}
+      {rows?.length === 0 ? <div class="notice">Nothing matches this filter yet.</div> : null}
+      {rows?.length ? (
+        <div class="card ledger">
+          {rows.map((r) => <LedgerRow key={r.action_id} r={r} onOpen={() => props.onOpen(r)} tz={host.timeZone} />)}
+        </div>
+      ) : null}
+      {cursor ? <div><Button busy={busy} onClick={() => load(filter, cursor)}>Load more</Button></div> : null}
     </section>
   );
 }
@@ -120,35 +138,29 @@ export function ActionsView({ data, error, host }: ViewProps) {
     );
   }
   if (ledger || host.displayMode === "fullscreen") {
-    return (
-      <div class="view">
-        <Ledger initialFilter={filter} host={host} onOpen={open} />
-      </div>
-    );
+    return <Ledger initialFilter={filter} host={host} onOpen={open} />;
   }
 
   return (
     <div class="view">
-      <header class="row spread wrap">
-        <h1>{filter === "might_disagree" ? "You might disagree with" : filter === "blocked" ? "Held or blocked" : filter === "purchases" ? "Purchases and bookings" : "What Butler did"}</h1>
-        <span class="meta">{total} in total</span>
+      <header class="row spread on-canvas">
+        <h1>{HEADING[filter] ?? "What Butler did"}</h1>
+        <Button variant="quiet" icon={<Expand size={13} />} busy={busy} onClick={seeMore} label={`See more: all ${total}`}>
+          See more
+        </Button>
       </header>
       {problem ? <ErrorBox message={problem} /> : null}
       {actions.length === 0 ? (
         <div class="notice">{data.spoken_summary}</div>
       ) : (
-        <div class="carousel" role="list">
-          {actions.map((r) => (
-            <div role="listitem" key={r.action_id} style={{ display: "flex" }}>
+        <div class={`carousel${actions.some((r) => r.might_disagree.score >= 0.3 && r.might_disagree.top_reason) ? " tabs" : ""}`} role="list">
+          {actions.map((r, i) => (
+            <div role="listitem" key={r.action_id} class="rise" style={{ animationDelay: `${i * 60}ms` }}>
               <ActionCard r={r} onOpen={() => void open(r)} tz={host.timeZone} />
             </div>
           ))}
         </div>
       )}
-      <div class="row spread wrap">
-        <Say text={data.spoken_summary} />
-        <Button busy={busy} onClick={seeMore}>See more</Button>
-      </div>
     </div>
   );
 }

@@ -62,7 +62,7 @@ export function ElicitationModal({ req, onAnswer }: { req: ElicitationRequestInf
             <FormFields schema={req.requestedSchema} values={values} setValues={setValues} />
             <div className="mt-6 flex justify-end gap-2">
               <button type="button" onClick={() => onAnswer(req.id, { action: "decline" })} className="rounded-lg border border-line px-4 py-2 text-sm hover:bg-white/5">Decline</button>
-              <button type="button" data-testid="elicit-submit" disabled={!ready} onClick={() => onAnswer(req.id, { action: "accept", content: values })} className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 disabled:opacity-40">Submit</button>
+              <button type="button" data-testid="elicit-submit" disabled={!ready} onClick={() => onAnswer(req.id, { action: "accept", content: values })} className="rounded-full bg-accent px-5 py-2 text-sm font-semibold text-on-accent disabled:opacity-40">Submit</button>
             </div>
           </>
         ) : (
@@ -73,7 +73,7 @@ export function ElicitationModal({ req, onAnswer }: { req: ElicitationRequestInf
             </div>
             <div className="mt-6 flex justify-end gap-2">
               <button type="button" onClick={() => onAnswer(req.id, { action: "decline" })} className="rounded-lg border border-line px-4 py-2 text-sm hover:bg-white/5">Cancel</button>
-              <button type="button" data-testid="elicit-open" onClick={() => { if (req.url) window.open(req.url, "_blank", "noopener,noreferrer"); onAnswer(req.id, { action: "accept" }); }} className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950">Continue to {host}</button>
+              <button type="button" data-testid="elicit-open" onClick={() => { if (req.url) window.open(req.url, "_blank", "noopener,noreferrer"); onAnswer(req.id, { action: "accept" }); }} className="rounded-full bg-accent px-5 py-2 text-sm font-semibold text-on-accent">Continue to {host}</button>
             </div>
           </>
         )}

@@ -1,8 +1,9 @@
-/** ui://butler/plan: the plan as a list. needs_you is pinned on top; Answer opens the decision, Details explains the action. */
+/** ui://butler/plan: the plan as a list. needs_you is pinned on top; Answer opens the decision, a done row opens its receipt. */
 import { useState } from "preact/hooks";
 import { planWhen } from "../format";
+import { ArrowLeft, Bag, Calendar, Cloud, Dot, Mail, Sparkle } from "../icons";
 import type { Data, Decision, Need, Plan, Receipt, ViewProps } from "../types";
-import { Button, ErrorBox, NeedChip, Say, SimulatedBadge, Skeleton } from "../ui";
+import { Button, ErrorBox, NeedChip, SimulatedBadge, Skeleton } from "../ui";
 import { DecisionPanel, ResultPanel, type DecisionResult } from "./options";
 import { ReceiptCard } from "./receipt";
 
@@ -13,6 +14,37 @@ function sortNeeds(needs: Need[]): Need[] {
   return [...needs].sort((a, b) => rank[a.status] - rank[b.status]);
 }
 
+const LEAD: Record<string, (p: { size?: number }) => preact.JSX.Element> = {
+  messages: Mail,
+  calendar: Calendar,
+  supplies: Bag,
+  services: Sparkle,
+  context: Cloud,
+};
+
+function Lead({ n }: { n: Need }) {
+  const Icon = LEAD[n.capability] ?? Dot;
+  return (
+    <span class="lead" aria-hidden="true">
+      <Icon size={16} />
+    </span>
+  );
+}
+
+function NeedText({ n }: { n: Need }) {
+  return (
+    <span class="grow stack">
+      <span class="need-label">{n.label}</span>
+      {n.note || SIMULATED_CAPS.has(n.capability) ? (
+        <span class="row tight wrap">
+          {n.note ? <span class="meta">{n.note}</span> : null}
+          {SIMULATED_CAPS.has(n.capability) ? <SimulatedBadge /> : null}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 export function PlanView({ data, error, host }: ViewProps) {
   const [decision, setDecision] = useState<Decision | undefined>();
   const [result, setResult] = useState<DecisionResult | undefined>();
@@ -21,13 +53,21 @@ export function PlanView({ data, error, host }: ViewProps) {
   const [problem, setProblem] = useState<string | undefined>();
 
   if (error) return <div class="view"><ErrorBox message={error} /></div>;
-  if (!data) return <Skeleton />;
+  if (!data) return <Skeleton lines={4} />;
   const plan = data["plan"] as Plan | undefined;
   if (!plan) return <div class="view"><div class="notice">{data.spoken_summary}</div></div>;
 
   const needs = sortNeeds(plan.needs);
-  const handled = plan.needs.filter((n) => n.status === "done" || n.status === "doing").length;
+  const done = plan.needs.filter((n) => n.status === "done").length;
+  const doing = plan.needs.filter((n) => n.status === "doing").length;
+  // only finished steps count as done; work in flight is said separately
+  const progress =
+    done === plan.needs.length
+      ? `All ${done} done`
+      : [done ? `${done} of ${plan.needs.length} done` : "", doing ? `${doing} under way` : ""].filter(Boolean).join(" · ");
   const when = planWhen(plan.starts_at, plan.ends_at, host.timeZone);
+  // titles like "Dinner for 6, Friday 7 PM" already say when
+  const titleSaysWhen = when !== "" && plan.title.toLowerCase().includes(when.slice(0, 3).toLowerCase());
 
   const answer = async (need: Need) => {
     setBusy(need.need_id);
@@ -68,7 +108,7 @@ export function PlanView({ data, error, host }: ViewProps) {
     return (
       <div class="view">
         <ResultPanel result={result} host={host} />
-        <Button onClick={() => { setResult(undefined); setDecision(undefined); }}>Back to the plan</Button>
+        <div><Button variant="quiet" icon={<ArrowLeft size={13} />} onClick={() => { setResult(undefined); setDecision(undefined); }}>Back to the plan</Button></div>
       </div>
     );
   }
@@ -76,44 +116,49 @@ export function PlanView({ data, error, host }: ViewProps) {
     return (
       <div class="view">
         <DecisionPanel decision={decision} host={host} onResult={setResult} />
-        <div><Button variant="ghost" onClick={() => setDecision(undefined)}>Back</Button></div>
+        <div><Button variant="quiet" icon={<ArrowLeft size={13} />} onClick={() => setDecision(undefined)}>Back</Button></div>
       </div>
     );
   }
 
   return (
     <div class="view">
-      <header class="stack">
-        <h1>{plan.title}</h1>
-        <p class="dim">
-          {[when, `${handled} of ${plan.needs.length} handled`].filter(Boolean).join(" · ")}
-        </p>
-      </header>
-      {problem ? <ErrorBox message={problem} /> : null}
-      <ul class="list" style={{ listStyle: "none", margin: 0, padding: 0 }} aria-label="What Butler is handling">
-        {needs.map((n) => (
-          <li key={n.need_id} class={`card ${n.status === "needs_you" ? "pinned" : ""}`} style={{ padding: "var(--space-2) var(--space-3)" }}>
-            <div class="row">
-              <NeedChip status={n.status} />
-              <div class="grow stack" style={{ gap: 2 }}>
-                <h3>{n.label}</h3>
-                {n.note ? <p class="meta">{n.note}</p> : null}
-              </div>
-              {SIMULATED_CAPS.has(n.capability) ? <SimulatedBadge /> : null}
-              {n.status === "needs_you" ? (
-                <Button variant="primary" busy={busy === n.need_id} onClick={() => answer(n)}>
+      <article class="card" aria-label={plan.title}>
+        <header>
+          <div class="stack">
+            <h1 class="display">{plan.title}</h1>
+            <p class="sub">{[titleSaysWhen ? "" : when, progress].filter(Boolean).join(" · ")}</p>
+          </div>
+        </header>
+        {problem ? <ErrorBox message={problem} /> : null}
+        <ul class="plain needs" aria-label="What Butler is handling">
+          {needs.map((n) =>
+            n.status === "needs_you" ? (
+              <li key={n.need_id} class="need pinned">
+                <Lead n={n} />
+                <NeedText n={n} />
+                <Button variant="cta" busy={busy === n.need_id} onClick={() => answer(n)}>
                   Answer
                 </Button>
-              ) : n.action_ids.length > 0 ? (
-                <Button variant="ghost" busy={busy === n.need_id} onClick={() => details(n)}>
-                  Details
-                </Button>
-              ) : null}
-            </div>
-          </li>
-        ))}
-      </ul>
-      <Say text={data.spoken_summary} />
+              </li>
+            ) : n.action_ids.length > 0 ? (
+              <li key={n.need_id}>
+                <button type="button" class={`need tap need-${n.status}`} aria-busy={busy === n.need_id ? "true" : undefined} aria-label={`${n.label}: details`} onClick={() => details(n)}>
+                  <Lead n={n} />
+                  <NeedText n={n} />
+                  <NeedChip status={n.status} />
+                </button>
+              </li>
+            ) : (
+              <li key={n.need_id} class={`need need-${n.status}`}>
+                <Lead n={n} />
+                <NeedText n={n} />
+                <NeedChip status={n.status} />
+              </li>
+            ),
+          )}
+        </ul>
+      </article>
     </div>
   );
 }

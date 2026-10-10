@@ -7,6 +7,7 @@ import { DARK_STYLE_VARIABLES, ViewHost, type ViewMetrics } from "@/lib/apps-hos
 import type { DeviceSpec } from "@/lib/devices";
 import type { JsonSchema, ToolInfo, ToolResult, UiResourcePayload } from "@/lib/mcp/types";
 import { fetchUiResource } from "@/lib/state/use-simulator";
+import { ShrinkIcon } from "./icons";
 import type { ActiveView } from "@/lib/state/types";
 
 interface Props {
@@ -14,6 +15,8 @@ interface Props {
   tool?: ToolInfo;
   sandboxOrigin: string;
   device: DeviceSpec;
+  /** Inline slot on this screen (device px): the space right of the reply bubble, to the screen edge. */
+  slot: { width: number; maxHeight: number; insetRight: number };
   fullscreen: boolean;
   onCallTool(params: { name: string; arguments?: Record<string, unknown> }): Promise<ToolResult>;
   onRequestDisplayMode(mode: "inline" | "fullscreen" | "pip"): "inline" | "fullscreen";
@@ -27,7 +30,7 @@ interface Props {
  * One MCP App view in a sandbox-proxy iframe (different origin), driven by an AppBridge.
  * The iframe element is stable across inline <-> fullscreen so the view never reloads.
  */
-export function AppView({ view, tool, sandboxOrigin, device, fullscreen, onCallTool, onRequestDisplayMode, onExitFullscreen, onMetrics, onResource, onNote }: Props) {
+export function AppView({ view, tool, sandboxOrigin, device, slot, fullscreen, onCallTool, onRequestDisplayMode, onExitFullscreen, onMetrics, onResource, onNote }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const hostRef = useRef<ViewHost>(undefined);
   const [height, setHeight] = useState(Math.round(device.height * 0.5));
@@ -35,8 +38,8 @@ export function AppView({ view, tool, sandboxOrigin, device, fullscreen, onCallT
   const cb = useRef({ onCallTool, onRequestDisplayMode, onMetrics, onResource, onNote });
   cb.current = { onCallTool, onRequestDisplayMode, onMetrics, onResource, onNote };
 
-  const inlineWidth = Math.round(device.width * 0.86);
-  const maxInlineHeight = Math.round(device.height * 0.78);
+  const inlineWidth = slot.width;
+  const maxInlineHeight = slot.maxHeight;
 
   const hostContext = (mode: "inline" | "fullscreen"): McpUiHostContext => ({
     theme: "dark",
@@ -44,6 +47,8 @@ export function AppView({ view, tool, sandboxOrigin, device, fullscreen, onCallT
     displayMode: mode,
     availableDisplayModes: ["inline", "fullscreen"],
     containerDimensions: mode === "fullscreen" ? { height: device.height, width: device.width } : { maxHeight: maxInlineHeight, width: inlineWidth },
+    // inline, the slot runs to the bezel: the screen margin is a safe area the view pads (and its carousel bleeds into)
+    safeAreaInsets: { top: 0, right: mode === "fullscreen" ? 0 : slot.insetRight, bottom: 0, left: 0 },
     locale: typeof navigator !== "undefined" ? navigator.language : "en-US",
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     platform: "web",
@@ -112,15 +117,17 @@ export function AppView({ view, tool, sandboxOrigin, device, fullscreen, onCallT
 
   const style: React.CSSProperties = fullscreen
     ? { position: "absolute", inset: 0, zIndex: 30, width: "100%", height: "100%" }
-    : { width: inlineWidth, height, maxHeight: maxInlineHeight };
+    : { position: "relative", width: inlineWidth, height, maxHeight: maxInlineHeight };
 
   return (
-    <div data-testid="app-view" data-display-mode={fullscreen ? "fullscreen" : "inline"} className={fullscreen ? "" : "mx-auto overflow-hidden rounded-[28px] ring-1 ring-white/10 transition-[height] duration-300"} style={style}>
+    <div data-testid="app-view" data-display-mode={fullscreen ? "fullscreen" : "inline"} className="overflow-hidden" style={style}>
       <iframe
         ref={iframeRef}
         title={`${view.tool} view`}
         data-testid="app-iframe"
-        className="h-full w-full border-0 bg-transparent"
+        // 2 px of bleed on every side, clipped by the wrapper: a scaled cross-origin frame otherwise shows a
+        // hairline seam along its edges on the device canvas.
+        className="absolute -left-[2px] -top-[2px] h-[calc(100%+4px)] w-[calc(100%+4px)] border-0 bg-transparent"
         referrerPolicy="origin"
       />
       {fullscreen && (
@@ -128,13 +135,14 @@ export function AppView({ view, tool, sandboxOrigin, device, fullscreen, onCallT
           type="button"
           onClick={onExitFullscreen}
           aria-label="Close full screen"
-          className="absolute right-6 top-5 z-40 rounded-full bg-black/60 px-5 py-2 text-[20px] font-medium text-white backdrop-blur hover:bg-black/80"
+          title="Close full screen"
+          className="absolute right-[40px] top-[26px] z-40 grid h-[56px] w-[56px] place-items-center rounded-full bg-[#19283c] text-[#d3ddeb] transition-colors hover:bg-[#22385a]"
         >
-          Close
+          <ShrinkIcon size={26} />
         </button>
       )}
       {error && (
-        <div role="alert" className="absolute inset-0 grid place-items-center bg-slate-950/90 p-8 text-center text-[1.1em] text-red-200">
+        <div role="alert" className="absolute inset-0 grid place-items-center rounded-[36px] bg-[#0e1c30] p-8 text-center text-[1.1em] text-red-200">
           <div>
             <div className="mb-2 text-[1.3em] font-semibold">This view could not be shown</div>
             <div className="font-mono text-[0.75em] opacity-80">{error}</div>

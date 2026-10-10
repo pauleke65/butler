@@ -65,7 +65,7 @@ describe("panel plugin", () => {
     await post("/__mock/receipt", { decision: "DENY", title: "Held: drinks purchase", amount_minor: 3100, rule_ids: ["rule_x"], rule_texts: ["Ask me before buying drinks."] });
     await post("/__mock/rule", { rule_id: "rule_x", text: "Ask me before buying drinks." });
     const deny = await until(() => root.querySelector('[data-testid="feed-row"][data-decision="DENY"]') ?? undefined);
-    expect(deny.querySelector('[data-testid="decision-badge"]')!.textContent).toBe("DENY");
+    expect(deny.querySelector('[data-testid="decision-badge"]')!.textContent).toBe("Denied");
     expect(deny.querySelector('[data-testid="amount"]')!.textContent).toBe("$31.00");
     expect(deny.querySelector('[data-testid="rule-text"]')!.textContent).toContain("Ask me before buying drinks.");
     expect(deny.classList.contains("fresh")).toBe(true);

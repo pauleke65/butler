@@ -1,8 +1,9 @@
 /** ui://butler/rule: one rule, either a draft awaiting "yes" or an active rule. Confirm / Remove. */
 import { useState } from "preact/hooks";
 import { fmtDate } from "../format";
+import { Check, Shield, Undo } from "../icons";
 import type { Data, Rule, ViewProps } from "../types";
-import { Button, Chip, ErrorBox, Say, Skeleton } from "../ui";
+import { Button, Chip, ErrorBox, Skeleton } from "../ui";
 
 export const EFFECT_LABEL: Record<Rule["effect"], string> = { allow: "Allowed", ask_first: "Ask first", never: "Never" };
 
@@ -16,7 +17,7 @@ export function statusOf(rule: Rule, needsConfirmation: boolean): { kind: string
   if (!rule.active && rule.policy_status === "disabled") return { kind: "undone", label: "Removed" };
   if (rule.policy_status === "creating") return { kind: "creating", label: "Starting up" };
   if (rule.policy_status === "failed") return { kind: "blocked", label: "Couldn't start" };
-  if (rule.active) return { kind: "active", label: "Active" };
+  if (rule.active) return { kind: "active", label: "Enforced by the gateway" };
   return { kind: "pending", label: "Draft" };
 }
 
@@ -80,34 +81,43 @@ export function RuleView({ data, error, host }: ViewProps) {
   const isDraft = confirmNeeded && !removing && current.policy_status === "draft";
   return (
     <div class="view">
-      <article class="card" aria-label="Rule">
-        <div class="row wrap">
-          <Chip kind={current.effect}>{EFFECT_LABEL[current.effect]}</Chip>
+      <article class="card rule tabbed" aria-label="Rule">
+        <span class={`tab ${current.effect === "never" ? "bad" : current.effect === "allow" ? "good" : "warn"}`}>{EFFECT_LABEL[current.effect]}</span>
+        <h1 class="rule-text">{current.text}</h1>
+        <div class="row tight wrap">
           <Chip kind={status.kind}>{status.label}</Chip>
+          <span class="row tight meta">
+            <Shield size={13} />
+            <span>{originLine(current, host.timeZone)}</span>
+          </span>
         </div>
-        <h1>{current.text}</h1>
-        <p class="meta">{originLine(current, host.timeZone)}</p>
         {problem ? <ErrorBox message={problem} /> : null}
-        {note ? <div class="notice">{note}</div> : null}
-        <div class="row wrap">
-          {isDraft || removing ? (
-            <Button variant="primary" busy={busy === "confirm"} onClick={confirm}>
-              {removing ? "Confirm removal" : "Confirm"}
-            </Button>
-          ) : null}
-          {current.active && !removing ? (
-            <Button variant="danger" busy={busy === "remove"} onClick={remove}>
-              Remove
-            </Button>
-          ) : null}
-          {undoOffer ? (
-            <Button busy={busy === "undo"} onClick={undo}>
-              {undoOffer.summary}
-            </Button>
-          ) : null}
-        </div>
+        {note ? (
+          <div class="notice good row tight" role="status">
+            <Check size={15} />
+            <span>{note}</span>
+          </div>
+        ) : null}
+        {isDraft || removing || current.active || undoOffer ? (
+          <div class="row tight wrap">
+            {isDraft || removing ? (
+              <Button variant="cta" busy={busy === "confirm"} onClick={confirm}>
+                {removing ? "Confirm removal" : "Confirm"}
+              </Button>
+            ) : null}
+            {undoOffer ? (
+              <Button icon={<Undo size={14} />} busy={busy === "undo"} onClick={undo}>
+                {undoOffer.summary}
+              </Button>
+            ) : null}
+            {current.active && !removing ? (
+              <Button variant="danger" busy={busy === "remove"} onClick={remove}>
+                Remove
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
       </article>
-      <Say text={data.spoken_summary} />
     </div>
   );
 }

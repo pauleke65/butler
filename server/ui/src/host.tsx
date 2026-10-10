@@ -17,17 +17,26 @@ export function outcomeOf<T = Data>(r: ToolResult): CallOutcome<T> {
 }
 
 export function applyTheme(ctx: HostContext): void {
-  const theme = ctx.theme ?? "dark"; // dark is the default for far-field
-  document.documentElement.dataset["theme"] = theme;
+  const root = document.documentElement;
+  root.dataset["theme"] = ctx.theme ?? "dark"; // dark is the default for far-field
+  root.dataset["display"] = ctx.displayMode ?? root.dataset["display"] ?? "inline";
   const insets = ctx.safeAreaInsets;
-  if (insets) document.body.style.padding = `${insets.top}px ${insets.right}px ${insets.bottom}px ${insets.left}px`;
-  // width-driven scale: Echo Show 15 (1920 px) gets 1.25x
-  document.documentElement.style.setProperty("--u", window.innerWidth >= 1600 ? "1.25" : "1");
+  if (insets) {
+    // as variables, so fullscreen can add its own gutter on top (tokens.css)
+    for (const [k, v] of [["t", insets.top], ["r", insets.right], ["b", insets.bottom], ["l", insets.left]] as const) root.style.setProperty(`--inset-${k}`, `${v ?? 0}px`);
+  }
+  applyScale();
+}
+
+/** Alexa+ authors on a 768-unit canvas and zooms 1.667x on Echo Show 8 and 15; narrow hosts get a smaller step. */
+function applyScale(): void {
+  document.documentElement.style.setProperty("--u", window.innerWidth < 560 ? "1.25" : "1.667");
 }
 
 export function startView(View: ComponentType<ViewProps>): MiniApp {
   const root = document.getElementById("app") as HTMLElement;
   applyTheme({});
+  window.addEventListener("resize", applyScale);
 
   let data: Data | null = null;
   let error: string | undefined;

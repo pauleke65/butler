@@ -28,6 +28,8 @@ export interface Panel {
   /** Unique, stable id. */
   id: string;
   title: string;
+  /** "card" (default): the simulator draws a titled, collapsible card. "bare": the card surface only; the panel draws its own header. */
+  chrome?: "card" | "bare";
   /** Render into `el`. May return a cleanup function (sync or async). */
   mount(el: HTMLElement, ctx: PanelCtx): void | (() => void) | Promise<void | (() => void)>;
 }

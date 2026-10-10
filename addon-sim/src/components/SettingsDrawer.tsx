@@ -5,6 +5,7 @@ import { DEVICES, DEVICE_ORDER } from "@/lib/devices";
 import type { ServerConfig } from "@/lib/mcp/types";
 import type { Settings } from "@/lib/state/settings";
 import type { Simulator } from "@/lib/state/use-simulator";
+import { CloseIcon } from "./icons";
 
 const input = "h-9 w-full rounded-md border border-line bg-bg px-2 text-sm text-slate-100 placeholder:text-slate-500";
 const label = "mb-1 block text-[11px] uppercase tracking-wider text-slate-400";
@@ -34,10 +35,10 @@ export function SettingsDrawer({ sim, onClose }: { sim: Simulator; onClose(): vo
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/50" role="dialog" aria-modal="true" aria-label="Settings" onClick={onClose}>
-      <div className="flex h-full w-[480px] max-w-full flex-col border-l border-line bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()} data-no-ptt>
+      <div className="flex h-full w-[480px] max-w-full flex-col bg-surface shadow-[0_0_60px_-10px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()} data-no-ptt>
         <header className="flex items-center justify-between border-b border-line px-4 py-3">
           <h2 className="text-base font-semibold">Settings</h2>
-          <button type="button" onClick={onClose} aria-label="Close settings" className="rounded-md px-2 py-1 text-slate-300 hover:bg-white/10">✕</button>
+          <button type="button" onClick={onClose} aria-label="Close settings" className="grid h-8 w-8 place-items-center rounded-full text-slate-300 hover:bg-surface2"><CloseIcon size={16} /></button>
         </header>
         <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-4 scroll-thin">
           <section>
@@ -96,7 +97,7 @@ export function SettingsDrawer({ sim, onClose }: { sim: Simulator; onClose(): vo
             </div>
             <div className="mt-3 flex gap-2">
               <button type="button" onClick={() => setServers((c) => [...c, blank(c.length + 1)])} className="rounded-md border border-line px-3 py-1.5 text-sm hover:bg-white/5">+ Add server</button>
-              <button type="button" onClick={() => void sim.applyServers(servers)} disabled={sim.connecting} className="rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold text-slate-950 disabled:opacity-50">{sim.connecting ? "Connecting…" : "Save and reconnect"}</button>
+              <button type="button" onClick={() => void sim.applyServers(servers)} disabled={sim.connecting} className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-on-accent disabled:opacity-50">{sim.connecting ? "Connecting…" : "Save and reconnect"}</button>
             </div>
             <p className="mt-2 text-[11px] text-slate-500">Tokens are kept in this browser (localStorage) and sent to the simulator server only to connect.</p>
           </section>

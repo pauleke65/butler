@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { formatReport, runScript, type RunReport, type StepResult } from "@/lib/runner/runner";
 import { ScriptError, parseScript, type Step } from "@/lib/runner/script";
 import type { Simulator } from "@/lib/state/use-simulator";
+import { CloseIcon, PlayIcon, StopIcon } from "./icons";
 
 const SAMPLE = `name: Quick check
 steps:
@@ -68,7 +69,7 @@ export function ScriptPlayer({ sim, onClose }: { sim: Simulator; onClose(): void
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-label="Play script" onClick={() => !running && onClose()} data-no-ptt>
-      <div className="flex max-h-[90vh] w-[980px] max-w-full flex-col rounded-2xl border border-line bg-surface shadow-2xl" onClick={(e) => e.stopPropagation()}>
+      <div className="flex max-h-[90vh] w-[980px] max-w-full flex-col rounded-[24px] bg-surface shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]" onClick={(e) => e.stopPropagation()}>
         <header className="flex items-center gap-3 border-b border-line px-4 py-3">
           <h2 className="text-base font-semibold">Play script</h2>
           <select aria-label="Load a script" className="h-8 rounded-md border border-line bg-bg px-2 text-sm" defaultValue="" onChange={(e) => e.target.value && void load(e.target.value)}>
@@ -77,11 +78,11 @@ export function ScriptPlayer({ sim, onClose }: { sim: Simulator; onClose(): void
           </select>
           <div className="ml-auto flex gap-2">
             {running === undefined ? (
-              <button type="button" onClick={() => void play()} data-testid="play-script" className="rounded-lg bg-sky-500 px-4 py-1.5 text-sm font-semibold text-slate-950">▶ Play</button>
+              <button type="button" onClick={() => void play()} data-testid="play-script" className="flex items-center gap-2 rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-on-accent"><PlayIcon size={14} />Play</button>
             ) : (
-              <button type="button" onClick={() => abort.current?.abort()} className="rounded-lg bg-red-500 px-4 py-1.5 text-sm font-semibold text-white">■ Stop</button>
+              <button type="button" onClick={() => abort.current?.abort()} className="flex items-center gap-2 rounded-full bg-deny px-4 py-1.5 text-sm font-semibold text-white"><StopIcon size={14} />Stop</button>
             )}
-            <button type="button" onClick={onClose} disabled={running !== undefined} aria-label="Close" className="rounded-md px-2 text-slate-300 hover:bg-white/10 disabled:opacity-40">✕</button>
+            <button type="button" onClick={onClose} disabled={running !== undefined} aria-label="Close" className="grid h-8 w-8 place-items-center rounded-full text-slate-300 hover:bg-surface2 disabled:opacity-40"><CloseIcon size={16} /></button>
           </div>
         </header>
         <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 overflow-hidden p-4">

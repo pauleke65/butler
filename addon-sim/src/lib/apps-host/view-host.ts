@@ -13,18 +13,18 @@ const FIRST_RENDER_METHOD = "ui/notifications/sandbox-first-render";
 
 /** Style variables (MCP Apps host styling), dark theme by default. */
 export const DARK_STYLE_VARIABLES: Record<string, string> = {
-  "--color-background-primary": "#0b1220",
-  "--color-background-secondary": "#111a2e",
-  "--color-background-tertiary": "#18233d",
-  "--color-text-primary": "#f1f5f9",
-  "--color-text-secondary": "#cbd5e1",
-  "--color-text-tertiary": "#94a3b8",
-  "--color-border-primary": "#2a3856",
-  "--color-ring-primary": "#38bdf8",
-  "--font-sans": "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
+  "--color-background-primary": "#173055",
+  "--color-background-secondary": "#0e1c30",
+  "--color-background-tertiary": "#132641",
+  "--color-text-primary": "#e9eff8",
+  "--color-text-secondary": "#b7c6da",
+  "--color-text-tertiary": "#8e9fb5",
+  "--color-border-primary": "#1c2e4a",
+  "--color-ring-primary": "#408eff",
+  "--font-sans": "Figtree, 'Amazon Ember', ui-sans-serif, system-ui, sans-serif",
   "--font-mono": "ui-monospace, SFMono-Regular, Menlo, monospace",
-  "--border-radius-md": "12px",
-  "--border-radius-lg": "18px",
+  "--border-radius-md": "16px",
+  "--border-radius-lg": "28px",
 };
 
 export interface ViewMetrics {

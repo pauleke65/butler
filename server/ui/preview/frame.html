@@ -2,13 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="color-scheme" content="dark light" />
     <title>Butler view frame</title>
     <style>
-      html, body { margin: 0; background: #05080f; color: #cbd5e1; font: 14px system-ui, sans-serif; }
+      html, body { margin: 0; background: #173055; color: #cbd5e1; font: 14px system-ui, sans-serif; }
       #stage { transform-origin: 0 0; }
       #bar { display: flex; gap: 16px; align-items: center; padding: 6px 12px; height: 28px; background: #0b1220; border-bottom: 1px solid #243352; }
       #bar b { color: #fff; }
-      iframe { display: block; border: 0; background: #000; }
+      iframe { display: block; border: 0; background: transparent; }
+      body:not([data-mode="fullscreen"]) #stage { padding: 40px 0 0 40px; }
       body.bare #bar { display: none; }
     </style>
   </head>

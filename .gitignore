@@ -16,3 +16,4 @@ coverage/
 docs/demo/*.mp4
 tools/record-demo/.frames/
 tools/record-demo/.tts-cache/
+.impeccable/review/

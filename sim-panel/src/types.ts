@@ -16,6 +16,8 @@ export interface PanelCtx {
 export interface Panel {
   id: string;
   title: string;
+  /** "card" (default): the simulator draws a titled, collapsible card. "bare": the card surface only; the panel draws its own header. */
+  chrome?: "card" | "bare";
   mount(el: HTMLElement, ctx: PanelCtx): void | (() => void) | Promise<void | (() => void)>;
 }
 
