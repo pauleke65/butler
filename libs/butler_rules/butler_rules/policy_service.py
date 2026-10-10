@@ -155,6 +155,24 @@ class AgentCorePolicyService:
             raise PolicyError(f"policy {policy_id} {status}: {'; '.join(map(str, reasons))}")
         raise PolicyPropagatingError(creating)
 
+    def finish(self, rule: Rule, timeout: float = 120.0) -> Rule:
+        """Keep waiting for a policy that ``create`` left ``creating`` (AgentCore took 7-13 s to reach ACTIVE when
+        measured), then record it active. Meant for a background thread; the wrapper honours ``creating`` rules
+        locally in the meantime."""
+        if not rule.policy_id:
+            raise PolicyError("rule has no policy id", "INVALID_INPUT")
+        saved_timeout, self.timeout = self.timeout, timeout
+        try:
+            status, reasons = self._wait_active(rule.policy_id)
+        finally:
+            self.timeout = saved_timeout
+        if status == "ACTIVE":
+            return self._save(rule.model_copy(update={"policy_status": "active", "active": True}))
+        if status.endswith("FAILED"):
+            self._save(rule.model_copy(update={"policy_status": "failed", "active": False}))
+            raise PolicyError(f"policy {rule.policy_id} {status}: {'; '.join(map(str, reasons))}")
+        raise PolicyPropagatingError(rule)
+
     def disable(self, rule: Rule) -> Rule:
         if rule.policy_id:
             try:

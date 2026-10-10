@@ -75,6 +75,6 @@ Alexa+ can now act for you: book, buy, message. That's useful only if you can tr
 ## Feature requests (optional field)
 - **Open the Alexa+ Web Simulator to hackathon participants** (Important): we couldn't verify tool routing or screen rendering against the real client.
 - **Proactive notifications for MCP add-ons** (Important): agents that work in the background need a way to say "I need you" without waiting to be asked.
-- **Name the matching policy in AgentCore Gateway denials** (Important): receipts should cite the exact rule; today we compute it ourselves.
-- **Document policy enforcement latency after ACTIVE** (Critical for safety): products must know when a new rule is really in force.
+- **Faster policy activation, or a documented latency** (Critical for safety): new policies took 7–13 s to become ACTIVE in our tests; products must know when a rule is really in force.
+- **Analyse only principals the gateway can produce** (Important): validation flagged our JWT-only rules as "overly restrictive" for IAM principals.
 - **Non-zero default Bedrock quotas for new accounts** (Important): we couldn't call any Nova model on day one.

@@ -41,7 +41,10 @@ def build_policy_service(store: Store, ids: Identities):
         # Same validation mode as the deploy (infra context policyValidationMode). AgentCore's validator flags our
         # agent-only forbids as "overly restrictive" for IAM principals, which this JWT-only gateway never sees.
         mode = os.environ.get("POLICY_VALIDATION_MODE", "FAIL_ON_ANY_FINDINGS")
-        return AgentCorePolicyService(client, engine_id, store=store, validation_mode=mode)
+        # Wait briefly for ACTIVE (AgentCore measured 7-13 s); after that the rule is finished in the background
+        # while the wrapper honours it locally, so the customer is never left waiting on a voice turn.
+        wait_s = float(os.environ.get("APPLY_RULE_WAIT_S", "4"))
+        return AgentCorePolicyService(client, engine_id, store=store, validation_mode=mode, timeout=wait_s)
     return LocalPolicyService(store, ids=ids, activation_delay_ms=int(os.environ.get("LOCAL_POLICY_ACTIVATION_MS", "0")))
 
 

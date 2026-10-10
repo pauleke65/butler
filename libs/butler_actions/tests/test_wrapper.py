@@ -226,3 +226,29 @@ def test_malformed_reasoning_never_prevents_a_receipt(seeded, junk):
     out, gw = run(seeded, args=args)
     assert out.status == "executed" and "reasoning" not in gw.calls[0][2]
     assert_valid(seeded, out)
+
+
+def test_rule_still_activating_on_agentcore_is_honoured_without_calling_the_gateway(seeded):
+    """AgentCore took 7-13 s to make a new policy ACTIVE (measured on the real service). A rule in `creating`
+    must already hold matching actions, otherwise the very next purchase slips through."""
+    ids = Identities.local()
+    draft = RuleDraft(template="ask_category", params={"category": "drinks"}, text="Ask me before buying drinks.",
+                      effect="ask_first", confidence=1.0)
+    rule = draft_to_rule(draft, "hh_t", origin={"type": "default"}, now="2026-10-12T10:00:00+00:00", ids=ids)
+    seeded.put_rule(rule.model_copy(update={"policy_status": "creating", "active": False, "policy_id": "p-creating"}))
+
+    class CountingGateway(CedarFakeGateway):
+        calls = 0
+
+        def call(self, *a, **kw):
+            CountingGateway.calls += 1
+            return super().call(*a, **kw)
+
+    gw = CountingGateway(seeded)
+    out, _ = run(seeded, args=checkout(3100), gateway=gw)
+    assert out.status == "held_for_approval" and CountingGateway.calls == 0
+    assert out.receipt.authority.decision == "DENY" and out.receipt.authority.rule_ids == [rule.rule_id]
+    assert out.denied_rule["rule_text"] == "Ask me before buying drinks."
+    # other categories are unaffected
+    ok, _ = run(seeded, args=checkout(1300, category="household"), gateway=gw)
+    assert ok.status == "executed" and CountingGateway.calls == 1

@@ -102,13 +102,13 @@ describe("object_to_action (two-step confirm)", () => {
     expectError(await env.call("object_to_action", {}), "object_to_action", "INVALID_INPUT");
   });
 
-  it("POLICY_PROPAGATING is a success: the rule is `creating` and the customer hears it takes a moment", async () => {
+  it("POLICY_PROPAGATING is a success: the rule is `creating` and Butler honours it at once, so the usual confirmation", async () => {
     const env = await makeEnv({ seed: { rules: false } });
     env.agent.propagating = true;
     assertEnvelope("object_to_action", await env.call("object_to_action", { correction: "don't buy drinks without asking" }));
     const done = assertEnvelope("object_to_action", await env.call("object_to_action", { correction: "yes", confirm: true }));
     expect(done.rule.policy_status).toBe("creating");
-    expect(done.spoken_summary).toBe("Done. It'll take effect in a moment.");
+    expect(done.spoken_summary).toMatch(/^Done, from now on I'll ask before buying drinks\./);
   });
 
   it("agent failures map to UPSTREAM_UNAVAILABLE", async () => {

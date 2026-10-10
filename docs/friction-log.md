@@ -86,3 +86,48 @@ Format per entry: task, steps, expected vs actual, severity, workaround, suggest
 - **Severity:** major (no model usable at all on day 1)
 - **Workaround:** offline implementations for every model-backed step; requested a cross-region TPM increase.
 - **Suggestion:** give new accounts a small non-zero default, and name the adjustable quota to raise in the throttling message.
+
+## Findings from the first real AWS deploy (2026-10-10)
+
+### FL-11 · AgentCore Policy rejects tool-specific policies on `resource is AgentCore::Gateway` · 2026-10-10
+- **Tool:** AgentCore Policy (CloudFormation `AWS::BedrockAgentCore::Policy`)
+- **Task:** create `forbid (principal, action == AgentCore::Action::"Supplies___checkout", resource is AgentCore::Gateway) when {…}`.
+- **Actual:** `ValidationException: … a constrained action scope was encountered, please constrain the resource to a specific AgentCore::Gateway resource when creating tool-specific policies.`
+- **Severity:** blocker (first deploy rolled back)
+- **Workaround:** compile `resource == AgentCore::Gateway::"<gateway arn>"`; CDK injects the real ARN. Because a wrong ARN would make a forbid silently never match, the live check calls the gateway with both identities after every deploy.
+- **Suggestion:** document the rule next to the Cedar examples, and warn (or fail) when a forbid's resource ARN matches no gateway attached to the engine.
+
+### FL-12 · AgentCore Runtime creates its own log group, so pre-creating it fails · 2026-10-10
+- **Tool:** AgentCore Runtime + CloudFormation
+- **Actual:** `AWS::Logs::LogGroup … /aws/bedrock-agentcore/runtimes/<id>-DEFAULT already exists`; the stack rolled back and left the group behind.
+- **Severity:** major
+- **Workaround:** set retention with `LogRetention` instead of creating the group; cleanup script deletes orphaned groups after a failed deploy.
+- **Suggestion:** a `logRetention` property on the Runtime construct.
+
+### FL-13 · NODE_22 runtime requires a `.js` entrypoint · 2026-10-10
+- **Tool:** AgentCore Runtime direct code deployment (Node 22)
+- **Actual:** `Entrypoint file type does not match your selected runtime. For NODE_22 runtime, your file should end with .js` (our ESM entry was `entry.mjs`).
+- **Severity:** minor
+- **Workaround:** `entry.js` + `package.json` with `"type": "module"`.
+- **Suggestion:** accept `.mjs`/`.cjs`, or say so in the code-deployment docs.
+
+### FL-14 · Policy validator flags agent-only forbids as "Overly Restrictive" for IAM principals · 2026-10-10
+- **Tool:** AgentCore Policy validation (`FAIL_ON_ANY_FINDINGS`)
+- **Actual:** `Overly Restrictive: Policy Engine will deny every request for the specified principal (AgentCore::IamEntity), action (Messages___send_email)…` for a forbid that only applies to one JWT client. Our gateway accepts only JWT callers, so IAM principals never reach it.
+- **Severity:** major (blocked deploy)
+- **Workaround:** `IGNORE_ALL_FINDINGS` for policy creation, plus our own parity tests and a live allow/deny check after every deploy.
+- **Suggestion:** analyse only the principal types the gateway's authorizer can produce.
+
+### FL-15 · CreatePolicy needs `bedrock-agentcore:GetGateway` · 2026-10-10
+- **Tool:** AgentCore Policy + IAM
+- **Actual:** the agent creating a rule at runtime got `AccessDeniedException … Failed to confirm existence on AgentCore Gateway … please make sure you have "bedrock-agentcore:GetGateway" permissions`.
+- **Severity:** major (corrections could not become rules)
+- **Workaround:** grant `GetGateway`, `ListGatewayTargets`, `GetGatewayTarget` on our gateway.
+- **Suggestion:** list the gateway permissions on the CreatePolicy IAM page.
+
+### FL-16 · New policies take 7–13 s to become ACTIVE (measured) · 2026-10-10
+- **Tool:** AgentCore Policy
+- **Measured:** create → ACTIVE in 12.5 s and 7.5 s; the gateway denied on the first check after ACTIVE (≤ 1.4 s later).
+- **Impact:** too slow to wait for inside a voice turn, and an action taken in that window would slip through.
+- **Workaround:** Butler confirms the rule at once and holds matching actions itself while the rule is `creating`; activation finishes in the background, then the gateway enforces it.
+- **Note (positive):** the real denial is a clear JSON-RPC error, `-32002 "Tool Execution Denied: … [Policy evaluation denied due to <policy id>]"`, so receipts can cite the exact policy.

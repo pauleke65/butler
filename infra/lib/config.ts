@@ -30,6 +30,8 @@ export interface ButlerConfig {
   /** Wait after a policy turns ACTIVE before telling the customer a rule is in force. */
   policySettleMs: number;
   policyValidationMode: "FAIL_ON_ANY_FINDINGS" | "IGNORE_ALL_FINDINGS";
+  /** Fixed 'now' for demo stages (BUTLER_NOW); unset = real clock. */
+  butlerNow?: string;
   /** `code` = AgentCore direct code deployment from S3 (no Docker); `container` = ECR image (needs Docker). */
   runtimeArtifact: "code" | "container";
   /** Unit tests only: point every asset at a tiny fixture instead of requiring `infra/dist`. */
@@ -94,6 +96,7 @@ export function loadConfig(node: Node): ButlerConfig {
     bedrockModelPlanner: str(node, "bedrockModelPlanner", "us.amazon.nova-2-lite-v1:0"),
     policySettleMs,
     policyValidationMode: oneOf(node, "policyValidationMode", ["FAIL_ON_ANY_FINDINGS", "IGNORE_ALL_FINDINGS"], "IGNORE_ALL_FINDINGS"),
+    butlerNow: (node.tryGetContext("butlerNow") as string | undefined) || undefined,
     runtimeArtifact: oneOf(node, "runtimeArtifact", ["code", "container"], "code"),
     stubAssets: bool(node, "stubAssets", false),
     distDir: path.resolve(INFRA_ROOT, str(node, "distDir", "dist")),

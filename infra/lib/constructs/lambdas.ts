@@ -8,6 +8,11 @@ import { Construct } from "constructs";
 import { assetDir } from "../assets";
 import type { ButlerConfig } from "../config";
 
+/** Optional fixed clock for a demo stage (`-c butlerNow=2026-10-12T10:00:00-04:00`): makes dates and deliveries repeatable. */
+export function demoClock(config: ButlerConfig): Record<string, string> {
+  return config.butlerNow ? { BUTLER_NOW: config.butlerNow } : {};
+}
+
 export const LOG_RETENTION = logs.RetentionDays.TWO_WEEKS;
 
 function pythonFunction(scope: Construct, id: string, config: ButlerConfig, opts: {
@@ -67,6 +72,7 @@ export class ActionsLambda extends Construct {
       description: "Butler Gateway action targets (all five), contracts section 7",
       environment: {
         TABLE_NAME: props.table.tableName,
+        ...demoClock(config),
         HOUSEHOLD_ID: config.householdId,
         ADAPTERS: config.adapters,
         // butler_action_handlers.real_adapters reads SES_FROM (not SES_FROM_ADDRESS) and GOOGLE_OAUTH_SECRET_ID.
@@ -118,6 +124,7 @@ export class ExecutorLambda extends Construct {
       description: "Butler approval executor (contracts section 6)",
       environment: {
         TABLE_NAME: props.table.tableName,
+        ...demoClock(config),
         HOUSEHOLD_ID: config.householdId,
         EXECUTOR_CLIENT_SECRET_ARN: props.executorSecret.secretArn,
         ...props.env,
@@ -151,6 +158,7 @@ export class DebugApi extends Construct {
       description: "Butler debug API for the Black Box panel (contracts section 11), read-only",
       environment: {
         TABLE_NAME: props.table.tableName,
+        ...demoClock(config),
         DEBUG_HOUSEHOLD_ID: config.householdId,
         DEBUG_API_TOKEN: props.token,
       },

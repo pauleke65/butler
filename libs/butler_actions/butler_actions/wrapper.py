@@ -198,7 +198,11 @@ def call_action(principal: PrincipalName, tool: str, args: dict[str, Any], *, ho
                 undo_of: str | None = None) -> ActionOutcome:
     """Run one Gateway tool call and ALWAYS write a receipt (contracts §8). ``ids`` is reserved."""
     sent, reasoning = _prepare_args(args, plan_id, need_id, correlation_id, tool)
-    rules = store.list_rules(household_id, active_only=True) if rules is None else rules
+    pending: list[Rule] = []
+    if rules is None:
+        everything = store.list_rules(household_id)
+        rules = [r for r in everything if r.active]
+        pending = [r for r in everything if r.policy_status == "creating"]
     call = _Call(principal, tool, sent, reasoning, household_id, correlation_id, plan_id, need_id, decision_id,
                  store, rules, undo_of)
     expected = match(rules, principal, tool, sent)
@@ -212,6 +216,14 @@ def call_action(principal: PrincipalName, tool: str, args: dict[str, Any], *, ho
     if problems:  # fail closed: Cedar would skip a forbid it cannot evaluate (see butler_rules.inputs)
         err = {"code": "INVALID_INPUT", "message": "; ".join(problems)}
         return _finish(call, None, expected, "failed", None, None, err)
+    if pending:  # a rule the customer just made, still activating on AgentCore (measured 7-13 s): honour it now
+        early = match([r.model_copy(update={"active": True}) for r in pending], principal, tool, sent)
+        if early.decision == "DENY":
+            blame = _denied_rule(early)
+            status = "held_for_approval" if blame and blame["effect"] == "ask_first" else "blocked"
+            if guard is not None:
+                guard.record_denial(need_id, tool, blame)
+            return _finish(call, None, early, status, "DENY", blame, None)
     resp = _call_gateway(gateway, principal, tool, sent, household_id)
     blame = _denied_rule(expected) if resp.status == "denied" else None
     status = _status_for(resp, blame)

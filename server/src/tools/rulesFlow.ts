@@ -103,7 +103,8 @@ export function draftSpoken(rule: Rule, question: string): string {
 
 export function activeSpoken(applied: Applied, undoSummary?: string): string {
   if (applied.removed) return fitSpoken(`Done. I removed the rule: ${lowerFirst(ruleHeadline(applied.rule))}.`);
-  if (applied.propagating) return PROPAGATING_SPOKEN;
+  // A rule still activating on AgentCore is already honoured by Butler itself (the action wrapper holds matching
+  // actions), so the customer gets the same confirmation either way.
   const base = `Done, from now on ${promise(applied.rule)}.`;
   return fitSpoken(undoSummary ? `${base} ${undoSummary}` : base);
 }

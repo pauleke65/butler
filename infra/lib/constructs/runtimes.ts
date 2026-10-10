@@ -9,7 +9,7 @@ import type * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import { assetDir } from "../assets";
 import type { ButlerConfig } from "../config";
-import { LOG_RETENTION } from "./lambdas";
+import { LOG_RETENTION, demoClock } from "./lambdas";
 
 /** Bedrock invoke permissions for an inference-profile id (`us.anthropic.x`) or a plain model id. */
 export function bedrockInvokeStatement(config: ButlerConfig, modelIds: string[]): iam.PolicyStatement {
@@ -82,6 +82,7 @@ export class Runtimes extends Construct {
         BEDROCK_MODEL_PLANNER: config.bedrockModelPlanner,
         BEDROCK_MODEL_FAST: config.bedrockModelFast,
         TABLE_NAME: props.table.tableName,
+        ...demoClock(config),
         HOUSEHOLD_ID: config.householdId,
         GATEWAY_URL: props.gateway.gatewayUrl ?? "",
         GATEWAY_ARN: props.gateway.gatewayArn,
@@ -114,8 +115,12 @@ export class Runtimes extends Construct {
           "bedrock-agentcore:DeletePolicy",
           "bedrock-agentcore:ManageAdminPolicy",
           "bedrock-agentcore:ManageResourceScopedPolicy",
+          // CreatePolicy checks the gateway named in the Cedar resource (found on the first live run).
+          "bedrock-agentcore:GetGateway",
+          "bedrock-agentcore:ListGatewayTargets",
+          "bedrock-agentcore:GetGatewayTarget",
         ],
-        resources: [engineArn, `${engineArn}/policy/*`, props.gateway.gatewayArn],
+        resources: [engineArn, `${engineArn}/policy/*`, props.gateway.gatewayArn, `${props.gateway.gatewayArn}/target/*`],
       }),
     );
 
@@ -144,6 +149,7 @@ export class Runtimes extends Construct {
         STAGE: config.stage,
         LOG_LEVEL: "info",
         TABLE_NAME: props.table.tableName,
+        ...demoClock(config),
         AGENT_RUNTIME_ARN: this.agent.agentRuntimeArn,
         EXECUTOR_FUNCTION_NAME: props.executorFn.functionName,
         HOUSEHOLD_BY_SUB: JSON.stringify({ "*": config.householdId }),

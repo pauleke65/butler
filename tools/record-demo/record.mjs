@@ -21,11 +21,14 @@ const NARRATE = !process.argv.includes("--silent");
 const WORK = resolve(here, ".frames");
 const W = 1600, H = 900;
 const EDGE = process.env.BROWSER_PATH ?? "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge";
-const VOICES = {
-  you: process.env.VOICE_YOU ?? "Reed (English (US))",
-  butler: process.env.VOICE_BUTLER ?? "Samantha",
-  narrator: process.env.VOICE_NARRATOR ?? "Daniel",
-};
+// TTS=polly uses Amazon Polly (generative / long-form voices; needs AWS credentials, a few cents per take);
+// TTS=say (default) uses free local macOS voices.
+const TTS = process.env.TTS ?? "say";
+const VOICES = TTS === "polly"
+  ? { you: process.env.VOICE_YOU ?? "Matthew", butler: process.env.VOICE_BUTLER ?? "Ruth", narrator: process.env.VOICE_NARRATOR ?? "Gregory" }
+  : { you: process.env.VOICE_YOU ?? "Reed (English (US))", butler: process.env.VOICE_BUTLER ?? "Samantha", narrator: process.env.VOICE_NARRATOR ?? "Daniel" };
+const POLLY_ENGINE = { [VOICES.you]: "generative", [VOICES.butler]: "generative", [VOICES.narrator]: "long-form" };
+const TEMPO = Number(process.env.TTS_TEMPO ?? (TTS === "polly" ? "1.12" : "1")); // Polly speaks slowly; keep the take under 3:00
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 rmSync(WORK, { recursive: true, force: true });
@@ -38,9 +41,17 @@ const clips = []; // {file, wall}
 const RATE = { [VOICES.you]: "225", [VOICES.butler]: "215", [VOICES.narrator]: "205" };
 function synth(voice, text) {
   for (let attempt = 0; attempt < 2; attempt++) {
-    const file = `${WORK}/audio/c${String(clipN++).padStart(3, "0")}.aiff`;
+    const base = `${WORK}/audio/c${String(clipN++).padStart(3, "0")}`;
+    const file = `${base}.wav`;
     try {
-      execFileSync("say", ["-v", voice, "-r", RATE[voice] ?? "200", "-o", file, "--", text], { stdio: "pipe" });
+      const raw = TTS === "polly" ? `${base}.mp3` : `${base}.aiff`;
+      if (TTS === "polly") {
+        execFileSync("aws", ["polly", "synthesize-speech", "--engine", POLLY_ENGINE[voice] ?? "generative", "--voice-id", voice,
+          "--output-format", "mp3", "--text", text, raw], { stdio: "pipe" });
+      } else {
+        execFileSync("say", ["-v", voice, "-r", RATE[voice] ?? "200", "-o", raw, "--", text], { stdio: "pipe" });
+      }
+      execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", raw, "-af", `atempo=${TEMPO}`, "-ar", "44100", file]);
       const dur = Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file]).toString());
       return { file, dur };
     } catch (e) {

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import os
+import threading
 import time
 from typing import Any
 
@@ -83,7 +84,10 @@ class RuleOps:
         try:
             created = self.policy.create(rule)
         except PolicyPropagatingError as e:
+            # Still activating on AgentCore. The wrapper already honours `creating` rules, so the customer can be
+            # told it is done; finish the activation (and any replacement) in the background.
             self.store.put_rule(e.rule)
+            self._finish_later(hh, e.rule)
             return _err("POLICY_PROPAGATING", "The rule was created and is taking effect.", {"rule": _dump(e.rule)})
         except PolicyError as e:
             log.error("policy create failed: %s", e)
@@ -94,6 +98,25 @@ class RuleOps:
         self.store.put_rule(created)
         self._disable_replaced(hh, created)
         return {"ok": True, "data": {"rule": _dump(created)}}
+
+    def _finish_later(self, hh: str, rule: Rule) -> threading.Thread | None:
+        finish = getattr(self.policy, "finish", None)
+        if finish is None:
+            return None
+
+        def run() -> None:
+            try:
+                active = finish(rule)
+                self._settle()
+                self.store.put_rule(active)
+                self._disable_replaced(hh, active)
+                log.info("rule %s active (background)", rule.rule_id)
+            except Exception:  # noqa: BLE001 - background thread: log and leave the rule `creating`/`failed`
+                log.exception("background activation failed for rule %s", rule.rule_id)
+
+        t = threading.Thread(target=run, name=f"activate-{rule.rule_id}", daemon=True)
+        t.start()
+        return t
 
     def _settle(self) -> None:
         if self.settle_ms > 0:
