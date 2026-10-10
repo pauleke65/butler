@@ -119,6 +119,10 @@ export class Runtimes extends Construct {
           "bedrock-agentcore:GetGateway",
           "bedrock-agentcore:ListGatewayTargets",
           "bedrock-agentcore:GetGatewayTarget",
+          // Policy creation is validated asynchronously against the gateway's tools *with the caller's permissions*;
+          // without this the policy ends CREATE_FAILED "Insufficient permissions to call gateway" (live finding).
+          // The gateway itself only accepts Cognito JWTs, so this grants no way to run tools.
+          "bedrock-agentcore:InvokeGateway",
         ],
         resources: [engineArn, `${engineArn}/policy/*`, props.gateway.gatewayArn, `${props.gateway.gatewayArn}/target/*`],
       }),

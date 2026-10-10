@@ -131,3 +131,17 @@ Format per entry: task, steps, expected vs actual, severity, workaround, suggest
 - **Impact:** too slow to wait for inside a voice turn, and an action taken in that window would slip through.
 - **Workaround:** Butler confirms the rule at once and holds matching actions itself while the rule is `creating`; activation finishes in the background, then the gateway enforces it.
 - **Note (positive):** the real denial is a clear JSON-RPC error, `-32002 "Tool Execution Denied: … [Policy evaluation denied due to <policy id>]"`, so receipts can cite the exact policy.
+
+### FL-17 · Runtime-created policies fail with "Insufficient permissions to call gateway" · 2026-10-10
+- **Tool:** AgentCore Policy + IAM
+- **Actual:** with `GetGateway`, `ListGatewayTargets` and `GetGatewayTarget` granted, `CreatePolicy` returned success, then the policy went `CREATE_FAILED: Insufficient permissions to call gateway with ID …`. The asynchronous validation runs with the caller's permissions and also calls the gateway.
+- **Severity:** blocker for "corrections become rules"
+- **Workaround:** grant `bedrock-agentcore:InvokeGateway` on our gateway to the agent role (the gateway only accepts Cognito JWTs, so this doesn't let the agent run tools).
+- **Suggestion:** document every permission CreatePolicy's validation needs, and fail synchronously with the missing action name.
+
+### FL-18 · AgentCore Runtime cold start ≈ 10 s · 2026-10-10
+- **Tool:** AgentCore Runtime (Python, direct code deployment)
+- **Actual:** after idling, the first invocation took about 10 s (container start); our server's 4 s timeout aborted it, and the plan was marked "couldn't reach my planner".
+- **Severity:** major
+- **Workaround:** 30 s timeout for the fire-and-forget plan calls.
+- **Suggestion:** a documented warm-pool or minimum-capacity option for latency-sensitive (voice) runtimes.
