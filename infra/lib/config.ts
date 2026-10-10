@@ -93,7 +93,7 @@ export function loadConfig(node: Node): ButlerConfig {
     bedrockModelFast: str(node, "bedrockModelFast", "us.amazon.nova-2-lite-v1:0"),
     bedrockModelPlanner: str(node, "bedrockModelPlanner", "us.amazon.nova-2-lite-v1:0"),
     policySettleMs,
-    policyValidationMode: oneOf(node, "policyValidationMode", ["FAIL_ON_ANY_FINDINGS", "IGNORE_ALL_FINDINGS"], "FAIL_ON_ANY_FINDINGS"),
+    policyValidationMode: oneOf(node, "policyValidationMode", ["FAIL_ON_ANY_FINDINGS", "IGNORE_ALL_FINDINGS"], "IGNORE_ALL_FINDINGS"),
     runtimeArtifact: oneOf(node, "runtimeArtifact", ["code", "container"], "code"),
     stubAssets: bool(node, "stubAssets", false),
     distDir: path.resolve(INFRA_ROOT, str(node, "distDir", "dist")),

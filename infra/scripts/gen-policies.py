@@ -3,7 +3,7 @@
     cd infra && pnpm gen:policies
 
 The output holds the base permit (contracts 9.2) and the five default rules (contracts 9.4). Cognito client ids are
-only known at deploy time, so the identities are the placeholders {{AGENT_SUB}} / {{EXECUTOR_SUB}} (the same ones the
+only known at deploy time, so the identities are the placeholders {{AGENT_SUB}} / {{EXECUTOR_SUB}} / {{GATEWAY_ARN}} (the same ones the
 golden files in policies/golden use); CDK substitutes them with the client-id tokens at synth time.
 """
 from __future__ import annotations
@@ -16,7 +16,7 @@ from butler_rules import Identities, base_policy, default_rules
 PLACEHOLDER_IDS = Identities(
     agent_sub="{{AGENT_SUB}}",
     executor_sub="{{EXECUTOR_SUB}}",
-    gateway_arn="arn:aws:bedrock-agentcore:us-east-1:000000000000:gateway/placeholder",  # not used by any template
+    gateway_arn="{{GATEWAY_ARN}}",  # every tool-specific forbid names the exact gateway (AgentCore requirement)
 )
 FIXED_NOW = "2026-01-01T00:00:00+00:00"  # timestamps are not part of the Cedar text
 

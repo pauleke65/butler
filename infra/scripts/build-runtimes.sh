@@ -48,7 +48,9 @@ build_server() {
     --format=esm --outfile="$out/server.mjs" --log-level=warning \
     --banner:js="import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);"
   # Entry: point the server at the views that sit next to it, then start it (PORT defaults to 8000, path /mcp).
-  cat > "$out/entry.mjs" <<'JS'
+  # AgentCore's NODE_22 runtime requires the entrypoint to end in .js, so mark the folder as ESM.
+  printf '{ "type": "module", "private": true }\n' > "$out/package.json"
+  cat > "$out/entry.js" <<'JS'
 import { fileURLToPath } from "node:url";
 process.env.UI_DIST_DIR ??= fileURLToPath(new URL("./ui", import.meta.url));
 await import("./server.mjs");

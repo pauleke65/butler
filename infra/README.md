@@ -64,7 +64,7 @@ Build it first:  bash infra/scripts/build-lambdas.sh
 | Script | Output | How |
 |---|---|---|
 | `scripts/build-lambdas.sh` | `dist/actions` (12 MB), `dist/executor` (26 MB, has cedarpy), `dist/debug-api` (10 MB) | `uv pip install --target ... --python-platform aarch64-manylinux2014 --python-version 3.12 --only-binary :all:` for third-party wheels (boto3 is NOT bundled: the Lambda runtime has it); the workspace packages and `seed/*.json` are copied as source. A unit test proves the actions entry never imports `butler_rules`/`cedarpy`. |
-| `scripts/build-runtimes.sh` | `dist/agent-runtime` (58 MB: arm64 deps incl. boto3, packages, `prompts/`, `agent_entry.py`), `dist/server-runtime` (3.8 MB: esbuild ESM bundle + the six built MCP Apps views) | same `uv` approach for the agent; `pnpm --filter ./server/ui build` + esbuild for the server. The bundle was started locally with `node entry.mjs` and served `/healthz` and a view. |
+| `scripts/build-runtimes.sh` | `dist/agent-runtime` (58 MB: arm64 deps incl. boto3, packages, `prompts/`, `agent_entry.py`), `dist/server-runtime` (3.8 MB: esbuild ESM bundle + the six built MCP Apps views) | same `uv` approach for the agent; `pnpm --filter ./server/ui build` + esbuild for the server. The bundle was started locally with `node entry.js` and served `/healthz` and a view. |
 
 ### Policies
 
@@ -201,7 +201,7 @@ Everything below was designed from the docs, the CDK type definitions and the ap
 **AgentCore Runtime (direct code deployment instead of containers)**
 * That both runtimes really accept `codeConfiguration`: Python 3.12 for the agent, **Node 22** for the server (so no Docker at all). The L2 allows it; the
   service behaviour is unproven. Fallback: `-c runtimeArtifact=container` (`agent/Dockerfile` is new and untested; `server/Dockerfile` was "not built in CI").
-* Entrypoints `["agent_entry.py"]` and `["entry.mjs"]`: whether the platform runs them as `python agent_entry.py` / `node entry.mjs` from the
+* Entrypoints `["agent_entry.py"]` and `["entry.js"]`: whether the platform runs them as `python agent_entry.py` / `node entry.js` from the
   zip root with dependencies next to the code (that is how the zips are laid out). `opentelemetry-instrument` is not wrapped around the agent.
 * That the platform reaches `0.0.0.0:8080` (`/invocations`, `/ping`) for HTTP and `0.0.0.0:8000/mcp` for MCP, and that `PORT` need not be set.
 * `requestHeaderConfiguration.allowlistedHeaders: ["Authorization"]`: the server needs the bearer token to pick the household; if the

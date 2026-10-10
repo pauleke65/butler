@@ -2,7 +2,7 @@
 forbid (
   principal,
   action == AgentCore::Action::"Supplies___checkout",
-  resource is AgentCore::Gateway
+  resource == AgentCore::Gateway::"{{GATEWAY_ARN}}"
 )
 when {
   principal.hasTag("sub") && principal.getTag("sub") == "{{AGENT_SUB}}" &&

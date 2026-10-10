@@ -2,5 +2,5 @@
 forbid (
   principal,
   action == AgentCore::Action::"Supplies___checkout",
-  resource is AgentCore::Gateway
+  resource == AgentCore::Gateway::"{{GATEWAY_ARN}}"
 );

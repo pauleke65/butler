@@ -100,7 +100,7 @@ export class ButlerStack extends Stack {
     new SavedQueries(this, "Queries", config, [
       this.actions.fn.logGroup.logGroupName,
       this.executor.fn.logGroup.logGroupName,
-      ...this.runtimes.logGroups.map((g) => g.logGroupName),
+      ...this.runtimes.logGroupNames,
     ]);
     new CostBudget(this, "Budget", config);
 

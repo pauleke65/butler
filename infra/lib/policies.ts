@@ -3,7 +3,7 @@
  *
  * The Cedar text is produced by the REAL compiler (libs/butler_rules) through scripts/gen-policies.py and committed
  * to generated/policies.json; test/policies.test.ts fails if the file drifts from `uv run` output. The Cognito
- * client ids are not known until deploy, so the file carries the `{{AGENT_SUB}}` / `{{EXECUTOR_SUB}}` placeholders
+ * client ids and the gateway ARN are not known until deploy, so the file carries the `{{AGENT_SUB}}` / `{{EXECUTOR_SUB}}` / `{{GATEWAY_ARN}}` placeholders
  * (the same ones the golden files use) and they are replaced by CloudFormation tokens at synth time.
  */
 import * as fs from "node:fs";
@@ -41,8 +41,10 @@ export function policyName(ruleId: string): string {
   return (/^[A-Za-z]/.test(name) ? name : `p${name}`).slice(0, 48);
 }
 
-export function bindIdentities(cedar: string, ids: { agentSub: string; executorSub: string }): string {
-  const out = cedar.replaceAll("{{AGENT_SUB}}", ids.agentSub).replaceAll("{{EXECUTOR_SUB}}", ids.executorSub);
+export function bindIdentities(cedar: string, ids: { agentSub: string; executorSub: string; gatewayArn?: string }): string {
+  let out = cedar.replaceAll("{{AGENT_SUB}}", ids.agentSub).replaceAll("{{EXECUTOR_SUB}}", ids.executorSub);
+  // Tool-specific forbids must name the exact gateway (AgentCore rejects `resource is AgentCore::Gateway` there).
+  if (ids.gatewayArn !== undefined) out = out.replaceAll("{{GATEWAY_ARN}}", ids.gatewayArn);
   if (out.includes("{{")) throw new Error("Unresolved {{placeholder}} left in a Cedar policy");
   return out;
 }

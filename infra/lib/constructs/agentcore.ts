@@ -62,7 +62,7 @@ export class GatewayWithPolicy extends Construct {
     }
 
     const validationMode = agentcore.PolicyValidationMode.of(config.policyValidationMode);
-    const ids = { agentSub: props.agentClientId, executorSub: props.executorClientId };
+    const ids = { agentSub: props.agentClientId, executorSub: props.executorClientId, gatewayArn: this.gateway.gatewayArn };
     for (const [ruleId, cedar] of Object.entries(loadPolicies())) {
       const policy = this.policyEngine.addPolicy(`Policy_${policyName(ruleId)}`, {
         policyName: policyName(ruleId),

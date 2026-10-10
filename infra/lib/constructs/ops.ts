@@ -5,22 +5,27 @@ import * as ses from "aws-cdk-lib/aws-ses";
 import { Construct } from "constructs";
 import type { ButlerConfig } from "../config";
 
-/** SES identities. NOTE: creating an email identity sends a verification mail; someone has to click the link. */
+/** SES identities. NOTE: creating an email identity sends a verification mail; someone has to click the link.
+ * With the @example.com placeholder no identity is created (nothing to verify, nothing sent); use fake adapters. */
 export class SesIdentities extends Construct {
-  readonly from: ses.EmailIdentity;
+  readonly from?: ses.EmailIdentity;
   readonly recipients: ses.EmailIdentity[];
 
   constructor(scope: Construct, id: string, config: ButlerConfig) {
     super(scope, id);
-    this.from = new ses.EmailIdentity(this, "From", { identity: ses.Identity.email(config.sesFromAddress) });
-    this.recipients = config.sesRecipients
-      .filter((a) => a !== config.sesFromAddress)
-      .map((address, i) => new ses.EmailIdentity(this, `Recipient${i}`, { identity: ses.Identity.email(address) }));
-    if (config.sesFromAddress.endsWith("@example.com")) {
+    const placeholder = config.sesFromAddress.endsWith("@example.com");
+    if (placeholder) {
       Annotations.of(this).addWarning(
-        "SES_FROM_ADDRESS is the @example.com placeholder: pass `-c SES_FROM_ADDRESS=you@yourdomain` or the identity can never be verified.",
+        "SES_FROM_ADDRESS is the @example.com placeholder: no SES identity created. Pass `-c SES_FROM_ADDRESS=you@yourdomain` for real email.",
       );
+    } else {
+      this.from = new ses.EmailIdentity(this, "From", { identity: ses.Identity.email(config.sesFromAddress) });
     }
+    this.recipients = placeholder
+      ? []
+      : config.sesRecipients
+          .filter((a) => a !== config.sesFromAddress)
+          .map((address, i) => new ses.EmailIdentity(this, `Recipient${i}`, { identity: ses.Identity.email(address) }));
   }
 }
 

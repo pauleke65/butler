@@ -90,10 +90,10 @@ describe("synthesized policies", () => {
     expect(cedarOf("rule_default_calendar")).not.toContain("getTag");
   });
 
-  it("uses validation mode FAIL_ON_ANY_FINDINGS by default and can be relaxed by context", () => {
-    expect(policies.every(([, r]) => r.Properties!["ValidationMode"] === "FAIL_ON_ANY_FINDINGS")).toBe(true);
-    const relaxed = resourcesOfType(synth({ policyValidationMode: "IGNORE_ALL_FINDINGS" }).json, "AWS::BedrockAgentCore::Policy");
-    expect(relaxed.every(([, r]) => r.Properties!["ValidationMode"] === "IGNORE_ALL_FINDINGS")).toBe(true);
+  it("defaults to IGNORE_ALL_FINDINGS (AgentCore flags agent-only forbids as 'overly restrictive' for IAM principals) and can be tightened", () => {
+    expect(policies.every(([, r]) => r.Properties!["ValidationMode"] === "IGNORE_ALL_FINDINGS")).toBe(true);
+    const strict = resourcesOfType(synth({ policyValidationMode: "FAIL_ON_ANY_FINDINGS" }).json, "AWS::BedrockAgentCore::Policy");
+    expect(strict.every(([, r]) => r.Properties!["ValidationMode"] === "FAIL_ON_ANY_FINDINGS")).toBe(true);
   });
 });
 

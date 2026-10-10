@@ -2,7 +2,7 @@
 forbid (
   principal,
   action == AgentCore::Action::"Messages___send_email",
-  resource is AgentCore::Gateway
+  resource == AgentCore::Gateway::"{{GATEWAY_ARN}}"
 )
 when {
   principal.hasTag("sub") && principal.getTag("sub") == "{{AGENT_SUB}}" &&

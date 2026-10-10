@@ -132,8 +132,12 @@ describe("Lambdas", () => {
 
   it("retain logs for 14 days", () => {
     const groups = resourcesOfType(s.json, "AWS::Logs::LogGroup");
-    expect(groups.length).toBeGreaterThanOrEqual(5);
+    expect(groups.length).toBeGreaterThanOrEqual(3); // the three Lambdas
     for (const [, g] of groups) expect(g.Properties!["RetentionInDays"]).toBe(14);
+    // AgentCore creates the two runtime log groups itself; we only set their retention (Custom::LogRetention).
+    const retention = resourcesOfType(s.json, "Custom::LogRetention");
+    expect(retention.length).toBe(2);
+    for (const [, r] of retention) expect(r.Properties!["RetentionInDays"]).toBe(14);
   });
 });
 

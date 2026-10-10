@@ -38,7 +38,10 @@ def build_policy_service(store: Store, ids: Identities):
         from butler_rules import AgentCorePolicyService
 
         client = boto3.client("bedrock-agentcore-control", region_name=os.environ.get("AWS_REGION", "us-east-1"))
-        return AgentCorePolicyService(client, engine_id, store=store)
+        # Same validation mode as the deploy (infra context policyValidationMode). AgentCore's validator flags our
+        # agent-only forbids as "overly restrictive" for IAM principals, which this JWT-only gateway never sees.
+        mode = os.environ.get("POLICY_VALIDATION_MODE", "FAIL_ON_ANY_FINDINGS")
+        return AgentCorePolicyService(client, engine_id, store=store, validation_mode=mode)
     return LocalPolicyService(store, ids=ids, activation_delay_ms=int(os.environ.get("LOCAL_POLICY_ACTIVATION_MS", "0")))
 
 

@@ -48,7 +48,8 @@ export class Runtimes extends Construct {
   readonly agent: agentcore.Runtime;
   readonly server: agentcore.Runtime;
   readonly mcpServerUrl: string;
-  readonly logGroups: logs.LogGroup[] = [];
+  /** Runtime log groups. AgentCore creates them itself, so we only set their retention. */
+  readonly logGroupNames: string[] = [];
 
   constructor(scope: Construct, id: string, props: RuntimesProps) {
     super(scope, id);
@@ -86,6 +87,7 @@ export class Runtimes extends Construct {
         GATEWAY_ARN: props.gateway.gatewayArn,
         POLICY_ENGINE_ID: props.policyEngine.policyEngineId,
         POLICY_SETTLE_MS: String(config.policySettleMs),
+        POLICY_VALIDATION_MODE: config.policyValidationMode,
         AGENT_SUB: props.clientIds.agent,
         EXECUTOR_SUB: props.clientIds.executor,
         COGNITO_TOKEN_URL: props.cognito.tokenUrl,
@@ -123,7 +125,7 @@ export class Runtimes extends Construct {
       : agentcore.AgentRuntimeArtifact.fromCodeAsset({
           path: assetDir(config, "server-runtime"),
           runtime: agentcore.AgentCoreRuntime.NODE_22,
-          entrypoint: ["entry.mjs"],
+          entrypoint: ["entry.js"],
         });
     this.server = new agentcore.Runtime(this, "ServerRuntime", {
       runtimeName: `butler_${config.stage}_server`,
@@ -163,15 +165,12 @@ export class Runtimes extends Construct {
       "https://bedrock-agentcore.", config.region, ".", stack.urlSuffix, "/runtimes/", encodedArn, "/invocations?qualifier=DEFAULT",
     ]);
 
-    // Pre-created so retention is 14 days; the runtime writes to /aws/bedrock-agentcore/runtimes/<id>-<endpoint>.
+    // AgentCore creates /aws/bedrock-agentcore/runtimes/<id>-DEFAULT itself when the runtime starts; creating it here
+    // collides with that (found on the first deploy). LogRetention sets 14-day retention whether or not it exists yet.
     for (const [name, rt] of [["Agent", this.agent], ["Server", this.server]] as const) {
-      this.logGroups.push(
-        new logs.LogGroup(this, `${name}RuntimeLogs`, {
-          logGroupName: Fn.join("", ["/aws/bedrock-agentcore/runtimes/", rt.agentRuntimeId, "-DEFAULT"]),
-          retention: LOG_RETENTION,
-          removalPolicy: RemovalPolicy.DESTROY,
-        }),
-      );
+      const logGroupName = Fn.join("", ["/aws/bedrock-agentcore/runtimes/", rt.agentRuntimeId, "-DEFAULT"]);
+      new logs.LogRetention(this, `${name}RuntimeLogRetention`, { logGroupName, retention: LOG_RETENTION, removalPolicy: RemovalPolicy.DESTROY });
+      this.logGroupNames.push(logGroupName);
     }
   }
 }

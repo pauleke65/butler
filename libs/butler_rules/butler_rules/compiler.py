@@ -39,7 +39,10 @@ def _policy(rule_id: str, spec: TemplateSpec, params: dict[str, Any], ids: Ident
         "forbid (\n"
         "  principal,\n"
         f"  {_action_clause(spec.scope(params))},\n"
-        "  resource is AgentCore::Gateway\n"
+        # AgentCore Policy rejects tool-specific policies unless the resource is one specific gateway
+        # (found on the first real deploy). A wrong ARN would make the forbid silently never match, so the
+        # deployed ARN is wired from the same CloudFormation value (infra) and checked by the live policy matrix.
+        f'  resource == AgentCore::Gateway::"{ids.gateway_arn}"\n'
         ")"
     )
     if conds:
