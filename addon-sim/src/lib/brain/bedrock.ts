@@ -96,7 +96,9 @@ export class BedrockBrain implements Brain {
           system,
           messages: this.windowed(messages),
           toolConfig,
-          inferenceConfig: { maxTokens: 400, temperature: 0.2 },
+          // Amazon Nova: greedy decoding makes tool calls more reliable (Nova user guide).
+          inferenceConfig: { maxTokens: 400, temperature: this.opts.model.includes("amazon.nova") ? 0 : 0.2 },
+          ...(this.opts.model.includes("amazon.nova") ? { additionalModelRequestFields: { inferenceConfig: { topK: 1 } } } : {}),
         }),
       );
       inputTokens += resp.usage?.inputTokens ?? 0;

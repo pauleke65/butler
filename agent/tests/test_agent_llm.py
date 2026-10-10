@@ -246,3 +246,22 @@ def test_a_denial_the_model_forgets_still_becomes_a_decision(store, world):
     assert pending.kind == "approve_action" and pending.reason_held.rule_id == rule_id
     assert pending.options[0].action_draft.tool == "Supplies___checkout" and pending.options[0].action_draft.args["amount_minor"] == 3100
     assert pending.options[0].price.amount_minor == 3100
+
+
+def test_nova_tool_calls_use_greedy_decoding():
+    from butler_agent.llm import BedrockLLM
+
+    seen = {}
+
+    class Fake:
+        def converse(self, **kw):
+            seen.update(kw)
+            return {"output": {"message": {"content": []}}}
+
+    llm = BedrockLLM(client=Fake())
+    llm.converse(model_id="us.amazon.nova-2-lite-v1:0", system="s", messages=[], tools=[{"name": "t", "inputSchema": {"json": {}}}])
+    assert seen["inferenceConfig"]["temperature"] == 0
+    assert seen["additionalModelRequestFields"] == {"inferenceConfig": {"topK": 1}}
+    seen.clear()
+    llm.converse(model_id="us.anthropic.claude-haiku-4-5-20251001-v1:0", system="s", messages=[], tools=[{"name": "t", "inputSchema": {"json": {}}}])
+    assert "additionalModelRequestFields" not in seen and "temperature" not in seen["inferenceConfig"]

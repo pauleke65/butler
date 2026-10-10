@@ -116,6 +116,8 @@ export class BedrockNeedsPass implements NeedsPass {
       system: [{ text: SYSTEM_PROMPT }],
       messages: [{ role: "user", content: [{ text: user }] }],
       inferenceConfig: { maxTokens: 400, temperature: 0 },
+      // Amazon Nova: greedy decoding for tool calls (Nova user guide, tool-use troubleshooting).
+      ...(this.opts.modelId.includes("amazon.nova") ? { additionalModelRequestFields: { inferenceConfig: { topK: 1 } } } : {}),
       toolConfig: {
         tools: [
           {

@@ -32,6 +32,9 @@ class BedrockLLM:
             if force_tool:
                 tool_config["toolChoice"] = {"tool": {"name": force_tool}}
             kwargs["toolConfig"] = tool_config
+            if is_nova(model_id):
+                kwargs["inferenceConfig"]["temperature"] = 0
+                kwargs.update(tool_decoding(model_id))
         return self.client.converse(**kwargs)
 
     def text(self, model_id: str, system: str, user: str, max_tokens: int = 64) -> str:
@@ -42,6 +45,18 @@ class BedrockLLM:
     def ping(self) -> str:
         """One tiny call with the fast model (used by the opt-in bedrock test)."""
         return self.text(fast_model(), "Reply with one word.", "Say OK.", max_tokens=16)
+
+
+def is_nova(model_id: str) -> bool:
+    return "amazon.nova" in model_id
+
+
+def tool_decoding(model_id: str) -> dict[str, Any]:
+    """Greedy decoding for tool calls, as the Amazon Nova guide recommends (fewer malformed tool calls).
+    Paired with ``temperature: 0`` in ``inferenceConfig``; returns the extra Converse kwargs."""
+    if not is_nova(model_id):
+        return {}
+    return {"additionalModelRequestFields": {"inferenceConfig": {"topK": 1}}}
 
 
 def response_blocks(res: dict[str, Any]) -> list[dict[str, Any]]:
