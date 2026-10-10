@@ -1,23 +1,31 @@
 [
  {
   "role": "narrator",
-  "text": "Hi! I built Butler for the Alexa+ track: an add-on that handles real situations for you, keeps a receipt for every action, and turns your corrections into rules the AI can't break."
+  "text": "Hi, I'm Paul. Butler is an Alexa+ add-on that acts for you, and turns your corrections into rules the AI can't break."
  },
  {
   "role": "narrator",
-  "text": "It's running on an Echo Show 8 in our open-source simulator, against the live stack on AWS. The Black Box on the right records every gateway decision."
+  "text": "This is our open-source simulator, connected to the live stack on AWS. The Black Box on the right records every gateway decision."
  },
  {
   "role": "narrator",
   "text": "I don't give Butler commands. I tell it what's happening."
  },
  {
+  "role": "you",
+  "text": "Tell Butler six friends from the dinner crew are coming over Friday at seven."
+ },
+ {
   "role": "narrator",
-  "text": "It plans, and starts on everything it's allowed to do."
+  "text": "It makes a plan and gets started."
  },
  {
   "role": "narrator",
   "text": "Butler never interrupts. It waits until I ask."
+ },
+ {
+  "role": "you",
+  "text": "How's Friday looking?"
  },
  {
   "role": "narrator",
@@ -32,40 +40,12 @@
   "text": "Every action has a receipt."
  },
  {
-  "role": "narrator",
-  "text": "What it used, what it turned down, and the rule that allowed it."
- },
- {
-  "role": "narrator",
-  "text": "The AI only picks a rule template. Plain code compiles it to Cedar and loads it into AgentCore Policy. It's live at the gateway."
- },
- {
-  "role": "narrator",
-  "text": "Butler tried to buy drinks for my parents. The gateway denied it, outside the model, before anything was bought."
- },
- {
-  "role": "narrator",
-  "text": "So it asks instead."
- },
- {
-  "role": "narrator",
-  "text": "And it flags its own decisions I might disagree with."
- },
- {
-  "role": "narrator",
-  "text": "Butler runs on Amazon Bedrock AgentCore Runtime, Gateway and Policy. Thanks for watching!"
- },
- {
-  "role": "you",
-  "text": "Tell Butler six friends from the dinner crew are coming over Friday at 7."
- },
- {
-  "role": "you",
-  "text": "How's Friday looking?"
- },
- {
   "role": "you",
   "text": "Why did you buy the drinks?"
+ },
+ {
+  "role": "narrator",
+  "text": "What it used, what it turned down, and the rule that allowed it."
  },
  {
   "role": "you",
@@ -76,16 +56,32 @@
   "text": "Yes."
  },
  {
+  "role": "narrator",
+  "text": "The AI only picks a rule template. Plain code turns it into a Cedar policy in AgentCore. Now it's live at the gateway."
+ },
+ {
   "role": "you",
   "text": "I'm travelling Thursday to Sunday. My parents are staying at the house."
+ },
+ {
+  "role": "narrator",
+  "text": "Butler tried to buy drinks for my parents. The gateway denied it, outside the model, before anything was bought."
  },
  {
   "role": "you",
   "text": "Anything you need from me?"
  },
  {
+  "role": "narrator",
+  "text": "So instead of buying, it asks."
+ },
+ {
   "role": "you",
   "text": "What did you do this week that I might disagree with?"
+ },
+ {
+  "role": "narrator",
+  "text": "Butler runs on Amazon Bedrock AgentCore. Thanks for watching!"
  },
  {
   "role": "butler",

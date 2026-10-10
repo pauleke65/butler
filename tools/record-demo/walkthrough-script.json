@@ -1,0 +1,108 @@
+[
+ {
+  "id": "01",
+  "role": "narrator",
+  "text": "Hi, I'm Paul. Butler is an Alexa+ add-on that acts for you, and turns your corrections into rules the AI can't break."
+ },
+ {
+  "id": "02",
+  "role": "narrator",
+  "text": "This is our open-source simulator, connected to the live stack on AWS. The Black Box on the right records every gateway decision."
+ },
+ {
+  "id": "03",
+  "role": "narrator",
+  "text": "I don't give Butler commands. I tell it what's happening."
+ },
+ {
+  "id": "04",
+  "role": "you",
+  "text": "Tell Butler six friends from the dinner crew are coming over Friday at seven.",
+  "type": "Tell Butler six friends from the dinner crew are coming over Friday at 7."
+ },
+ {
+  "id": "05",
+  "role": "narrator",
+  "text": "It makes a plan and gets started."
+ },
+ {
+  "id": "06",
+  "role": "narrator",
+  "text": "Butler never interrupts. It waits until I ask."
+ },
+ {
+  "id": "07",
+  "role": "you",
+  "text": "How's Friday looking?"
+ },
+ {
+  "id": "08",
+  "role": "narrator",
+  "text": "One decision is mine, so I'll tap it."
+ },
+ {
+  "id": "09",
+  "role": "narrator",
+  "text": "That tap runs under a separate approval identity, not the AI."
+ },
+ {
+  "id": "10",
+  "role": "narrator",
+  "text": "Every action has a receipt."
+ },
+ {
+  "id": "11",
+  "role": "you",
+  "text": "Why did you buy the drinks?"
+ },
+ {
+  "id": "12",
+  "role": "narrator",
+  "text": "What it used, what it turned down, and the rule that allowed it."
+ },
+ {
+  "id": "13",
+  "role": "you",
+  "text": "Don't buy drinks without asking me."
+ },
+ {
+  "id": "14",
+  "role": "you",
+  "text": "Yes."
+ },
+ {
+  "id": "15",
+  "role": "narrator",
+  "text": "The AI only picks a rule template. Plain code turns it into a Cedar policy in AgentCore. Now it's live at the gateway."
+ },
+ {
+  "id": "16",
+  "role": "you",
+  "text": "I'm travelling Thursday to Sunday. My parents are staying at the house."
+ },
+ {
+  "id": "17",
+  "role": "narrator",
+  "text": "Butler tried to buy drinks for my parents. The gateway denied it, outside the model, before anything was bought."
+ },
+ {
+  "id": "18",
+  "role": "you",
+  "text": "Anything you need from me?"
+ },
+ {
+  "id": "19",
+  "role": "narrator",
+  "text": "So instead of buying, it asks."
+ },
+ {
+  "id": "20",
+  "role": "you",
+  "text": "What did you do this week that I might disagree with?"
+ },
+ {
+  "id": "21",
+  "role": "narrator",
+  "text": "Butler runs on Amazon Bedrock AgentCore. Thanks for watching!"
+ }
+]

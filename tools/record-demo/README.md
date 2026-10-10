@@ -46,3 +46,15 @@ python3 cut-silences.py ../../docs/demo/butler-walkthrough-raw.mp4 ../../docs/de
 
 - The take waits for the cloud: the agent's purchases must land before "How's Friday looking?", and the new rule must be active in AgentCore before the travel step.
 - `cut-silences.py` shortens pauses longer than 3.2 s (policy activation takes ~10 s) to about 2 s, and trims the tail.
+
+### With your own voice
+
+The presenter's 21 clips are in [`docs/demo/voiceover-script.md`](../../docs/demo/voiceover-script.md) (their text, ids and on-screen moments live in `walkthrough-script.json`). Record them in one voice note with two-second pauses, then:
+
+```bash
+python3 split-voicenote.py ~/Downloads/voicenote.m4a voice/      # cleans the audio, cuts it into voice/01.wav ... 21.wav
+TTS=polly node record.mjs --mode walkthrough --voice-dir voice --prewarm walkthrough-lines.json --out ../../docs/demo/butler-walkthrough-raw.mp4
+python3 cut-silences.py ../../docs/demo/butler-walkthrough-raw.mp4 ../../docs/demo/butler-walkthrough.mp4
+```
+
+Clips you recorded play in your voice; any missing clip falls back to Polly. If the splitter finds more or fewer takes than clips (a re-read line), it lists them with their lengths and writes nothing.

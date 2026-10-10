@@ -87,10 +87,23 @@ if (process.argv.includes("--prewarm")) {
   console.log(`prewarmed ${ok}/${list.length} clips`);
   if (ok < list.length) process.exit(1);
 }
+// --voice-dir: your own recordings, one file per clip id (01.wav, 02.m4a, ...; see split-voicenote.py). A clip id with a
+// file plays your voice; anything else falls back to the TTS voice.
+const VOICE_DIR = arg("voice-dir") ? resolve(arg("voice-dir")) : undefined;
+function userClip(id) {
+  if (!VOICE_DIR || !id) return null;
+  const src = ["wav", "m4a", "mp3", "aif", "aiff"].map((ext) => `${VOICE_DIR}/${id}.${ext}`).find((f) => existsSync(f));
+  if (!src) return null;
+  const file = `${WORK}/audio/user-${id}.wav`;
+  if (!existsSync(file)) execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", src, "-ar", "44100", "-ac", "1", file]);
+  const dur = Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file]).toString());
+  return { file, dur };
+}
+
 /** Speak now (relative to the video) and return the clip duration in ms. */
-function speakAt(voice, text) {
+function speakAt(voice, text, clipId) {
   if (!NARRATE) return Math.min(6000, 600 + text.split(/\s+/).length * 320);
-  const clip = text.trim() ? synth(voice, text) : null;
+  const clip = userClip(clipId) ?? (text.trim() ? synth(voice, text) : null);
   if (!clip) return 1500; // keep the timing; skip the voice rather than abort the take
   clips.push({ file: clip.file, wall: Date.now() / 1000 });
   return Math.round(clip.dur * 1000);
@@ -186,12 +199,13 @@ const input = () => page.getByPlaceholder("…or type what you would say");
 /** Customer says (and types) a line, then Butler's reply is spoken when it appears. */
 const T0 = Date.now();
 const el = () => ((Date.now() - T0) / 1000).toFixed(1);
-async function say(text, { after = 400 } = {}) {
+async function say(text, { after = 400, clip, typed } = {}) {
   console.log(`[${el()}s] you: ${text}`);
   const before = await assistantCount();
   await input().evaluate((el) => el.focus({ preventScroll: true })); // focusing must not scroll the zoomed page
-  const ms = speakAt(VOICES.you, text);
-  await page.keyboard.type(text, { delay: Math.max(18, Math.min(80, Math.round((ms * 0.85) / text.length))) });
+  const ms = speakAt(VOICES.you, text, clip);
+  const shown = typed ?? text; // what lands in the transcript box (e.g. "7" where you say "seven")
+  await page.keyboard.type(shown, { delay: Math.max(18, Math.min(80, Math.round((ms * 0.85) / shown.length))) });
   await sleep(250);
   await page.keyboard.press("Enter");
   await page.waitForFunction((b) => document.querySelectorAll('[data-role="assistant"]').length > b, before, { timeout: REPLY_TIMEOUT_MS }).catch(() => {});
@@ -200,7 +214,7 @@ async function say(text, { after = 400 } = {}) {
   console.log(`[${el()}s] butler: ${reply}`);
   await sleep(reply ? speakAt(VOICES.butler, reply) + after : 3000);
 }
-async function narrate(text, pad = 600) { await sleep(speakAt(VOICES.narrator, text) + pad); }
+async function narrate(text, pad = 600, clip) { await sleep(speakAt(VOICES.narrator, text, clip) + pad); }
 
 // ── run ─────────────────────────────────────────────────────────────────────────
 await page.goto(BASE, { waitUntil: "networkidle" });
@@ -334,26 +348,30 @@ async function blackBox(what, timeout = 60000) {
   console.log(`[${el()}s] black box ${what}: ${ok ? "seen" : "TIMED OUT"}`);
 }
 
+// The presenter's clips (docs/demo/voiceover-script.md); ids match your recordings in --voice-dir.
+const SCRIPT = Object.fromEntries(JSON.parse(readFileSync(resolve(here, "walkthrough-script.json"), "utf8")).map((c) => [c.id, c]));
+
 async function walkthrough() {
-  const pres = (text, pad = 350) => narrate(text, pad);
+  const pres = (id, pad = 350) => narrate(SCRIPT[id].text, pad, id);
+  const line = (id, opts = {}) => say(SCRIPT[id].text, { ...opts, clip: id, ...(SCRIPT[id].type ? { typed: SCRIPT[id].type } : {}) });
   // The camera transforms <body>; typing into the transcript box would otherwise scroll the page to reveal it.
   await page.addStyleTag({ content: "html { overflow: hidden !important; } body { overflow: clip !important; height: 100vh !important; }" });
   await startCapture();
   await sleep(300);
   await overlay("Butler", "An Alexa+ add-on that acts for you, keeps a receipt for every action, and turns your corrections into rules the AI can't break.", { full: true });
-  await pres("Hi! I built Butler for the Alexa+ track: an add-on that handles real situations for you, keeps a receipt for every action, and turns your corrections into rules the AI can't break.", 450);
+  await pres("01", 450);
   await fadeOverlay();
-  await pres("It's running on an Echo Show 8 in our open-source simulator, against the live stack on AWS. The Black Box on the right records every gateway decision.", 200);
+  await pres("02", 200);
 
   await camera(DEVICE);
-  await pres("I don't give Butler commands. I tell it what's happening.", 150);
-  await say("Tell Butler six friends from the dinner crew are coming over Friday at 7.", { after: 250 });
-  await pres("It plans, and starts on everything it's allowed to do.", 350);
+  await pres("03", 150);
+  await line("04", { after: 250 });
+  await pres("05", 350);
   await blackBox("plan-work");
 
-  await pres("Butler never interrupts. It waits until I ask.", 150);
-  await say("How's Friday looking?", { after: 250 });
-  await pres("One decision is mine, so I'll tap it.", 100);
+  await pres("06", 150);
+  await line("07", { after: 250 });
+  await pres("08", 100);
   let spoken = "";
   for (const f of page.frames()) {
     const btn = f.getByRole("button", { name: "Choose" }).first();
@@ -371,33 +389,33 @@ async function walkthrough() {
   }
   console.log(`[${el()}s] butler (tap): ${spoken}`);
   await sleep(speakAt(VOICES.butler, spoken || "I booked a cleaner for 85 dollars. You approved it.") + 250);
-  await pres("That tap runs under a separate approval identity, not the AI.", 400);
+  await pres("09", 400);
 
-  await pres("Every action has a receipt.", 100);
-  await say("Why did you buy the drinks?", { after: 250 });
-  await pres("What it used, what it turned down, and the rule that allowed it.", 450);
+  await pres("10", 100);
+  await line("11", { after: 250 });
+  await pres("12", 450);
 
-  await say("Don't buy drinks without asking me.", { after: 150 });
-  await say("Yes.", { after: 200 });
+  await line("13", { after: 150 });
+  await line("14", { after: 200 });
   await camera(BLACK_BOX, { maxScale: 1.45 });
   await blackBox("rule-active", 45000); // in force at the gateway, so the next DENY is AgentCore's
-  await pres("The AI only picks a rule template. Plain code compiles it to Cedar and loads it into AgentCore Policy. It's live at the gateway.", 300);
+  await pres("15", 300);
 
   await camera([DEVICE, BLACK_BOX], { pad: 20 });
-  await say("I'm travelling Thursday to Sunday. My parents are staying at the house.", { after: 0 });
+  await line("16", { after: 0 });
   await denyLanded();
   await camera(BLACK_BOX, { height: 330, maxScale: 1.9, ms: 1000 });
-  await pres("Butler tried to buy drinks for my parents. The gateway denied it, outside the model, before anything was bought.", 450);
+  await pres("17", 450);
 
   await camera(DEVICE);
-  await say("Anything you need from me?", { after: 150 });
-  await pres("So it asks instead.", 350);
-  await say("What did you do this week that I might disagree with?", { after: 250 });
-  await pres("And it flags its own decisions I might disagree with.", 500);
+  await line("18", { after: 150 });
+  await pres("19", 350);
+  await line("20", { after: 250 });
+  await sleep(500);
 
   await camera("full", { ms: 900 });
   await overlay("Butler", "Amazon Bedrock AgentCore Runtime, Gateway and Policy · Cedar · Cognito · DynamoDB · AWS CDK<br/>Open-source simulator: addon-sim", { full: true });
-  await pres("Butler runs on Amazon Bedrock AgentCore Runtime, Gateway and Policy. Thanks for watching!", 1300);
+  await pres("21", 1300);
 }
 
 if (MODE === "walkthrough") await walkthrough();
