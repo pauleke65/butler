@@ -8,7 +8,7 @@ import {
   type NeedsPassResult,
 } from "../lib/needsPass.js";
 import { joinNames } from "../lib/spoken.js";
-import { numberWord, spokenDay, spokenTime, spokenWeekdayOrDate, toUtcIso } from "../lib/time.js";
+import { numberWord, spokenDay, spokenRange, spokenTime, spokenWeekdayOrDate, toUtcIso } from "../lib/time.js";
 import { countNeeds, needsCustomer, TERMINAL_PLAN_STATUSES, householdTimezone } from "./shared.js";
 import { defineTool, type ToolContext } from "./spec.js";
 
@@ -86,8 +86,8 @@ export function planSpoken(plan: Plan, now: Date, tz: string): string {
     lead = start ? `Got it, ${who} ${spokenDay(start, now, tz)} at ${spokenTime(start, tz)}.` : `Got it, ${who} coming over.`;
   } else if (plan.kind === "away") {
     lead =
-      start && end && spokenWeekdayOrDate(start, now, tz) !== spokenWeekdayOrDate(end, now, tz)
-        ? `Got it, you're away ${spokenWeekdayOrDate(start, now, tz)} to ${spokenWeekdayOrDate(end, now, tz)}.`
+      start && end && spokenRange(start, end, now, tz).includes(" to ")
+        ? `Got it, you're away ${spokenRange(start, end, now, tz)}.`
         : start
           ? `Got it, you're away ${spokenDay(start, now, tz)}.`
           : "Got it, you're away.";

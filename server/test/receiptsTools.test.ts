@@ -29,7 +29,7 @@ describe("list_actions", () => {
     const body = assertEnvelope("list_actions", await env.call("list_actions", { filter: "might_disagree" }));
     expect(body.actions.map((a: Receipt) => a.title)).toEqual(["Booked BrightHome", "Bought drinks for 7"]);
     expect(body.total_count).toBe(2);
-    expect(body.spoken_summary).toBe("Two things might bother you. Top one: Booked BrightHome, because it's the first time I booked a cleaner.");
+    expect(body.spoken_summary).toBe("Two things might bother you, starting with: booked BrightHome. It's the first time I booked a cleaner.");
   });
 
   it("blocked includes held_for_approval and blocked", async () => {

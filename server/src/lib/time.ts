@@ -114,7 +114,7 @@ export function spokenTime(instant: Date, tz: string): string {
   return w.minute === 0 ? `${h} ${suffix}` : `${h}:${pad(w.minute)} ${suffix}`;
 }
 
-/** "today", "tomorrow", "Friday" within a week, otherwise "October 16". */
+/** "today", "tomorrow", "Friday" within a week, "next Friday" the week after, otherwise "October 16". */
 export function spokenDay(instant: Date, now: Date, tz: string): string {
   const diff = dayNumber(instant, tz) - dayNumber(now, tz);
   if (diff === 0) return "today";
@@ -122,7 +122,23 @@ export function spokenDay(instant: Date, now: Date, tz: string): string {
   if (diff === -1) return "yesterday";
   const w = wallClock(instant, tz);
   if (diff > 1 && diff < 7) return weekdayName(w.weekday);
+  if (diff >= 7 && diff < 14) return `next ${weekdayName(w.weekday)}`;
   return `${MONTHS[w.month - 1]} ${w.day}`;
+}
+
+/** "Thursday to Sunday" / "next Thursday to Sunday": ranges are named by weekday when close, else by date. */
+export function spokenRange(start: Date, end: Date, now: Date, tz: string): string {
+  const startDiff = dayNumber(start, tz) - dayNumber(now, tz);
+  const span = dayNumber(end, tz) - dayNumber(start, tz);
+  const ws = wallClock(start, tz);
+  const we = wallClock(end, tz);
+  const first =
+    startDiff >= 0 && startDiff < 7 ? weekdayName(ws.weekday)
+      : startDiff >= 7 && startDiff < 14 ? `next ${weekdayName(ws.weekday)}`
+        : `${MONTHS[ws.month - 1]} ${ws.day}`;
+  if (span <= 0) return first;
+  const last = span < 7 && startDiff >= 0 && startDiff < 14 ? weekdayName(we.weekday) : `${MONTHS[we.month - 1]} ${we.day}`;
+  return `${first} to ${last}`;
 }
 
 /** "Friday at 7 PM". */
@@ -130,7 +146,7 @@ export function spokenWhen(instant: Date, now: Date, tz: string): string {
   return `${spokenDay(instant, now, tz)} at ${spokenTime(instant, tz)}`;
 }
 
-const NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+const NUMBER_WORDS =["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
 
 export function numberWord(n: number): string {
   return Number.isInteger(n) && n >= 0 && n < NUMBER_WORDS.length ? (NUMBER_WORDS[n] as string) : String(n);

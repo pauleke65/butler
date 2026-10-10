@@ -5,6 +5,7 @@ import {
   numberWord,
   spokenDay,
   spokenMoney,
+  spokenRange,
   spokenTime,
   spokenWhen,
   startOfDayInTz,
@@ -137,5 +138,17 @@ describe("auth", () => {
     expect(householdFor("special-sub", cfg.householdBySub)).toBe("hh_other");
     expect(householdFor("anyone", cfg.householdBySub)).toBe("hh_demo");
     expect(authenticate(`Bearer ${jwt({ sub: "special-sub" })}`, cfg)).toMatchObject({ ok: true, principal: { householdId: "hh_other" } });
+  });
+});
+
+describe("spoken dates", () => {
+  const tz = "America/New_York";
+  const now = new Date("2026-10-09T22:00:00-04:00"); // a Friday evening
+  it("a date a week out is 'next Friday', not a calendar date", () => {
+    expect(spokenDay(new Date("2026-10-16T19:00:00-04:00"), now, tz)).toBe("next Friday");
+  });
+  it("ranges read as weekdays", () => {
+    expect(spokenRange(new Date("2026-10-15T00:00:00-04:00"), new Date("2026-10-18T23:59:00-04:00"), now, tz)).toBe("Thursday to Sunday");
+    expect(spokenRange(new Date("2026-10-10T00:00:00-04:00"), new Date("2026-10-11T23:59:00-04:00"), now, tz)).toBe("Saturday to Sunday");
   });
 });

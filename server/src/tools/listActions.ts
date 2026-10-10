@@ -27,9 +27,9 @@ export function actionsSpoken(actions: Receipt[], total: number, filter: string,
   const top = actions[0] as Receipt;
   const count = `${numberWord(total)} action${total === 1 ? "" : "s"}`;
   if (filter === "might_disagree") {
-    const reason = top.might_disagree.top_reason ? `, because ${lowerFirst(stripEndPunct(top.might_disagree.top_reason))}` : "";
     const things = total === 1 ? "One thing" : `${upperFirst(numberWord(total))} things`;
-    return fitSpoken(`${things} might bother you. Top one: ${stripEndPunct(top.title)}${reason}.`);
+    const why = top.might_disagree.top_reason ? ` ${upperFirst(stripEndPunct(top.might_disagree.top_reason))}.` : "";
+    return fitSpoken(`${things} might bother you, starting with: ${lowerFirst(stripEndPunct(top.title))}.${why}`);
   }
   if (filter === "blocked") return fitSpoken(`${numberWord(total)} ${total === 1 ? "action was" : "actions were"} held or blocked ${when}. Most recent: ${stripEndPunct(top.title)}.`);
   if (filter === "purchases") return fitSpoken(`I made ${numberWord(total)} purchase${total === 1 ? "" : "s"} or booking${total === 1 ? "" : "s"} ${when}. Most recent: ${stripEndPunct(top.title)}.`);

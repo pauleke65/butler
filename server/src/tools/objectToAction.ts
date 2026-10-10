@@ -1,6 +1,5 @@
 /** object_to_action (contracts §3.7, ticket M-10): correction -> draft rule -> confirm -> active rule. */
 import { ObjectToActionInput, ObjectToActionOutput } from "@butler/contracts";
-import { lowerFirst, stripEndPunct } from "../lib/spoken.js";
 import {
   activeSpoken,
   confirmPending,
@@ -11,6 +10,15 @@ import {
 } from "./rulesFlow.js";
 import { resolveReceipt } from "./shared.js";
 import { defineTool } from "./spec.js";
+
+/** "Want me to refund that purchase too?" from an undo summary such as "Undo: Bought drinks for 7". */
+export function undoQuestion(summary: string): string {
+  const what = summary.replace(/^Undo:\s*/i, "");
+  if (/^(bought|ordered)/i.test(what)) return "Want me to refund that purchase too?";
+  if (/^booked/i.test(what)) return "Want me to cancel that booking too?";
+  if (/^(added|created)/i.test(what)) return "Want me to remove that event too?";
+  return "Want me to undo that too?";
+}
 
 export const objectToAction = defineTool({
   name: "object_to_action",
@@ -32,7 +40,7 @@ export const objectToAction = defineTool({
       const lock = await requireLock(ctx);
       const applied = await confirmPending(ctx, lock);
       const undo = applied.removed ? undefined : await offeredUndo(ctx, applied.rule);
-      const undoLine = undo ? `Want me to undo ${lowerFirst(stripEndPunct(undo.summary.replace(/^Undo:\s*/, "")))}?` : undefined;
+      const undoLine = undo ? undoQuestion(undo.summary) : undefined;
       return {
         data: {
           spoken_summary: activeSpoken(applied, undoLine),

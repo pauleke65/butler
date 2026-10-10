@@ -58,7 +58,7 @@ describe("object_to_action (two-step confirm)", () => {
     expect(step1.rule.origin).toMatchObject({ type: "correction", action_id: drinksReceipt().action_id });
     const step2 = assertEnvelope("object_to_action", await env.call("object_to_action", { correction: "yes", confirm: true }));
     expect(step2.offered_undo).toEqual({ action_id: drinksReceipt().action_id, summary: "Undo: Bought drinks for 7" });
-    expect(step2.spoken_summary).toBe("Done, from now on I'll ask before buying drinks. Want me to undo bought drinks for 7?");
+    expect(step2.spoken_summary).toBe("Done, from now on I'll ask before buying drinks. Want me to refund that purchase too?");
   });
 
   it("no undo is offered when the original action isn't reversible", async () => {
