@@ -123,7 +123,9 @@ export interface AgentClient {
   removeRule(ctx: AgentCtx, ruleId: string): Promise<{ rule: Rule | undefined }>;
 }
 
-export const AGENT_TIMEOUTS_MS = { start_plan: 4_000, resume_plan: 4_000, draft_rule: 8_000, apply_rule: 65_000, remove_rule: 35_000 } as const;
+// AgentCore Runtime cold starts took ~10 s on the first real deploy (the agent acked after the old 4 s timeout had
+// already aborted the call), so the async ops get room for a cold start; they run in the background anyway.
+export const AGENT_TIMEOUTS_MS = { start_plan: 30_000, resume_plan: 30_000, draft_rule: 25_000, apply_rule: 65_000, remove_rule: 35_000 } as const;
 
 function isErrorCode(c: string): c is ErrorCode {
   return (ERROR_CODES as readonly string[]).includes(c);

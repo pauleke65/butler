@@ -70,16 +70,17 @@ export function createHandler(deps: Deps): (req: IncomingMessage, res: ServerRes
         return;
       }
 
+      // Stateless server: only POST carries MCP messages. Answer other methods (the runtime's GET probes) before auth
+      // so they don't flood the logs with unauthorized warnings.
+      if (req.method !== "POST") {
+        sendJson(res, 405, jsonRpcError(-32000, "Method not allowed"), { allow: "POST" });
+        return;
+      }
+
       const auth = authenticate(req.headers.authorization, deps.config);
       if (!auth.ok) {
         deps.logger.log("warn", "http.unauthorized", { reason: auth.reason });
         sendJson(res, 401, jsonRpcError(-32001, `Unauthorized: ${auth.reason}`), { "www-authenticate": 'Bearer realm="butler"' });
-        return;
-      }
-
-      if (req.method !== "POST") {
-        // Stateless server: no standalone SSE stream and no sessions to delete.
-        sendJson(res, 405, jsonRpcError(-32000, "Method not allowed."), { allow: "POST" });
         return;
       }
 
