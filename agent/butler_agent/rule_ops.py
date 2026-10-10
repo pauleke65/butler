@@ -111,7 +111,7 @@ class RuleOps:
                 self.store.put_rule(active)
                 self._disable_replaced(hh, active)
                 log.info("rule %s active (background)", rule.rule_id)
-            except Exception:  # noqa: BLE001 - background thread: log and leave the rule `creating`/`failed`
+            except Exception:  # background thread: log and leave the rule `creating`/`failed`
                 log.exception("background activation failed for rule %s", rule.rule_id)
 
         t = threading.Thread(target=run, name=f"activate-{rule.rule_id}", daemon=True)
