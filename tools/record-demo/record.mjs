@@ -28,7 +28,15 @@ const TTS = process.env.TTS ?? "say";
 const VOICES = TTS === "polly"
   ? { you: process.env.VOICE_YOU ?? "Matthew", butler: process.env.VOICE_BUTLER ?? "Ruth", narrator: process.env.VOICE_NARRATOR ?? "Gregory" }
   : { you: process.env.VOICE_YOU ?? "Reed (English (US))", butler: process.env.VOICE_BUTLER ?? "Samantha", narrator: process.env.VOICE_NARRATOR ?? "Daniel" };
-const POLLY_ENGINE = { [VOICES.you]: "generative", [VOICES.butler]: "generative", [VOICES.narrator]: "long-form" };
+// The walkthrough has one human voice: the presenter narrates and also talks to the Echo.
+const MODE = arg("mode", "explainer"); // explainer: chapter banners + narrator; walkthrough: presenter, camera moves, no banners
+if (MODE === "walkthrough" && TTS === "polly") {
+  VOICES.you = process.env.VOICE_YOU ?? "Stephen";
+  VOICES.narrator = process.env.VOICE_NARRATOR ?? "Stephen";
+}
+const LONG_FORM = new Set(["Gregory", "Patrick"]);
+const POLLY_ENGINE = Object.fromEntries(Object.values(VOICES).map((v) => [v, LONG_FORM.has(v) ? "long-form" : "generative"]));
+const REPLY_TIMEOUT_MS = Number(process.env.REPLY_TIMEOUT_MS ?? "45000"); // AgentCore cold starts can take ~10 s
 const TEMPO = Number(process.env.TTS_TEMPO ?? (TTS === "polly" ? "1.12" : "1")); // Polly speaks slowly; keep the take under 3:00
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -159,10 +167,11 @@ async function overlay(title, sub, { full = false } = {}) {
   await page.evaluate(({ title, sub, full }) => {
     let el = document.getElementById("__cap");
     if (!el) { el = document.createElement("div"); el.id = "__cap"; document.body.appendChild(el); }
+    // same family as the simulator: Alexa navy, Figtree, no borders
     el.style.cssText = full
-      ? "position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#0b1220;color:#e8eefc;font:600 44px/1.2 -apple-system,Segoe UI,sans-serif;text-align:center;padding:0 140px;"
-      : "position:fixed;left:50%;transform:translateX(-50%);top:14px;z-index:99999;max-width:1200px;background:rgba(10,16,32,.92);border:1px solid #3a4a73;border-radius:14px;color:#fff;font:600 22px/1.3 -apple-system,Segoe UI,sans-serif;padding:12px 22px;text-align:center;box-shadow:0 6px 30px rgba(0,0,0,.45);";
-    el.innerHTML = `<div>${title}</div>${sub ? `<div style="font:400 ${full ? 26 : 17}px/1.35 -apple-system,Segoe UI,sans-serif;color:#9fb2dd;margin-top:6px">${sub}</div>` : ""}`;
+      ? "position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:22px;background:radial-gradient(70% 60% at 30% 45%,#16243a 0%,#0b0c0f 70%);color:#eceef2;font:500 76px/1.08 Figtree,system-ui,sans-serif;letter-spacing:-0.02em;padding:0 180px;"
+      : "position:fixed;left:50%;transform:translateX(-50%);top:12px;z-index:99999;max-width:1100px;background:#1b1e23;border-radius:22px;color:#eceef2;font:600 22px/1.3 Figtree,system-ui,sans-serif;letter-spacing:-0.01em;padding:14px 26px 15px;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 18px 40px -16px rgba(0,0,0,.85);";
+    el.innerHTML = `<div style="text-wrap:balance">${title}</div>${sub ? `<div style="font:400 ${full ? 30 : 16}px/1.4 Figtree,system-ui,sans-serif;letter-spacing:0;color:#a3a9b4;margin-top:${full ? 0 : 4}px;max-width:${full ? 1100 : 1000}px;text-wrap:balance">${sub}</div>` : ""}`;
   }, { title, sub, full });
 }
 const clearOverlay = () => page.evaluate(() => document.getElementById("__cap")?.remove());
@@ -180,12 +189,12 @@ const el = () => ((Date.now() - T0) / 1000).toFixed(1);
 async function say(text, { after = 400 } = {}) {
   console.log(`[${el()}s] you: ${text}`);
   const before = await assistantCount();
-  await input().click();
+  await input().evaluate((el) => el.focus({ preventScroll: true })); // focusing must not scroll the zoomed page
   const ms = speakAt(VOICES.you, text);
   await page.keyboard.type(text, { delay: Math.max(18, Math.min(80, Math.round((ms * 0.85) / text.length))) });
   await sleep(250);
   await page.keyboard.press("Enter");
-  await page.waitForFunction((b) => document.querySelectorAll('[data-role="assistant"]').length > b, before, { timeout: 25000 }).catch(() => {});
+  await page.waitForFunction((b) => document.querySelectorAll('[data-role="assistant"]').length > b, before, { timeout: REPLY_TIMEOUT_MS }).catch(() => {});
   await sleep(350);
   const reply = await lastAssistantText();
   console.log(`[${el()}s] butler: ${reply}`);
@@ -203,57 +212,196 @@ await page.evaluate(() => {
 });
 await page.reload({ waitUntil: "networkidle" });
 await sleep(1500);
-await page.getByRole("button", { name: "Smart display 15" }).click();
+await page.getByRole("button", { name: "Smart display 8" }).click();
 await sleep(800);
 
-await startCapture();
-await sleep(300);
-await overlay("Butler", "An Alexa+ add-on that acts for you, shows a receipt for every action,<br/>and turns your corrections into rules the AI cannot break.", { full: true });
-await narrate("Meet Butler: an Alexa plus add-on that acts for you, and shows its receipts.", 500);
-await clearOverlay();
+async function explainer() {
+  await startCapture();
+  await sleep(300);
+  await overlay("Butler", "An Alexa+ add-on that acts for you, shows a receipt for every action, and turns your corrections into rules the AI cannot break.", { full: true });
+  await narrate("Meet Butler: an Alexa plus add-on that acts for you, and shows its receipts.", 500);
+  await clearOverlay();
 
-await overlay("1 · Describe a situation", "Not a command. Butler works out what it needs.");
-await say("Tell Butler six friends from the dinner crew are coming over Friday at 7.", { after: 1300 });
+  await overlay("Describe a situation", "Not a command. Butler works out what it needs.");
+  await say("Tell Butler six friends from the dinner crew are coming over Friday at 7.", { after: 1300 });
 
-await overlay("2 · It handles what it can, and asks about the rest", "Invites sent, calendar set, drinks bought. Cleaning needs your call.");
-await say("How's Friday looking?", { after: 700 });
+  await overlay("It handles what it can, and asks about the rest", "Invites sent, calendar set, drinks bought. Cleaning needs your call.");
+  await say("How's Friday looking?", { after: 700 });
 
-await overlay("3 · Tap a screen, or just say it", "Choosing runs through the approval path, not the AI.");
-let clicked = false;
-for (const f of page.frames()) {
-  const btn = f.getByRole("button", { name: "Choose" }).first();
-  if (await btn.count().catch(() => 0)) { await btn.click({ timeout: 3000 }).catch(() => {}); clicked = true; break; }
+  await overlay("Tap a screen, or just say it", "Choosing runs through the approval path, not the AI.");
+  let clicked = false;
+  for (const f of page.frames()) {
+    const btn = f.getByRole("button", { name: "Choose" }).first();
+    if (await btn.count().catch(() => 0)) { await btn.click({ timeout: 3000 }).catch(() => {}); clicked = true; break; }
+  }
+  if (clicked) {
+    await sleep(1300);
+    let spoken = "";
+    for (const f of page.frames()) {
+      const t = await f.locator("text=/approved it/i").first().textContent({ timeout: 500 }).catch(() => "");
+      if (t) { spoken = t.trim(); break; }
+    }
+    await sleep(speakAt(VOICES.butler, spoken || "I booked BrightHome for 85 dollars. You approved it.") + 700);
+  } else {
+    await say("Book BrightHome.");
+  }
+
+  await overlay("Every action has a receipt", "What it did, why, what it rejected, and which rule allowed it.");
+  await say("Why did you buy the drinks?", { after: 1300 });
+
+  await overlay("Object once, and it becomes a rule", "The AI drafts it; deterministic code compiles it to policy.");
+  await say("Don't buy drinks without asking me.");
+  await say("Yes.", { after: 700 });
+
+  await overlay("Next time, the rule blocks it. Watch the panel.", "The gateway denies the purchase before anything is bought.");
+  await say("I'm travelling Thursday to Sunday. My parents are staying at the house.", { after: 700 });
+  await overlay("The DENY is enforced outside the AI", "Butler stops and asks you instead of buying.");
+  await sleep(1500);
+  await say("Anything you need from me?", { after: 700 });
+
+  await overlay("See what it did that you might disagree with", "");
+  await say("What did you do this week that I might disagree with?", { after: 1200 });
+
+  await overlay("Alexa can act for you without being a black box.", "Every action has a receipt. Every correction becomes a rule.", { full: true });
+  await narrate("Alexa can act for you, without being a black box.", 1200);
+
 }
-if (clicked) {
-  await sleep(1300);
+
+// ── walkthrough: the submitter presents, no banners; an in-page camera frames what matters ─────────────────────
+const DEVICE = '[data-testid="device-frame"]';
+const BLACK_BOX = "[data-attention]";
+
+/** Ease the page onto one element or the union of several (a CSS transform on the app root, so text stays crisp). */
+async function camera(target, { pad = 28, ms = 1150, height, maxScale = 2 } = {}) {
+  await page.evaluate(({ target, pad, ms, height, maxScale, W, H }) => {
+    const cur = window.__cam ?? { s: 1, tx: 0, ty: 0 };
+    let next = { s: 1, tx: 0, ty: 0 };
+    if (target !== "full") {
+      const rects = (Array.isArray(target) ? target : [target])
+        .map((q) => document.querySelector(q)?.getBoundingClientRect())
+        .filter(Boolean)
+        .map((r) => ({ x: (r.left - cur.tx) / cur.s, y: (r.top - cur.ty) / cur.s, w: r.width / cur.s, h: r.height / cur.s })); // undo the current camera
+      if (!rects.length) return;
+      const x0 = Math.min(...rects.map((r) => r.x));
+      const y0 = Math.min(...rects.map((r) => r.y));
+      const x1 = Math.max(...rects.map((r) => r.x + r.w));
+      const y1 = height ? y0 + height : Math.max(...rects.map((r) => r.y + r.h));
+      const s = Math.min(W / (x1 - x0 + 2 * pad), H / (y1 - y0 + 2 * pad), maxScale);
+      const tx = Math.min(0, Math.max(W - s * W, W / 2 - (s * (x0 + x1)) / 2));
+      const ty = Math.min(0, Math.max(H - s * H, H / 2 - (s * (y0 + y1)) / 2));
+      next = { s, tx, ty };
+    }
+    // move the app's root, not <body>: <body> clips (see walkthrough()), so nothing can scroll the zoomed view away
+    const b = [...document.body.children].find((c) => c.contains(document.querySelector('[data-testid="stage"]'))) ?? document.body;
+    b.style.transformOrigin = "0 0";
+    b.style.transition = `transform ${ms}ms cubic-bezier(0.65, 0, 0.35, 1)`;
+    b.style.transform = next.s === 1 ? "none" : `translate(${next.tx}px, ${next.ty}px) scale(${next.s})`;
+    window.__cam = next;
+  }, { target, pad, ms, height, maxScale, W, H });
+  await sleep(ms + 60);
+}
+
+async function fadeOverlay(ms = 550) {
+  await page.evaluate((ms) => {
+    const el = document.getElementById("__cap");
+    if (!el) return;
+    el.style.transition = `opacity ${ms}ms ease-out`;
+    el.style.opacity = "0";
+    setTimeout(() => el.remove(), ms + 20);
+  }, ms);
+  await sleep(ms + 40);
+}
+
+async function denyLanded(timeout = 30000) {
+  await page
+    .waitForFunction(() => document.querySelector('[data-testid^="panel-"]')?.shadowRoot?.querySelector('[data-decision="DENY"]'), null, { timeout })
+    .catch(() => console.warn("no DENY row seen in the Black Box"));
+}
+
+/** Wait until the Black Box shows something (the cloud agent works in the background). */
+async function blackBox(what, timeout = 60000) {
+  const ok = await page
+    .waitForFunction((what) => {
+      const root = document.querySelector('[data-testid^="panel-"]')?.shadowRoot;
+      if (!root) return false;
+      const rows = [...root.querySelectorAll('[data-testid="feed-row"]')].map((r) => r.textContent ?? "");
+      const rules = [...root.querySelectorAll('[data-testid="rule-row"]')].map((r) => r.textContent ?? "");
+      if (what === "plan-work") return rows.some((t) => t.includes("$42.00")) && rows.some((t) => t.includes("search_providers"));
+      if (what === "rule-active") return rules.some((t) => t.includes("buying drinks") && t.includes("Ask first"));
+      return false;
+    }, what, { timeout, polling: 500 })
+    .then(() => true, () => false);
+  console.log(`[${el()}s] black box ${what}: ${ok ? "seen" : "TIMED OUT"}`);
+}
+
+async function walkthrough() {
+  const pres = (text, pad = 350) => narrate(text, pad);
+  // The camera transforms <body>; typing into the transcript box would otherwise scroll the page to reveal it.
+  await page.addStyleTag({ content: "html { overflow: hidden !important; } body { overflow: clip !important; height: 100vh !important; }" });
+  await startCapture();
+  await sleep(300);
+  await overlay("Butler", "An Alexa+ add-on that acts for you, keeps a receipt for every action, and turns your corrections into rules the AI can't break.", { full: true });
+  await pres("Hi! I built Butler for the Alexa+ track: an add-on that handles real situations for you, keeps a receipt for every action, and turns your corrections into rules the AI can't break.", 450);
+  await fadeOverlay();
+  await pres("It's running on an Echo Show 8 in our open-source simulator, against the live stack on AWS. The Black Box on the right records every gateway decision.", 200);
+
+  await camera(DEVICE);
+  await pres("I don't give Butler commands. I tell it what's happening.", 150);
+  await say("Tell Butler six friends from the dinner crew are coming over Friday at 7.", { after: 250 });
+  await pres("It plans, and starts on everything it's allowed to do.", 350);
+  await blackBox("plan-work");
+
+  await pres("Butler never interrupts. It waits until I ask.", 150);
+  await say("How's Friday looking?", { after: 250 });
+  await pres("One decision is mine, so I'll tap it.", 100);
   let spoken = "";
   for (const f of page.frames()) {
-    const t = await f.locator("text=/approved it/i").first().textContent({ timeout: 500 }).catch(() => "");
-    if (t) { spoken = t.trim(); break; }
+    const btn = f.getByRole("button", { name: "Choose" }).first();
+    if (await btn.count().catch(() => 0)) {
+      await btn.click({ timeout: 5000 }).catch(() => {});
+      break;
+    }
   }
-  await sleep(speakAt(VOICES.butler, spoken || "I booked BrightHome for 85 dollars. You approved it.") + 700);
-} else {
-  await say("Book BrightHome.");
+  for (let i = 0; i < 20 && !spoken; i++) {
+    await sleep(250);
+    for (const f of page.frames()) {
+      const t = await f.locator("text=/approved it/i").first().textContent({ timeout: 200 }).catch(() => "");
+      if (t) { spoken = t.trim(); break; }
+    }
+  }
+  console.log(`[${el()}s] butler (tap): ${spoken}`);
+  await sleep(speakAt(VOICES.butler, spoken || "I booked a cleaner for 85 dollars. You approved it.") + 250);
+  await pres("That tap runs under a separate approval identity, not the AI.", 400);
+
+  await pres("Every action has a receipt.", 100);
+  await say("Why did you buy the drinks?", { after: 250 });
+  await pres("What it used, what it turned down, and the rule that allowed it.", 450);
+
+  await say("Don't buy drinks without asking me.", { after: 150 });
+  await say("Yes.", { after: 200 });
+  await camera(BLACK_BOX, { maxScale: 1.45 });
+  await blackBox("rule-active", 45000); // in force at the gateway, so the next DENY is AgentCore's
+  await pres("The AI only picks a rule template. Plain code compiles it to Cedar and loads it into AgentCore Policy. It's live at the gateway.", 300);
+
+  await camera([DEVICE, BLACK_BOX], { pad: 20 });
+  await say("I'm travelling Thursday to Sunday. My parents are staying at the house.", { after: 0 });
+  await denyLanded();
+  await camera(BLACK_BOX, { height: 330, maxScale: 1.9, ms: 1000 });
+  await pres("Butler tried to buy drinks for my parents. The gateway denied it, outside the model, before anything was bought.", 450);
+
+  await camera(DEVICE);
+  await say("Anything you need from me?", { after: 150 });
+  await pres("So it asks instead.", 350);
+  await say("What did you do this week that I might disagree with?", { after: 250 });
+  await pres("And it flags its own decisions I might disagree with.", 500);
+
+  await camera("full", { ms: 900 });
+  await overlay("Butler", "Amazon Bedrock AgentCore Runtime, Gateway and Policy · Cedar · Cognito · DynamoDB · AWS CDK<br/>Open-source simulator: addon-sim", { full: true });
+  await pres("Butler runs on Amazon Bedrock AgentCore Runtime, Gateway and Policy. Thanks for watching!", 1300);
 }
 
-await overlay("4 · Every action has a receipt", "What it did, why, what it rejected, and which rule allowed it.");
-await say("Why did you buy the drinks?", { after: 1300 });
-
-await overlay("5 · Object once, and it becomes a rule", "The AI drafts it; deterministic code compiles it to policy.");
-await say("Don't buy drinks without asking me.");
-await say("Yes.", { after: 700 });
-
-await overlay("6 · Next time, the rule blocks it. Watch the panel.", "The gateway denies the purchase before anything is bought.");
-await say("I'm travelling Thursday to Sunday. My parents are staying at the house.", { after: 700 });
-await overlay("The DENY is enforced outside the AI", "Butler stops and asks you instead of buying.");
-await sleep(1500);
-await say("Anything you need from me?", { after: 700 });
-
-await overlay("7 · See what it did that you might disagree with", "");
-await say("What did you do this week that I might disagree with?", { after: 1200 });
-
-await overlay("Alexa can act for you without being a black box.", "Every action has a receipt. Every correction becomes a rule.", { full: true });
-await narrate("Alexa can act for you, without being a black box.", 1200);
+if (MODE === "walkthrough") await walkthrough();
+else await explainer();
 
 const longTasks = await page.evaluate(() => window.__longTasks || []).catch(() => []);
 capturing = false;

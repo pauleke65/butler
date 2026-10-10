@@ -1,0 +1,126 @@
+[
+ {
+  "role": "narrator",
+  "text": "Hi! I built Butler for the Alexa+ track: an add-on that handles real situations for you, keeps a receipt for every action, and turns your corrections into rules the AI can't break."
+ },
+ {
+  "role": "narrator",
+  "text": "It's running on an Echo Show 8 in our open-source simulator, against the live stack on AWS. The Black Box on the right records every gateway decision."
+ },
+ {
+  "role": "narrator",
+  "text": "I don't give Butler commands. I tell it what's happening."
+ },
+ {
+  "role": "narrator",
+  "text": "It plans, and starts on everything it's allowed to do."
+ },
+ {
+  "role": "narrator",
+  "text": "Butler never interrupts. It waits until I ask."
+ },
+ {
+  "role": "narrator",
+  "text": "One decision is mine, so I'll tap it."
+ },
+ {
+  "role": "narrator",
+  "text": "That tap runs under a separate approval identity, not the AI."
+ },
+ {
+  "role": "narrator",
+  "text": "Every action has a receipt."
+ },
+ {
+  "role": "narrator",
+  "text": "What it used, what it turned down, and the rule that allowed it."
+ },
+ {
+  "role": "narrator",
+  "text": "The AI only picks a rule template. Plain code compiles it to Cedar and loads it into AgentCore Policy. It's live at the gateway."
+ },
+ {
+  "role": "narrator",
+  "text": "Butler tried to buy drinks for my parents. The gateway denied it, outside the model, before anything was bought."
+ },
+ {
+  "role": "narrator",
+  "text": "So it asks instead."
+ },
+ {
+  "role": "narrator",
+  "text": "And it flags its own decisions I might disagree with."
+ },
+ {
+  "role": "narrator",
+  "text": "Butler runs on Amazon Bedrock AgentCore Runtime, Gateway and Policy. Thanks for watching!"
+ },
+ {
+  "role": "you",
+  "text": "Tell Butler six friends from the dinner crew are coming over Friday at 7."
+ },
+ {
+  "role": "you",
+  "text": "How's Friday looking?"
+ },
+ {
+  "role": "you",
+  "text": "Why did you buy the drinks?"
+ },
+ {
+  "role": "you",
+  "text": "Don't buy drinks without asking me."
+ },
+ {
+  "role": "you",
+  "text": "Yes."
+ },
+ {
+  "role": "you",
+  "text": "I'm travelling Thursday to Sunday. My parents are staying at the house."
+ },
+ {
+  "role": "you",
+  "text": "Anything you need from me?"
+ },
+ {
+  "role": "you",
+  "text": "What did you do this week that I might disagree with?"
+ },
+ {
+  "role": "butler",
+  "text": "Got it, six guests Friday at 7 PM. I'll handle invites, the calendar and drinks, and I'll check with you on cleaning."
+ },
+ {
+  "role": "butler",
+  "text": "I invited 6 guests, added dinner to your calendar and bought drinks for 42 dollars. One thing for you: which cleaner should I book?"
+ },
+ {
+  "role": "butler",
+  "text": "I booked a cleaner for 85 dollars. You approved it."
+ },
+ {
+  "role": "butler",
+  "text": "I bought drinks for 42 dollars because you have 6 guests coming. Your 50 dollar limit allowed it."
+ },
+ {
+  "role": "butler",
+  "text": "From now on, I'll ask before buying drinks. Should I make that a rule?"
+ },
+ {
+  "role": "butler",
+  "text": "Done, from now on I'll ask before buying drinks. Want me to refund that purchase too?"
+ },
+ {
+  "role": "butler",
+  "text": "Got it, you're away Thursday to Sunday. I'll handle letting people know, your calendar and drinks."
+ },
+ {
+  "role": "butler",
+  "text": "I told your parents the plan and blocked your calendar. One thing for you: OK to buy drinks for 31 dollars?"
+ },
+ {
+  "role": "butler",
+  "text": "Two things might bother you, starting with: booked a cleaner. It's the first time I booked a cleaner."
+ }
+]

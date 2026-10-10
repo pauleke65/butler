@@ -30,3 +30,19 @@ AWS_PROFILE=pie TTS=polly node record.mjs --prewarm lines.json --out ../../docs/
 - `--prewarm lines.json` renders every known line first and caches it in `.tts-cache/`, so a flaky network can't leave gaps.
 - Frames are taken as screenshots on a steady clock (`CAPTURE_FPS`, default 12). The DevTools screencast drifted ~5 s behind the audio in long takes; `CAPTURE=screencast` keeps it available.
 - The simulator's own voice is switched off during recording (it delayed typing while "speaking").
+
+## Submission walkthrough (presenter voice, live AWS stack)
+
+The Devpost video. One presenter voice (Polly *Stephen*) narrates in the first person and talks to the Echo, Butler answers (Ruth). There are no chapter banners; the browser itself zooms like a camera onto the device and the Black Box. It runs against the deployed `dev` stack, so the DENY in the video is a real AgentCore Gateway decision.
+
+```bash
+export AWS_PROFILE=pie AWS_REGION=us-east-1 PYTHONPATH=$PWD/tools/record-demo/pydns   # pydns: DNS fallback for flaky home routers
+BUTLER_NOW=2026-10-12T10:00:00-04:00 uv run python infra/scripts/seed_aws.py --stage dev --reset   # also deletes rule policies earlier takes created
+tools/record-demo/sim-aws.sh                      # simulator against AgentCore Runtime + the deployed debug API (1 h token)
+cd tools/record-demo
+TTS=polly node record.mjs --mode walkthrough --prewarm walkthrough-lines.json --out ../../docs/demo/butler-walkthrough-raw.mp4
+python3 cut-silences.py ../../docs/demo/butler-walkthrough-raw.mp4 ../../docs/demo/butler-walkthrough.mp4   # trims cloud waits
+```
+
+- The take waits for the cloud: the agent's purchases must land before "How's Friday looking?", and the new rule must be active in AgentCore before the travel step.
+- `cut-silences.py` shortens pauses longer than 3.2 s (policy activation takes ~10 s) to about 2 s, and trims the tail.
