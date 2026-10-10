@@ -1,0 +1,78 @@
+[
+ {
+  "role": "narrator",
+  "text": "Meet Butler: an Alexa plus add-on that acts for you, and shows its receipts."
+ },
+ {
+  "role": "you",
+  "text": "Tell Butler six friends from the dinner crew are coming over Friday at 7."
+ },
+ {
+  "role": "butler",
+  "text": "Got it, six guests Friday at 7 PM. I'll handle invites, the calendar and drinks, and I'll check with you on cleaning."
+ },
+ {
+  "role": "you",
+  "text": "How's Friday looking?"
+ },
+ {
+  "role": "butler",
+  "text": "I invited 6 guests, added dinner to your calendar and bought drinks for 42 dollars. One thing for you: which cleaner should I book?"
+ },
+ {
+  "role": "butler",
+  "text": "I booked a cleaner for 85 dollars. You approved it."
+ },
+ {
+  "role": "you",
+  "text": "Why did you buy the drinks?"
+ },
+ {
+  "role": "butler",
+  "text": "I bought drinks for 42 dollars because you have 6 guests coming. Your 50 dollar limit allowed it."
+ },
+ {
+  "role": "you",
+  "text": "Don't buy drinks without asking me."
+ },
+ {
+  "role": "butler",
+  "text": "From now on, I'll ask before buying drinks. Should I make that a rule?"
+ },
+ {
+  "role": "you",
+  "text": "Yes."
+ },
+ {
+  "role": "butler",
+  "text": "Done, from now on I'll ask before buying drinks. Want me to refund that purchase too?"
+ },
+ {
+  "role": "you",
+  "text": "I'm travelling Thursday to Sunday. My parents are staying at the house."
+ },
+ {
+  "role": "butler",
+  "text": "Got it, you're away Thursday to Sunday. I'll handle letting people know, your calendar and drinks."
+ },
+ {
+  "role": "you",
+  "text": "Anything you need from me?"
+ },
+ {
+  "role": "butler",
+  "text": "I told your parents the plan and blocked your calendar. One thing for you: OK to buy drinks for 31 dollars?"
+ },
+ {
+  "role": "you",
+  "text": "What did you do this week that I might disagree with?"
+ },
+ {
+  "role": "butler",
+  "text": "Two things might bother you, starting with: booked a cleaner. It's the first time I booked a cleaner."
+ },
+ {
+  "role": "narrator",
+  "text": "Alexa can act for you, without being a black box."
+ }
+]

@@ -8,7 +8,8 @@
  *   node record.mjs [--out ../../docs/demo/butler-demo.mp4] [--base http://localhost:3000] [--silent]
  */
 import { chromium } from "playwright-core";
-import { mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -39,26 +40,44 @@ mkdirSync(dirname(OUT), { recursive: true });
 let clipN = 0;
 const clips = []; // {file, wall}
 const RATE = { [VOICES.you]: "225", [VOICES.butler]: "215", [VOICES.narrator]: "205" };
+// Clips are cached by (voice, text) so a network blip can't ruin a take; `--prewarm lines.json` fills the cache first.
+const CACHE = resolve(here, ".tts-cache");
+mkdirSync(CACHE, { recursive: true });
+function cacheFile(voice, text) {
+  const key = createHash("sha1").update(`${TTS}|${voice}|${TEMPO}|${text}`).digest("hex").slice(0, 16);
+  return `${CACHE}/${key}.wav`;
+}
+function render(voice, text, out) {
+  const raw = `${out}.${TTS === "polly" ? "mp3" : "aiff"}`;
+  if (TTS === "polly") {
+    execFileSync("aws", ["polly", "synthesize-speech", "--engine", POLLY_ENGINE[voice] ?? "generative", "--voice-id", voice,
+      "--output-format", "mp3", "--text", text, raw], { stdio: "pipe" });
+  } else {
+    execFileSync("say", ["-v", voice, "-r", RATE[voice] ?? "200", "-o", raw, "--", text], { stdio: "pipe" });
+  }
+  execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", raw, "-af", `atempo=${TEMPO}`, "-ar", "44100", out]);
+  rmSync(raw, { force: true });
+}
 function synth(voice, text) {
-  for (let attempt = 0; attempt < 2; attempt++) {
-    const base = `${WORK}/audio/c${String(clipN++).padStart(3, "0")}`;
-    const file = `${base}.wav`;
-    try {
-      const raw = TTS === "polly" ? `${base}.mp3` : `${base}.aiff`;
-      if (TTS === "polly") {
-        execFileSync("aws", ["polly", "synthesize-speech", "--engine", POLLY_ENGINE[voice] ?? "generative", "--voice-id", voice,
-          "--output-format", "mp3", "--text", text, raw], { stdio: "pipe" });
-      } else {
-        execFileSync("say", ["-v", voice, "-r", RATE[voice] ?? "200", "-o", raw, "--", text], { stdio: "pipe" });
+  const file = cacheFile(voice, text);
+  if (!existsSync(file)) {
+    for (let attempt = 1; ; attempt++) {
+      try { render(voice, text, file); break; } catch (e) {
+        console.warn(`tts failed (attempt ${attempt}) for "${text.slice(0, 40)}": ${String(e.stderr ?? e.message).trim().slice(0, 120)}`);
+        if (attempt >= 6) return null;
+        execFileSync("sleep", [String(Math.min(8, attempt * 1.5))]);
       }
-      execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-i", raw, "-af", `atempo=${TEMPO}`, "-ar", "44100", file]);
-      const dur = Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file]).toString());
-      return { file, dur };
-    } catch (e) {
-      console.warn(`say failed (attempt ${attempt + 1}) for "${text.slice(0, 40)}": ${String(e.stderr ?? e.message).trim()}`);
     }
   }
-  return null;
+  const dur = Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", file]).toString());
+  return { file, dur };
+}
+if (process.argv.includes("--prewarm")) {
+  const list = JSON.parse(readFileSync(resolve(arg("prewarm")), "utf8"));
+  let ok = 0;
+  for (const { role, text } of list) if (synth(VOICES[role], text)) ok++;
+  console.log(`prewarmed ${ok}/${list.length} clips`);
+  if (ok < list.length) process.exit(1);
 }
 /** Speak now (relative to the video) and return the clip duration in ms. */
 function speakAt(voice, text) {
@@ -73,16 +92,67 @@ function speakAt(voice, text) {
 const browser = await chromium.launch({ executablePath: EDGE, headless: true, args: ["--no-sandbox", "--hide-scrollbars"] });
 const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
 const page = await ctx.newPage();
+// The simulator speaks replies with the browser's speechSynthesis; in headless Edge that blocks the page for the
+// length of the utterance, so typing and screen changes show up late. Narration comes from our own mix, so replace it
+// with a silent stand-in that fires start/end events on the normal schedule without blocking.
+await ctx.addInitScript(() => {
+  // diagnostics: record main-thread long tasks (>= 50 ms) with wall-clock start times
+  try {
+    window.__longTasks = [];
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) window.__longTasks.push([Math.round(performance.timeOrigin + e.startTime), Math.round(e.duration)]);
+    }).observe({ type: "longtask", buffered: true });
+  } catch {}
+});
+await ctx.addInitScript(() => {
+  const synth = window.speechSynthesis;
+  if (!synth) return;
+  const fire = (u, type) => { try { u.dispatchEvent(new Event(type)); } catch {} try { u["on" + type]?.(new Event(type)); } catch {} };
+  synth.speak = (u) => {
+    const ms = Math.min(9000, 400 + String(u.text || "").split(/\s+/).length * 280);
+    setTimeout(() => fire(u, "start"), 0);
+    setTimeout(() => fire(u, "end"), ms);
+  };
+  synth.cancel = () => {};
+});
 const cdp = await ctx.newCDPSession(page);
 const frames = []; // {file, t}
 let n = 0;
+// Capture: CAPTURE=screenshots (default) grabs Page.captureScreenshot on a steady clock, each frame stamped with when
+// it was taken. The DevTools screencast (CAPTURE=screencast) built up a ~5 s backlog in long takes while stamping
+// frames on arrival, so the picture drifted behind the narration.
+const CAPTURE = process.env.CAPTURE ?? "screenshots";
+const FPS = Number(process.env.CAPTURE_FPS ?? "12");
+let capturing = false;
+let captureWall = 0;
+let captureLoop = Promise.resolve();
 cdp.on("Page.screencastFrame", async (f) => {
   const file = `${WORK}/f${String(n++).padStart(6, "0")}.jpg`;
   writeFileSync(file, Buffer.from(f.data, "base64"));
-  frames.push({ file, t: f.metadata.timestamp });
+  frames.push({ file, t: f.metadata.timestamp, arrived: Date.now() / 1000 });
   cdp.send("Page.screencastFrameAck", { sessionId: f.sessionId }).catch(() => {});
 });
-const startCapture = () => cdp.send("Page.startScreencast", { format: "jpeg", quality: 85, everyNthFrame: 1, maxWidth: W, maxHeight: H });
+async function screenshotLoop() {
+  const every = 1000 / FPS;
+  while (capturing) {
+    const started = Date.now();
+    try {
+      const { data } = await cdp.send("Page.captureScreenshot", { format: "jpeg", quality: 82, optimizeForSpeed: true });
+      const t = (started + Date.now()) / 2 / 1000; // mid-point of the capture
+      const file = `${WORK}/f${String(n++).padStart(6, "0")}.jpg`;
+      writeFileSync(file, Buffer.from(data, "base64"));
+      frames.push({ file, t, arrived: Date.now() / 1000 });
+    } catch { /* page navigating or busy: skip this tick */ }
+    const wait = every - (Date.now() - started);
+    if (wait > 0) await sleep(wait);
+  }
+}
+const startCapture = async () => {
+  captureWall = Date.now() / 1000;
+  if (CAPTURE === "screencast") return cdp.send("Page.startScreencast", { format: "jpeg", quality: 85, everyNthFrame: 1, maxWidth: W, maxHeight: H });
+  capturing = true;
+  captureLoop = screenshotLoop();
+};
 
 // ── page helpers ────────────────────────────────────────────────────────────────
 async function overlay(title, sub, { full = false } = {}) {
@@ -125,7 +195,12 @@ async function narrate(text, pad = 600) { await sleep(speakAt(VOICES.narrator, t
 
 // ── run ─────────────────────────────────────────────────────────────────────────
 await page.goto(BASE, { waitUntil: "networkidle" });
-await page.evaluate(() => { localStorage.clear(); sessionStorage.clear(); });
+// Simulator voice off: narration comes from our mix, and while the simulator "speaks" (Polly fetch, then the browser
+// voice, up to ~9 s) typed lines queue behind it, which made the picture lag the audio.
+await page.evaluate(() => {
+  localStorage.clear(); sessionStorage.clear();
+  localStorage.setItem("addon-sim.settings.v1", JSON.stringify({ voice: { engine: "off", pollyVoiceId: "Joanna", browserVoiceName: "" } }));
+});
 await page.reload({ waitUntil: "networkidle" });
 await sleep(1500);
 await page.getByRole("button", { name: "Smart display 15" }).click();
@@ -180,11 +255,32 @@ await say("What did you do this week that I might disagree with?", { after: 1200
 await overlay("Alexa can act for you without being a black box.", "Every action has a receipt. Every correction becomes a rule.", { full: true });
 await narrate("Alexa can act for you, without being a black box.", 1200);
 
+const longTasks = await page.evaluate(() => window.__longTasks || []).catch(() => []);
+capturing = false;
+await captureLoop;
 await cdp.send("Page.stopScreencast").catch(() => {});
 await browser.close();
 
+// ── capture diagnostics: big gaps between frames, and frames that arrived long after they were painted ──
+{
+  const gaps = [];
+  for (let i = 1; i < frames.length; i++) {
+    const gap = frames[i].t - frames[i - 1].t;
+    const late = frames[i].arrived - frames[i].t;
+    if (gap > 2 || late > 1) gaps.push(`frame ${i} at ${(frames[i].t - frames[0].t).toFixed(1)}s: gap ${gap.toFixed(1)}s, arrived ${late.toFixed(1)}s after paint`);
+  }
+  console.log(`capture: ${frames.length} frames; ${gaps.length} anomalies`);
+  const heavy = longTasks.filter(([, d]) => d >= 200);
+  console.log(`main-thread long tasks: ${longTasks.length} (>=200 ms: ${heavy.length}, total ${longTasks.reduce((a, [, d]) => a + d, 0)} ms)`);
+  for (const [at, d] of heavy.slice(0, 30)) console.log(`  long task at ${(at / 1000 - captureWall).toFixed(1)}s for ${d} ms`);
+  for (const g of gaps.slice(0, 25)) console.log("  " + g);
+}
+
 // ── encode video ────────────────────────────────────────────────────────────────
 if (frames.length < 10) { console.error("too few frames captured:", frames.length); process.exit(1); }
+// The first screencast frame is the last thing Chrome painted, stamped with when it was painted, which can be
+// seconds before capture began. Anchor the timeline at the moment capture started so audio lines up.
+frames[0].t = Math.max(frames[0].t, captureWall);
 const t0 = frames[0].t;
 const end = Date.now() / 1000;
 const list = [];

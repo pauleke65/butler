@@ -19,3 +19,14 @@ scripts/stack.sh restart && uv run python -m butler_local.seed --reset
 ```
 
 Voices: `VOICE_YOU` (default "Reed (English (US))"), `VOICE_BUTLER` ("Samantha"), `VOICE_NARRATOR` ("Daniel"). The take must stay under 3:00 (the last one was 2:40).
+
+## Amazon Polly voices (recommended for the submission)
+
+```bash
+AWS_PROFILE=pie TTS=polly node record.mjs --prewarm lines.json --out ../../docs/demo/butler-demo-polly.mp4
+```
+
+- Voices: Ruth (Butler) and Matthew (you), both Polly *generative*; Gregory (*long-form*) narrates. A take costs a few cents.
+- `--prewarm lines.json` renders every known line first and caches it in `.tts-cache/`, so a flaky network can't leave gaps.
+- Frames are taken as screenshots on a steady clock (`CAPTURE_FPS`, default 12). The DevTools screencast drifted ~5 s behind the audio in long takes; `CAPTURE=screencast` keeps it available.
+- The simulator's own voice is switched off during recording (it delayed typing while "speaking").
