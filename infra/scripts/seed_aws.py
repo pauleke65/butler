@@ -49,6 +49,22 @@ def policies_by_name(client: Any, engine_id: str) -> dict[str, str]:
             return found
 
 
+def remove_demo_policies(client: Any, engine_id: str, timeout_s: float = 120) -> list[str]:
+    """Delete rule policies that demo runs created (corrections turned into rules). Keeps the base permit and the
+    default rules' policies. Without this a reset clears the table but the old rules keep enforcing at the gateway."""
+    import time
+
+    keep = {policy_name(rule_id) for rule_id in DEFAULT_RULE_IDS}
+    stale = {name: pid for name, pid in policies_by_name(client, engine_id).items() if name.startswith("rule_") and name not in keep}
+    for name, pid in stale.items():
+        client.delete_policy(policyEngineId=engine_id, policyId=pid)
+        log.info("deleted demo policy %s", name)
+    deadline = time.monotonic() + timeout_s
+    while stale and time.monotonic() < deadline and set(stale) & set(policies_by_name(client, engine_id)):
+        time.sleep(3)
+    return sorted(stale)
+
+
 def link_default_policies(store: Store, household_id: str, client: Any, engine_id: str) -> list[str]:
     """Point each default rule record at its deployed policy. Returns the rule ids that were linked."""
     deployed = policies_by_name(client, engine_id)
@@ -77,13 +93,18 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--reset", action="store_true", help="clear demo state first (keeps household, contacts, default rules)")
     args = parser.parse_args(argv)
 
+    from botocore.config import Config
+
     # a stray local-moto endpoint must never leak into a run against AWS
     os.environ.pop("DYNAMODB_ENDPOINT", None)
-    values = ssm_values(boto3.client("ssm", region_name=args.region), args.stage)
+    retrying = Config(retries={"max_attempts": 10, "mode": "standard"})  # rides out brief DNS / network drops
+    values = ssm_values(boto3.client("ssm", region_name=args.region, config=retrying), args.stage)
     ids = Identities(values["cognito/agent-client-id"], values["cognito/executor-client-id"], values["gateway/arn"])
     store = Store(values["table-name"], args.region)
     summary = seed(store, do_reset=args.reset, ids=ids)
-    control = boto3.client("bedrock-agentcore-control", region_name=args.region)
+    control = boto3.client("bedrock-agentcore-control", region_name=args.region, config=retrying)
+    if args.reset:
+        remove_demo_policies(control, values["policy-engine/id"])
     linked = link_default_policies(store, summary["household_id"], control, values["policy-engine/id"])
     log.info("seeded %s into %s: %d history receipts, %d default rules linked to deployed policies",
              summary["household_id"], values["table-name"], summary["receipts"], len(linked))

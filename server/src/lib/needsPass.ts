@@ -10,6 +10,7 @@ import type { Capability, Contact, SituationKind } from "@butler/contracts";
 import {
   addDays,
   isoInTz,
+  spokenRange,
   tzOffsetMinutes,
   wallClock,
   weekdayName,
@@ -290,9 +291,9 @@ export function buildKeywordResult(input: NeedsPassInput, kindOverride?: Situati
     const staying = someoneStaying(text);
     let range = "";
     if (times.startDate && times.endDate) {
-      const a = dayLabel(times.startDate, input.now, tz);
-      const b = dayLabel(times.endDate, input.now, tz);
-      range = a === b ? `, ${a}` : `, ${a} to ${b}`;
+      // "Away, Thursday to Sunday": weekday names when close, like the spoken reply
+      const r = spokenRange(times.startDate, times.endDate, input.now, tz);
+      range = `, ${r.charAt(0).toUpperCase()}${r.slice(1)}`;
     } else if (times.startDate) range = `, ${dayLabel(times.startDate, input.now, tz)}`;
     return {
       kind,

@@ -1,6 +1,6 @@
 # Devpost submission (draft)
 
-Paste-ready text for the Devpost form. Lines marked **[confirm]** depend on things not done yet (AWS deploy, real-model run); fix or delete them before submitting.
+Paste-ready text for the Devpost form. Checked against the deployed `dev` stack on 2026-10-10.
 
 ---
 
@@ -22,11 +22,11 @@ Alexa+ can now act for you: book, buy, message. That's useful only if you can tr
 
 ## How we built it
 - **Alexa+ add-on:** a self-hosted MCP server in TypeScript (official MCP SDK, stateless Streamable HTTP, negotiates spec **2025-11-25**) with 9 tools designed from Amazon's Alexa+ MCP design guide: one tool per intent, voice-only `spoken_summary`, never an empty result. Six **MCP Apps** screens (`ui://`) using the guide's List, Carousel and Card layouts.
-- **Planner agent:** a tool-use loop on **Amazon Bedrock** with **Amazon Nova 2 Lite** that turns a situation into needs and actions. Every action goes through **Amazon Bedrock AgentCore Gateway**.
+- **Planner agent** on **AgentCore Runtime** turns a situation into needs and actions; every action goes through **Amazon Bedrock AgentCore Gateway**. It is written as a tool-use loop for **Amazon Bedrock** with **Amazon Nova 2 Lite**. Our new account still has zero Bedrock quota, so the deployed stack and the demo run the planner's deterministic offline twin; the Bedrock path is implemented and tested, but has not run against the live model yet.
 - **Rules enforced outside the model:** **AgentCore Policy** evaluates Cedar policies on every tool call. The model never writes Cedar: it picks one of seven rule templates; deterministic code validates the parameters, compiles the policy, activates it, and waits for it to take effect before telling you "done".
 - **The AI can't approve itself:** two Cognito machine identities. "Ask first" rules block only the agent. Your "yes" is executed by a separate deterministic approval executor (a Lambda with no model) under its own identity; "never" rules block both.
 - **Receipts:** a wrapper around every gateway call records the gateway's decision, the rule that allowed or denied it, the reasoning and the alternatives, then writes it to **DynamoDB**.
-- **Infrastructure as code:** one AWS CDK stack (AgentCore Runtime for the MCP server and the agent, Gateway with five tool targets served by one Lambda, Policy engine in ENFORCE mode, Cognito, DynamoDB, SES).
+- **Infrastructure as code:** one AWS CDK stack (AgentCore Runtime for the MCP server and the agent, Gateway with five tool targets served by one Lambda, Policy engine in ENFORCE mode, Cognito, DynamoDB). The demo video runs against this deployed stack.
 - **Open-source simulator:** the official Alexa+ simulator isn't available to participants, so we built **addon-sim**: a generic MCP Apps host with smart-display frames, voice, an inspector and a scripted-conversation runner. Butler's demo runs in it; it works with any MCP server.
 
 ## Challenges we ran into
@@ -70,7 +70,7 @@ Alexa+ can now act for you: book, buy, message. That's useful only if you can tr
 | Product feedback | paste from [`product-feedback.md`](product-feedback.md) |
 | Friction log | paste the top entries from [`friction-log.md`](friction-log.md) and link the file |
 
-**AWS services used (for AWS Builder):** Amazon Bedrock (Converse, Amazon Nova 2 Lite); Amazon Bedrock AgentCore Runtime (MCP server and agent), Gateway (five tool targets on one Lambda) and Policy (Cedar, ENFORCE); AWS Lambda (action tools, approval executor, debug API); Amazon DynamoDB; Amazon Cognito (machine identities); Amazon SES; AWS CDK; Amazon CloudWatch. **[confirm]** which of these ran on the deployed stack.
+**AWS services used (for AWS Builder), all running on the deployed stack:** Amazon Bedrock AgentCore Runtime (MCP server and agent), Gateway (five tool targets on one Lambda) and Policy (Cedar, ENFORCE); AWS Lambda (action tools, approval executor, debug API); Amazon DynamoDB (receipts, rules, plans); Amazon Cognito (machine identities for the agent, the approval executor and the simulator); AWS Secrets Manager and Systems Manager Parameter Store; AWS CDK; Amazon CloudWatch Logs; Amazon Polly (demo voices). Implemented but not live yet: Amazon Bedrock with Amazon Nova 2 Lite (zero quota on our new account) and Amazon SES email (the stack runs with test adapters).
 
 ## Feature requests (optional field)
 - **Open the Alexa+ Web Simulator to hackathon participants** (Important): we couldn't verify tool routing or screen rendering against the real client.

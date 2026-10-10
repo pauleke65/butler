@@ -16,6 +16,9 @@ export async function POST(req: Request) {
   const servers = body.servers
     .filter((s) => s && typeof s.url === "string" && typeof s.id === "string")
     .map((s) => ({ ...s, auth: s.auth ?? { type: "none" as const } }));
-  const connections = await getHub().configure(servers);
+  const hub = getHub();
+  // a page session (re)applies its servers: re-read ui:// resources so rebuilt views show up after a reload
+  hub.manager.clearResourceCache();
+  const connections = await hub.configure(servers);
   return Response.json({ connections });
 }
