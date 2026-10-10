@@ -2,64 +2,77 @@
 
 **An Alexa+ add-on that acts on your behalf, keeps a receipt for every action, and turns your corrections into rules it cannot break.**
 
-Built for the [Build, Ship, Shape: Amazon Developer Hackathon](https://amazonappdev2026.devpost.com/) (Alexa+ track, with the AWS Builder and Open Source mini challenges).
+Built for the [Build, Ship, Shape: Amazon Developer Hackathon](https://amazonappdev2026.devpost.com/): Alexa+ track, plus the AWS Builder and Open Source mini challenges.
 
-> You describe a situation: *"six friends are coming over Friday at 7"*. Butler works out what that needs and handles it: invites, calendar, groceries, a cleaner. Every action leaves a **receipt** (what, why, what it rejected, which rule allowed it). When you object (*"don't buy drinks without asking me"*), Butler turns it into a **rule enforced outside the AI model**, so the next attempt is blocked and Butler asks instead.
+- **Demo video:** _YouTube link added at submission_ (2:40, recorded from the running system)
+- **Simulator (open source):** [`addon-sim/`](addon-sim/), published as its own repo
 
-## How it fits together
+![Architecture](docs/architecture.png)
 
-```
- addon-sim (Alexa+ style simulator)          Butler
- ┌─────────────────────────┐   MCP over    ┌───────────────────┐  start/resume   ┌─────────────────────────┐
- │ voice, "Alexa brain",   │ ─ Streamable ▶│ MCP server (TS)   │ ──────────────▶ │ Planner agent (Python)  │
- │ MCP Apps host (screens) │ ◀─── HTTP ─── │ 9 tools + 6 views │                 │ Strands / Bedrock       │
- └─────────────────────────┘               └─────────┬─────────┘                 └───────────┬─────────────┘
-                                                     │ approvals                             │ every action
-                                                     ▼                                       ▼
-                                           ┌───────────────────┐               ┌──────────────────────────┐
-                                           │ Approval executor │──────────────▶│ AgentCore Gateway        │
-                                           │ (deterministic)   │               │  + Policy (Cedar rules)  │──▶ ALLOW / DENY
-                                           └───────────────────┘               └────────────┬─────────────┘
-                                                                                            ▼ (if allowed)
-                                                                      email · calendar · checkout · bookings
-```
+## What it does
 
-- **Why the AI can't approve itself:** the agent and the approval executor hold different identities. "Ask first" rules block only the agent. When you say yes, plain code, not the model, runs the action.
-- **Corrections become rules:** the model drafts a rule from a small set of templates; deterministic code compiles it to [Cedar](https://www.cedarpolicy.com/) and activates it. The model never writes policy code.
+You describe a situation, not a command: *"Six friends from the dinner crew are coming over Friday at 7."* Butler works out what that needs and handles it:
+- it sends the invites and puts the dinner on your calendar;
+- it compares drink options and buys the one that arrives in time, within your spending limit;
+- it asks you which cleaner to book.
 
-## Repo map
+Every action leaves a **receipt**: what it did, why, what it rejected, and which rule allowed it. When you object (*"don't buy drinks without asking me"*), Butler turns that into a **rule enforced outside the AI model**. Next time it tries to buy drinks, the gateway blocks the call and Butler asks you instead.
 
-| Path | What |
+## Why it's built this way
+
+| Idea | How |
 |---|---|
-| `server/` | Alexa-facing MCP server (TypeScript) and `server/ui/` MCP Apps screens |
-| `agent/` | Planner agent: scripted (offline) and Bedrock-backed |
-| `actions/` | Action tools behind the gateway: email, calendar, shopping, services, weather |
-| `libs/butler_rules/` | Rule templates, Cedar compiler, matcher, policy service |
-| `libs/butler_actions/` | Store, action-call wrapper, receipts, scoring, spoken summaries |
-| `executor/` | Approval executor |
-| `local/` | Local stack: DynamoDB (moto), gateway emulator evaluating real Cedar, seed loader, supervisor |
-| `debug-api/` | Read-only API feeding the live "Black Box" panel |
-| `sim-panel/` | Black Box panel plugin for the simulator |
-| `addon-sim/` | The simulator (open source, separate from Butler, MIT) |
-| `packages/contracts/` | Shared schemas (zod → JSON Schema → Pydantic) |
-| `handoff/`, `SPEC.md` | Product spec and the full build handoff pack |
+| Rules the AI can't talk its way around | Every action goes through **Amazon Bedrock AgentCore Gateway**, where **AgentCore Policy** evaluates Cedar rules before the tool runs. The model never sees or writes the policy. |
+| The AI can't approve itself | Two machine identities. "Ask first" rules block only the agent's identity. When you say yes, a separate deterministic **approval executor** (no model) runs the action under its own identity. `never` rules block both. |
+| Corrections become rules safely | The model only picks a rule template and fills its parameters. Deterministic code validates them, compiles Cedar, activates the policy, and waits until it's enforced before saying "done". |
+| Fail closed | Cedar skips a rule that errors, so a missing or mistyped field could let an action through. Every rule is guarded, inputs are type-checked before the call, and every tool re-validates its own inputs (e.g. checkout recomputes the total). |
+| Made for Alexa+ | Turn-based design (Butler never interrupts), one tool per intent, a `spoken_summary` that works voice-only, and screens that follow Amazon's four Alexa+ layouts (List, Carousel, Card; Map unused). |
 
-## Run it locally (no AWS needed)
+## Where to look in the code
+
+| What | Where |
+|---|---|
+| **MCP server entry point** (Streamable HTTP, negotiates MCP **2025-11-25**) | [`server/src/index.ts`](server/src/index.ts) → [`server/src/server.ts`](server/src/server.ts) |
+| The 9 Alexa-facing tools | [`server/src/tools/`](server/src/tools/) |
+| MCP Apps screens (`ui://butler/*`) | [`server/ui/src/views/`](server/ui/src/views/) |
+| Planner agent (Bedrock tool-use loop) and rule drafting | [`agent/butler_agent/`](agent/butler_agent/) |
+| Rule templates, Cedar compiler, policy service | [`libs/butler_rules/`](libs/butler_rules/), compiled policies in [`policies/golden/`](policies/golden/) |
+| Action wrapper and receipts | [`libs/butler_actions/butler_actions/wrapper.py`](libs/butler_actions/butler_actions/wrapper.py) |
+| Approval executor | [`executor/`](executor/) |
+| Action tools behind the gateway | [`actions/butler_action_handlers/`](actions/butler_action_handlers/) |
+| AWS infrastructure (CDK: AgentCore Runtime, Gateway, Policy engine, Cognito, DynamoDB, Lambda) | [`infra/`](infra/) |
+| Spec, handoff and as-built notes | [`SPEC.md`](SPEC.md), [`handoff/`](handoff/) |
+
+## Run it locally (no AWS account needed)
 
 ```bash
-make install        # pnpm install + uv sync (Python 3.12)
-make test           # all Python + TypeScript tests
-make dev            # local stack: DB, gateway emulator, executor, agent
-pnpm --filter ./server dev          # MCP server on :8000/mcp
-pnpm --dir addon-sim dev            # simulator on :3000
+make install                      # pnpm install + uv sync (Python 3.12)
+scripts/stack.sh start            # local DynamoDB, gateway emulator (real Cedar), executor, agent, MCP server
+pnpm --dir addon-sim dev          # simulator on http://localhost:3000
 ```
 
-Modes (`LLM_MODE`): `offline` (default, deterministic) or `bedrock` (real models via Amazon Bedrock). See `handoff/05-local-build.md`.
+Then type or say *"Tell Butler six friends from the dinner crew are coming over Friday at 7."*
 
-## Where MCP and Cedar are actually used
-- MCP server entry point: `server/src/index.ts` (tools in `server/src/tools/`, screens in `server/ui/`)
-- Policy enforcement: `libs/butler_rules/` (compile + real-Cedar evaluation) and `local/butler_local/gateway.py`; in AWS the same policies attach to AgentCore Gateway
-- Receipts: `libs/butler_actions/butler_actions/wrapper.py`
+The local gateway emulator evaluates the **same compiled Cedar policies** with the open-source Cedar engine, so the rules behave as they do on AgentCore Policy. Other commands:
+
+```bash
+make test                                          # all Python + TypeScript tests
+pnpm --dir addon-sim play scripts/butler-golden.yaml --url http://localhost:8000/mcp --token local-sim-token
+uv run python -m butler_local.seed --reset         # reset the demo between runs
+```
+
+Model-backed steps (planner, rule drafting, fast needs pass) run on **Amazon Nova 2 Lite** via Bedrock with `LLM_MODE=bedrock`. Each also has a deterministic offline implementation (`LLM_MODE=offline`, the default) so tests and demos run anywhere.
+
+## Real vs simulated
+
+| Part | Status |
+|---|---|
+| MCP server, screens, planner, rules, receipts, approval flow | Real |
+| Policy enforcement | Real Cedar (AgentCore Policy in AWS; open-source Cedar engine locally) |
+| Email (Amazon SES), calendar (Google Calendar) | Real integrations, sandboxed to test accounts |
+| Payments | Real provider in **test mode** only |
+| Product catalogue, cleaners and other service providers | **Simulated** (labelled "Simulated" on every screen) |
+| Alexa+ itself | The official simulator isn't open to hackathon participants, so the demo runs in [`addon-sim`](addon-sim/), an open-source host that follows Amazon's published Alexa+ MCP design guide |
 
 ## Licence
 MIT. The simulator is a generic tool and is not affiliated with Amazon.

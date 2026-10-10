@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8aa0c8"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f27474"/>
+    </marker>
+    <style>
+      .bg { fill: #0b1220; }
+      .box { fill: #121c33; stroke: #33456e; stroke-width: 1.5; }
+      .aws { fill: #10213a; stroke: #f0a63a; stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .key { fill: #1b2c4f; stroke: #5b8cff; stroke-width: 2; }
+      .gate { fill: #2a1a24; stroke: #f27474; stroke-width: 2; }
+      .t { fill: #e8eefc; font-size: 20px; font-weight: 600; }
+      .s { fill: #9fb2dd; font-size: 14px; }
+      .xs { fill: #7f93bd; font-size: 12.5px; }
+      .lbl { fill: #b9c7e6; font-size: 13px; }
+      .h { fill: #f0a63a; font-size: 14px; font-weight: 600; letter-spacing: .06em; }
+      .line { stroke: #8aa0c8; stroke-width: 2; fill: none; }
+      .red { stroke: #f27474; stroke-width: 2.5; fill: none; }
+    </style>
+  </defs>
+  <rect class="bg" width="1600" height="900"/>
+  <text x="40" y="52" class="t" font-size="28">Butler: an Alexa+ add-on with receipts and rules the AI can't break</text>
+  <text x="40" y="80" class="s">MCP spec 2025-11-25 · MCP Apps screens · Amazon Bedrock AgentCore (Runtime, Gateway, Policy) · Amazon Nova</text>
+
+  <!-- Customer + Alexa+ -->
+  <rect class="box" x="40" y="130" width="250" height="150" rx="14"/>
+  <text x="62" y="165" class="t">Customer</text>
+  <text x="62" y="192" class="s">"Six friends are coming</text>
+  <text x="62" y="212" class="s">over Friday at 7."</text>
+  <text x="62" y="246" class="xs">voice · Echo Show screens</text>
+
+  <rect class="box" x="40" y="320" width="250" height="170" rx="14"/>
+  <text x="62" y="356" class="t">Alexa+</text>
+  <text x="62" y="382" class="s">MCP client: picks tools,</text>
+  <text x="62" y="402" class="s">speaks spoken_summary,</text>
+  <text x="62" y="422" class="s">renders ui:// screens</text>
+  <text x="62" y="456" class="xs">demo: addon-sim (open source)</text>
+
+  <path class="line" d="M165 280 L165 318" marker-end="url(#arrow)"/>
+
+  <!-- AWS boundary -->
+  <rect class="aws" x="350" y="110" width="1210" height="760" rx="18"/>
+  <text x="374" y="140" class="h">AWS · us-east-1</text>
+
+  <!-- MCP server -->
+  <rect class="key" x="380" y="320" width="300" height="200" rx="14"/>
+  <text x="402" y="356" class="t">Butler MCP server</text>
+  <text x="402" y="380" class="xs">AgentCore Runtime · TypeScript</text>
+  <text x="402" y="410" class="s">9 tools: handle_situation,</text>
+  <text x="402" y="430" class="s">get_status, answer_decision,</text>
+  <text x="402" y="450" class="s">explain_action, object_to_action …</text>
+  <text x="402" y="480" class="s">6 MCP Apps screens</text>
+  <text x="402" y="500" class="xs">(plan, options, receipt, rule …)</text>
+
+  <path class="line" d="M290 405 L378 405" marker-end="url(#arrow)"/>
+  <text x="306" y="394" class="lbl">MCP</text>
+
+  <!-- Planner agent -->
+  <rect class="key" x="760" y="160" width="300" height="180" rx="14"/>
+  <text x="782" y="196" class="t">Planner agent</text>
+  <text x="782" y="220" class="xs">AgentCore Runtime · Python</text>
+  <text x="782" y="250" class="s">situation → needs → actions</text>
+  <text x="782" y="272" class="s">tool-use loop on Bedrock</text>
+  <text x="782" y="294" class="s">Amazon Nova 2 Lite</text>
+  <text x="782" y="322" class="xs">identity: butler-agent</text>
+
+  <path class="line" d="M680 360 C 720 360, 720 260, 758 260" marker-end="url(#arrow)"/>
+  <text x="586" y="304" class="lbl">start / resume</text>
+
+  <!-- Approval executor -->
+  <rect class="box" x="760" y="400" width="300" height="160" rx="14"/>
+  <text x="782" y="436" class="t">Approval executor</text>
+  <text x="782" y="460" class="xs">Lambda · deterministic, no model</text>
+  <text x="782" y="490" class="s">runs an action only after</text>
+  <text x="782" y="510" class="s">the customer says yes</text>
+  <text x="782" y="540" class="xs">identity: approval-executor</text>
+
+  <path class="line" d="M680 470 L758 470" marker-end="url(#arrow)"/>
+  <text x="686" y="494" class="xs">you say yes</text>
+
+  <!-- Gateway + Policy -->
+  <rect class="gate" x="1130" y="240" width="390" height="250" rx="16"/>
+  <text x="1152" y="278" class="t">AgentCore Gateway</text>
+  <text x="1152" y="304" class="t" fill="#f6a3a3">+ AgentCore Policy (Cedar)</text>
+  <text x="1152" y="338" class="s">every action is checked here,</text>
+  <text x="1152" y="358" class="s">outside the AI, before it runs</text>
+  <text x="1152" y="392" class="xs">base permit + forbid rules:</text>
+  <text x="1152" y="412" class="xs">spend cap · ask before drinks · never email X …</text>
+  <text x="1152" y="440" class="lbl" fill="#7fe0a0">ALLOW → run the tool</text>
+  <text x="1152" y="464" class="lbl" fill="#f6a3a3">DENY → Butler asks you instead</text>
+
+  <path class="line" d="M1060 260 L1128 300" marker-end="url(#arrow)"/>
+  <path class="line" d="M1060 480 L1128 440" marker-end="url(#arrow)"/>
+
+  <!-- Tools -->
+  <rect class="box" x="1130" y="540" width="390" height="150" rx="14"/>
+  <text x="1152" y="574" class="t">Action tools (Lambda)</text>
+  <text x="1152" y="602" class="s">email (SES) · calendar (Google)</text>
+  <text x="1152" y="624" class="s">checkout (test-mode payments)</text>
+  <text x="1152" y="646" class="s">services (simulated) · weather</text>
+  <text x="1152" y="672" class="xs">inputs re-validated; idempotent</text>
+  <path class="line" d="M1325 490 L1325 538" marker-end="url(#arrow)"/>
+
+  <!-- Data -->
+  <rect class="box" x="380" y="600" width="680" height="220" rx="14"/>
+  <text x="402" y="636" class="t">DynamoDB: plans, decisions, rules, receipts</text>
+  <text x="402" y="668" class="s">Every attempted action leaves a receipt: what it did, why, what it rejected,</text>
+  <text x="402" y="690" class="s">and which rule allowed or denied it (gateway decision recorded).</text>
+  <text x="402" y="726" class="s">Corrections → the model picks a rule template → deterministic code</text>
+  <text x="402" y="748" class="s">compiles Cedar → new policy is active before Butler says "done".</text>
+  <text x="402" y="790" class="xs">Cognito: two machine identities, so the AI can never approve its own held actions.</text>
+  <path class="line" d="M530 520 L530 598" marker-end="url(#arrow)"/>
+  <path class="line" d="M910 560 L910 598" marker-end="url(#arrow)"/>
+  <path class="line" d="M1130 640 L1062 700" marker-end="url(#arrow)"/>
+  <text x="1140" y="716" class="xs">receipts ↙</text>
+
+  <!-- Correction loop callout -->
+  <path class="red" d="M200 490 C 200 560, 330 560, 378 620" marker-end="url(#arrowRed)"/>
+  <text x="60" y="540" class="lbl" fill="#f6a3a3">"Don't buy drinks</text>
+  <text x="60" y="560" class="lbl" fill="#f6a3a3">without asking me."</text>
+  <text x="60" y="582" class="xs">→ becomes a Cedar rule</text>
+</svg>

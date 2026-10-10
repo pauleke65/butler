@@ -15,9 +15,10 @@ One block per tool/API/SDK actually used. Fill the **(to complete after deploy)*
 - **Needs work:** stateless + elicitation (FL-04), output-schema validation on errors (FL-05), view bundle size (FL-06).
 - **Build again?** Yes.
 
-### Amazon Bedrock (Converse)
-- **Used for:** (to complete after deploy) fast needs pass, planner, rule drafting, simulator brain; all behind an offline implementation.
-- **Needs work:** access gating and error message (FL-01).
+### Amazon Bedrock (Converse) and Amazon Nova 2 Lite
+- **Used for:** fast needs pass, planner tool-use loop, rule drafting (forced tool choice for structured output), simulator brain. Every step also has an offline implementation.
+- **Worked well:** one Converse API for every model, so switching from Claude to Nova was a config change; tool use and forced tool choice map cleanly onto our contracts.
+- **Needs work:** a brand-new account had a 0 tokens/day quota for every Nova model and Service Quotas would not accept a request below the 8M default (FL-10); Anthropic models needed a separate use-case form (FL-01); Nova Premier is already end-of-life. **(to complete)** quality notes once Nova 2 Lite runs the planner evals.
 
 ### Amazon Bedrock AgentCore: Runtime, Gateway, Policy
 - **Used for:** (to complete after deploy) hosting the MCP server and agent; routing every action through Gateway; enforcing user rules with Policy (Cedar) outside the model.
