@@ -4,9 +4,9 @@ Fields for the Open Source entry. Paul to review before pasting. Items in `<angl
 
 | Field | Value |
 |---|---|
-| Contribution URL | `<https://github.com/OWNER/addon-sim>` (the simulator repo; or the specific PR/release `v0.1.0` if the form wants a single contribution) |
-| Project repo URL | `<https://github.com/OWNER/butler>` |
-| GitHub username | `<github-username>` |
+| Contribution URL | https://github.com/pauleke65/addon-sim (release v0.1.0: https://github.com/pauleke65/addon-sim/releases/tag/v0.1.0) |
+| Project repo URL | https://github.com/pauleke65/butler |
+| GitHub username | pauleke65 |
 | Licence | MIT (visible in the repo's About box) |
 
 ## What I did
@@ -31,6 +31,6 @@ Not affiliated with Amazon. Device frames are generic and carry no Amazon brandi
 
 ## Links to include on the form
 
-* Repo: `<https://github.com/OWNER/addon-sim>`
+* Repo: https://github.com/pauleke65/addon-sim
 * Quick start: README section "Quick start (about 10 minutes)"
 * Demo of the simulator inside the Butler video: `<YouTube URL>`

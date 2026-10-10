@@ -4,8 +4,8 @@
 
 Built for the [Build, Ship, Shape: Amazon Developer Hackathon](https://amazonappdev2026.devpost.com/): Alexa+ track, plus the AWS Builder and Open Source mini challenges.
 
-- **Demo video:** _YouTube link added at submission_ (2:40, recorded from the running system)
-- **Simulator (open source):** [`addon-sim/`](addon-sim/), published as its own repo
+- **Demo video:** _YouTube link added at submission_ (2:44, recorded against the deployed AWS stack)
+- **Simulator (open source):** [`addon-sim/`](addon-sim/), also published on its own: https://github.com/pauleke65/addon-sim
 
 ![Architecture](docs/architecture.png)
 
@@ -61,7 +61,7 @@ pnpm --dir addon-sim play scripts/butler-golden.yaml --url http://localhost:8000
 uv run python -m butler_local.seed --reset         # reset the demo between runs
 ```
 
-Model-backed steps (planner, rule drafting, fast needs pass) run on **Amazon Nova 2 Lite** via Bedrock with `LLM_MODE=bedrock`. Each also has a deterministic offline implementation (`LLM_MODE=offline`, the default) so tests and demos run anywhere.
+Model-backed steps (planner, rule drafting, fast needs pass) are written for **Amazon Nova 2 Lite** via Bedrock (`LLM_MODE=bedrock`). Each also has a deterministic offline implementation (`LLM_MODE=offline`, the default) so tests and demos run anywhere. Our new AWS account still has zero Bedrock quota, so the deployed stack and the demo video run the offline implementations; see [`docs/bedrock-setup.md`](docs/bedrock-setup.md).
 
 ## Real vs simulated
 

@@ -63,7 +63,7 @@ Alexa+ can now act for you: book, buy, message. That's useful only if you can tr
 |---|---|
 | Primary track | Alexa+ |
 | Mini challenges | AWS Builder; Open Source |
-| Repository | `<https://github.com/OWNER/butler>` (public, MIT) |
+| Repository | https://github.com/pauleke65/butler (public, MIT) |
 | Demo video | `<YouTube URL>` (under 3:00) |
 | Existing project? | No: built during the submission window |
 | Open Source fields | see [`addon-sim/docs/devpost-open-source.md`](../addon-sim/docs/devpost-open-source.md) |
