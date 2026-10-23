@@ -16,47 +16,47 @@ Pronunciation: **AgentCore** = "agent core".
 
 ## The clips
 
-**1.** Hi, I'm Paul, and this is Butler: an Alexa+ add-on that handles everyday stuff for you. And when you correct it, that becomes a rule the AI can't break.
+**1.** Hi, I'm Paul, and this is Butler, an Alexa+ add-on that takes care of everyday things for you and turns your corrections into rules the AI can't break.
 
-**2.** It's running on an Echo Show in my simulator, talking to the real backend on AWS. The Black Box on the right logs every gateway decision.
+**2.** It's running on an Echo Show in my simulator and talking to the real backend on AWS, and the Black Box on the right logs every decision the gateway makes.
 
-**3.** I don't give Butler commands. I just tell it what's going on.
+**3.** I don't give Butler commands, I just tell it what's going on.
 
 **4.** *(to the Echo)* Tell Butler six friends from the dinner crew are coming over Friday at seven.
 
-**5.** And it gets to work.
+**5.** Butler makes a plan and starts working on it right away.
 
-**6.** It won't interrupt me. It waits until I check in.
+**6.** It won't interrupt me, it just waits until I check in.
 
 **7.** *(to the Echo)* How's Friday looking?
 
-**8.** It needs me to pick a cleaner. I'll go with BrightHome.
+**8.** It needs me to pick a cleaner, so I'll go with BrightHome.
 
-**9.** That tap goes through a separate approval path. The AI can't approve itself.
+**9.** My tap goes through a separate approval path, because the AI isn't allowed to approve things for itself.
 
-**10.** Everything it does has a receipt.
+**10.** Everything Butler does comes with a receipt.
 
 **11.** *(to the Echo)* Why did you buy the drinks?
 
-**12.** What it knew, what it turned down, and the rule that let it go ahead.
+**12.** It shows me what it knew, the options it turned down, and the rule that let it go ahead.
 
 **13.** *(to the Echo)* Don't buy drinks without asking me.
 
 **14.** *(to the Echo)* Yes.
 
-**15.** The AI only picks a rule template. Regular code turns it into a policy the gateway enforces. There's the new rule.
+**15.** The AI only picks a rule template, and plain code turns that into a policy the gateway enforces, so you can see the new rule right here.
 
-**16.** *(to the Echo)* I'm travelling Thursday to Sunday. My parents are staying at the house.
+**16.** *(to the Echo)* I'm travelling Thursday to Sunday, and my parents are staying at the house.
 
-**17.** Butler tried to buy drinks for my parents, and the gateway blocked it, outside the AI, before anything was spent.
+**17.** Butler tried to buy drinks for my parents, and the gateway blocked it before a single cent was spent, completely outside the AI.
 
 **18.** *(to the Echo)* Anything you need from me?
 
-**19.** So instead of buying, it asks me first.
+**19.** So instead of buying them, it asks me first.
 
 **20.** *(to the Echo)* What did you do this week that I might disagree with?
 
-**21.** That's Butler, built on Amazon Bedrock AgentCore. Thanks for watching!
+**21.** That's Butler, built on Amazon Bedrock AgentCore, and thanks for watching!
 
 ## Where each clip plays
 

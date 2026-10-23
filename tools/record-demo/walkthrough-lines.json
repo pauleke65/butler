@@ -1,15 +1,15 @@
 [
  {
   "role": "narrator",
-  "text": "Hi, I'm Paul, and this is Butler: an Alexa+ add-on that handles everyday stuff for you. And when you correct it, that becomes a rule the AI can't break."
+  "text": "Hi, I'm Paul, and this is Butler, an Alexa+ add-on that takes care of everyday things for you and turns your corrections into rules the AI can't break."
  },
  {
   "role": "narrator",
-  "text": "It's running on an Echo Show in my simulator, talking to the real backend on AWS. The Black Box on the right logs every gateway decision."
+  "text": "It's running on an Echo Show in my simulator and talking to the real backend on AWS, and the Black Box on the right logs every decision the gateway makes."
  },
  {
   "role": "narrator",
-  "text": "I don't give Butler commands. I just tell it what's going on."
+  "text": "I don't give Butler commands, I just tell it what's going on."
  },
  {
   "role": "you",
@@ -17,11 +17,11 @@
  },
  {
   "role": "narrator",
-  "text": "And it gets to work."
+  "text": "Butler makes a plan and starts working on it right away."
  },
  {
   "role": "narrator",
-  "text": "It won't interrupt me. It waits until I check in."
+  "text": "It won't interrupt me, it just waits until I check in."
  },
  {
   "role": "you",
@@ -29,15 +29,15 @@
  },
  {
   "role": "narrator",
-  "text": "It needs me to pick a cleaner. I'll go with BrightHome."
+  "text": "It needs me to pick a cleaner, so I'll go with BrightHome."
  },
  {
   "role": "narrator",
-  "text": "That tap goes through a separate approval path. The AI can't approve itself."
+  "text": "My tap goes through a separate approval path, because the AI isn't allowed to approve things for itself."
  },
  {
   "role": "narrator",
-  "text": "Everything it does has a receipt."
+  "text": "Everything Butler does comes with a receipt."
  },
  {
   "role": "you",
@@ -45,7 +45,7 @@
  },
  {
   "role": "narrator",
-  "text": "What it knew, what it turned down, and the rule that let it go ahead."
+  "text": "It shows me what it knew, the options it turned down, and the rule that let it go ahead."
  },
  {
   "role": "you",
@@ -57,15 +57,15 @@
  },
  {
   "role": "narrator",
-  "text": "The AI only picks a rule template. Regular code turns it into a policy the gateway enforces. There's the new rule."
+  "text": "The AI only picks a rule template, and plain code turns that into a policy the gateway enforces, so you can see the new rule right here."
  },
  {
   "role": "you",
-  "text": "I'm travelling Thursday to Sunday. My parents are staying at the house."
+  "text": "I'm travelling Thursday to Sunday, and my parents are staying at the house."
  },
  {
   "role": "narrator",
-  "text": "Butler tried to buy drinks for my parents, and the gateway blocked it, outside the AI, before anything was spent."
+  "text": "Butler tried to buy drinks for my parents, and the gateway blocked it before a single cent was spent, completely outside the AI."
  },
  {
   "role": "you",
@@ -73,7 +73,7 @@
  },
  {
   "role": "narrator",
-  "text": "So instead of buying, it asks me first."
+  "text": "So instead of buying them, it asks me first."
  },
  {
   "role": "you",
@@ -81,7 +81,7 @@
  },
  {
   "role": "narrator",
-  "text": "That's Butler, built on Amazon Bedrock AgentCore. Thanks for watching!"
+  "text": "That's Butler, built on Amazon Bedrock AgentCore, and thanks for watching!"
  },
  {
   "role": "butler",
