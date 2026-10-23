@@ -68,9 +68,9 @@ Model-backed steps (planner, rule drafting, fast needs pass) are written for **A
 | Part | Status |
 |---|---|
 | MCP server, screens, planner, rules, receipts, approval flow | Real |
-| Policy enforcement | Real Cedar (AgentCore Policy in AWS; open-source Cedar engine locally) |
-| Email (Amazon SES), calendar (Google Calendar) | Real integrations, sandboxed to test accounts |
-| Payments | Real provider in **test mode** only |
+| Policy enforcement | Real: AgentCore Policy on the deployed stack (the demo video shows a real gateway DENY); the open-source Cedar engine locally |
+| Email (Amazon SES), calendar (Google Calendar) | Adapters implemented and tested; the demo and the deployed stack use test stand-ins |
+| Payments | Test-mode adapter implemented and tested; the demo uses a test stand-in, nothing is charged |
 | Product catalogue, cleaners and other service providers | **Simulated** (labelled "Simulated" on every screen) |
 | Alexa+ itself | The official simulator isn't open to hackathon participants, so the demo runs in [`addon-sim`](addon-sim/), an open-source host that follows Amazon's published Alexa+ MCP design guide |
 
