@@ -58,3 +58,5 @@ python3 cut-silences.py ../../docs/demo/butler-walkthrough-raw.mp4 ../../docs/de
 ```
 
 Clips you recorded play in your voice; any missing clip falls back to Polly. If the splitter finds more or fewer takes than clips (a re-read line), it lists them with their lengths and writes nothing.
+
+If your pauses were too short for the splitter, cut by transcript instead: transcribe the note with word timestamps (for example faster-whisper `word_timestamps=True`, saved as `[{"w", "s", "e"}, ...]`), then run `python3 align-voicenote.py words.json ~/Downloads/voicenote.m4a voice/`. It matches the words to the script's clips and cuts at the quietest point between them.
