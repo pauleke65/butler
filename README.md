@@ -4,7 +4,8 @@
 
 Built for the [Build, Ship, Shape: Amazon Developer Hackathon](https://amazonappdev2026.devpost.com/): Alexa+ track, plus the AWS Builder and Open Source mini challenges.
 
-- **Demo video:** _YouTube link added at submission_ (2:44, recorded against the deployed AWS stack)
+- **Demo video:** [youtu.be/HOlPAQEx1Mo](https://youtu.be/HOlPAQEx1Mo) (2:59, recorded against the deployed AWS stack)
+- **Devpost:** [devpost.com/software/butler-vkfsu7](https://devpost.com/software/butler-vkfsu7)
 - **Simulator (open source):** [`addon-sim/`](addon-sim/), also published on its own: https://github.com/pauleke65/addon-sim
 
 ![Architecture](docs/architecture.png)

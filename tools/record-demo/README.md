@@ -46,6 +46,7 @@ python3 cut-silences.py ../../docs/demo/butler-walkthrough-raw.mp4 ../../docs/de
 
 - The take waits for the cloud: the agent's purchases must land before "How's Friday looking?", and the new rule must be active in AgentCore before the travel step.
 - `cut-silences.py` shortens pauses longer than 3.2 s (policy activation takes ~10 s) to about 2 s, and trims the tail.
+- To land under 3:00 with your own voice, cut tighter and keep silent camera moves whole: `--max 2.2 --keep 0.75 --tail 2.5 --hold <t1>,<t2>` (times in the raw take). The submitted video used `--hold 205.5,215.3`.
 
 ### With your own voice
 

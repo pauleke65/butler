@@ -1,8 +1,9 @@
 """Shorten long pauses in a recorded take (jump cuts while the cloud works) and trim the tail.
 
-    python3 cut-silences.py in.mp4 out.mp4 [--max 3.2] [--keep 1.0] [--tail 3.0]
+    python3 cut-silences.py in.mp4 out.mp4 [--max 3.2] [--keep 1.0] [--tail 3.0] [--hold 205,215]
 
 Silences longer than --max seconds keep --keep seconds on each side; everything after the last speech + --tail goes.
+--hold lists times (in the input) whose silence stays whole, e.g. a camera move that would jump if cut.
 """
 import re
 import subprocess
@@ -12,6 +13,7 @@ args = sys.argv[1:]
 src, dst = args[0], args[1]
 opt = lambda k, d: float(args[args.index(k) + 1]) if k in args else d
 MAX, KEEP, TAIL = opt("--max", 3.2), opt("--keep", 1.0), opt("--tail", 3.0)
+HOLD = [float(t) for t in args[args.index("--hold") + 1].split(",")] if "--hold" in args else []
 
 dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", src]).decode())
 log = subprocess.run(["ffmpeg", "-hide_banner", "-i", src, "-af", "silencedetect=noise=-38dB:d=1.5", "-f", "null", "-"], capture_output=True, text=True).stderr
@@ -23,7 +25,7 @@ cuts = []
 for a, b in silences:
     if b >= dur - 0.05:  # trailing silence: trim the tail
         end = min(dur, a + TAIL)
-    elif b - a > MAX:
+    elif b - a > MAX and not any(a <= t <= b for t in HOLD):
         cuts.append((a + KEEP, b - KEEP))
 keep, t = [], 0.0
 for a, b in cuts:
