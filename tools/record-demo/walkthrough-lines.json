@@ -1,15 +1,15 @@
 [
  {
   "role": "narrator",
-  "text": "Hi, I'm Paul. Butler is an Alexa+ add-on that acts for you, and turns your corrections into rules the AI can't break."
+  "text": "Hi, I'm Paul, and this is Butler: an Alexa+ add-on that handles everyday stuff for you. And when you correct it, that becomes a rule the AI can't break."
  },
  {
   "role": "narrator",
-  "text": "This is our open-source simulator, connected to the live stack on AWS. The Black Box on the right records every gateway decision."
+  "text": "It's running on an Echo Show in my simulator, talking to the real backend on AWS. The Black Box on the right logs every gateway decision."
  },
  {
   "role": "narrator",
-  "text": "I don't give Butler commands. I tell it what's happening."
+  "text": "I don't give Butler commands. I just tell it what's going on."
  },
  {
   "role": "you",
@@ -17,11 +17,11 @@
  },
  {
   "role": "narrator",
-  "text": "It makes a plan and gets started."
+  "text": "And it gets to work."
  },
  {
   "role": "narrator",
-  "text": "Butler never interrupts. It waits until I ask."
+  "text": "It won't interrupt me. It waits until I check in."
  },
  {
   "role": "you",
@@ -29,15 +29,15 @@
  },
  {
   "role": "narrator",
-  "text": "One decision is mine, so I'll tap it."
+  "text": "It needs me to pick a cleaner. I'll go with BrightHome."
  },
  {
   "role": "narrator",
-  "text": "That tap runs under a separate approval identity, not the AI."
+  "text": "That tap goes through a separate approval path. The AI can't approve itself."
  },
  {
   "role": "narrator",
-  "text": "Every action has a receipt."
+  "text": "Everything it does has a receipt."
  },
  {
   "role": "you",
@@ -45,7 +45,7 @@
  },
  {
   "role": "narrator",
-  "text": "What it used, what it turned down, and the rule that allowed it."
+  "text": "What it knew, what it turned down, and the rule that let it go ahead."
  },
  {
   "role": "you",
@@ -57,7 +57,7 @@
  },
  {
   "role": "narrator",
-  "text": "The AI only picks a rule template. Plain code turns it into a Cedar policy in AgentCore. Now it's live at the gateway."
+  "text": "The AI only picks a rule template. Regular code turns it into a policy the gateway enforces. There's the new rule."
  },
  {
   "role": "you",
@@ -65,7 +65,7 @@
  },
  {
   "role": "narrator",
-  "text": "Butler tried to buy drinks for my parents. The gateway denied it, outside the model, before anything was bought."
+  "text": "Butler tried to buy drinks for my parents, and the gateway blocked it, outside the AI, before anything was spent."
  },
  {
   "role": "you",
@@ -73,7 +73,7 @@
  },
  {
   "role": "narrator",
-  "text": "So instead of buying, it asks."
+  "text": "So instead of buying, it asks me first."
  },
  {
   "role": "you",
@@ -81,7 +81,7 @@
  },
  {
   "role": "narrator",
-  "text": "Butler runs on Amazon Bedrock AgentCore. Thanks for watching!"
+  "text": "That's Butler, built on Amazon Bedrock AgentCore. Thanks for watching!"
  },
  {
   "role": "butler",

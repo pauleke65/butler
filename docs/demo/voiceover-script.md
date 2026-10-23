@@ -8,55 +8,55 @@ You read 21 short clips; Butler's replies stay in its own voice (Polly "Ruth"). 
 2. Read the clips **in order**, in one recording. **Don't read the numbers** or the notes in *italics*.
 3. **Pause for two full seconds** after each clip. The pauses are how I cut your recording into clips.
 4. If you fluff a line, pause, then read that **whole** clip again. I keep the last take.
-5. Talk the way you'd present to a friend: relaxed and clear, a little slower than normal conversation.
+5. Talk the way you'd show a friend something you built: relaxed, smiling, a little slower than normal conversation. It's fine to sound like yourself; it doesn't have to be perfect.
 6. Lines marked *to the Echo* are you speaking to the device: say them the way you'd talk to Alexa at home.
 7. Send the file as it comes off your phone (m4a, mp3 or wav are all fine).
 
-Pronunciation: **Cedar** = "SEE-der". **AgentCore** = "agent core".
+Pronunciation: **AgentCore** = "agent core".
 
 ## The clips
 
-**1.** Hi, I'm Paul. Butler is an Alexa+ add-on that acts for you, and turns your corrections into rules the AI can't break.
+**1.** Hi, I'm Paul, and this is Butler: an Alexa+ add-on that handles everyday stuff for you. And when you correct it, that becomes a rule the AI can't break.
 
-**2.** This is our open-source simulator, connected to the live stack on AWS. The Black Box on the right records every gateway decision.
+**2.** It's running on an Echo Show in my simulator, talking to the real backend on AWS. The Black Box on the right logs every gateway decision.
 
-**3.** I don't give Butler commands. I tell it what's happening.
+**3.** I don't give Butler commands. I just tell it what's going on.
 
 **4.** *(to the Echo)* Tell Butler six friends from the dinner crew are coming over Friday at seven.
 
-**5.** It makes a plan and gets started.
+**5.** And it gets to work.
 
-**6.** Butler never interrupts. It waits until I ask.
+**6.** It won't interrupt me. It waits until I check in.
 
 **7.** *(to the Echo)* How's Friday looking?
 
-**8.** One decision is mine, so I'll tap it.
+**8.** It needs me to pick a cleaner. I'll go with BrightHome.
 
-**9.** That tap runs under a separate approval identity, not the AI.
+**9.** That tap goes through a separate approval path. The AI can't approve itself.
 
-**10.** Every action has a receipt.
+**10.** Everything it does has a receipt.
 
 **11.** *(to the Echo)* Why did you buy the drinks?
 
-**12.** What it used, what it turned down, and the rule that allowed it.
+**12.** What it knew, what it turned down, and the rule that let it go ahead.
 
 **13.** *(to the Echo)* Don't buy drinks without asking me.
 
 **14.** *(to the Echo)* Yes.
 
-**15.** The AI only picks a rule template. Plain code turns it into a Cedar policy in AgentCore. Now it's live at the gateway.
+**15.** The AI only picks a rule template. Regular code turns it into a policy the gateway enforces. There's the new rule.
 
 **16.** *(to the Echo)* I'm travelling Thursday to Sunday. My parents are staying at the house.
 
-**17.** Butler tried to buy drinks for my parents. The gateway denied it, outside the model, before anything was bought.
+**17.** Butler tried to buy drinks for my parents, and the gateway blocked it, outside the AI, before anything was spent.
 
 **18.** *(to the Echo)* Anything you need from me?
 
-**19.** So instead of buying, it asks.
+**19.** So instead of buying, it asks me first.
 
 **20.** *(to the Echo)* What did you do this week that I might disagree with?
 
-**21.** Butler runs on Amazon Bedrock AgentCore. Thanks for watching!
+**21.** That's Butler, built on Amazon Bedrock AgentCore. Thanks for watching!
 
 ## Where each clip plays
 
@@ -65,7 +65,7 @@ Pronunciation: **Cedar** = "SEE-der". **AgentCore** = "agent core".
 | 1 | Title card |
 | 2 | Whole simulator: Echo Show on the left, Black Box on the right |
 | 3–5 | Camera on the Echo: you describe the dinner, Butler answers and the plan appears |
-| 6–9 | You ask about Friday, the cleaner carousel appears, you tap BrightHome, the approval lands |
+| 6–9 | You ask about Friday, the cleaner carousel appears, BrightHome gets tapped, the approval lands |
 | 10–12 | The receipt for the drinks, with the "why" open |
 | 13–15 | You correct Butler, then the camera moves to the Black Box as the new rule goes live |
 | 16–17 | The travel plan, then the camera moves in on the Black Box as the gateway denies the drinks |
